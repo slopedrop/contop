@@ -1,0 +1,77 @@
+name: Release Mobile
+
+on:
+  push:
+    tags:
+      - "mobile-v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate tag format
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          if [[ ! "$TAG" =~ ^mobile-v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo "::error::Invalid tag format: $TAG. Expected: mobile-vX.Y.Z"
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: cd contop-mobile && npm ci
+
+      - name: Determine release info
+        id: release_info
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          VERSION="${TAG#mobile-}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if [[ "$TAG" =~ -(alpha|beta|rc) ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build APK (for GitHub release)
+        run: |
+          cd contop-mobile
+          eas build --platform android --profile preview --non-interactive --json > build-result.json
+          ARTIFACT_URL=$(cat build-result.json | jq -r '.[0].artifacts.buildUrl')
+          curl -L -o contop-mobile.apk "$ARTIFACT_URL"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release_info.outputs.tag }}
+          name: Mobile ${{ steps.release_info.outputs.version }}
+          prerelease: ${{ steps.release_info.outputs.prerelease }}
+          generate_release_notes: true
+          files: contop-mobile/contop-mobile.apk
+
+      - name: Build AAB (Play Store)
+        run: cd contop-mobile && eas build --platform android --profile production --non-interactive
+
+      - name: Build iOS (App Store)
+        run: cd contop-mobile && eas build --platform ios --profile production --non-interactive
+
+      - name: Submit to Google Play
+        run: cd contop-mobile && eas submit --platform android --profile production --non-interactive
+
+      - name: Submit to App Store
+        run: cd contop-mobile && eas submit --platform ios --profile production --non-interactive
