@@ -1637,11 +1637,12 @@ window.addEventListener("DOMContentLoaded", async () => {
   updateStatus("stopped");
 
   // First-launch setup — runs GPU detection + dependency installation if needed
-  try {
+  // Non-blocking: runs in background so window close always works
+  {
     const setupStatus = document.getElementById("setup-status");
 
     // Register progress listener BEFORE invoking (events stream during the invoke)
-    const unlisten = await listen<string>("setup-progress", (event) => {
+    listen<string>("setup-progress", (event) => {
       if (setupStatus) {
         try {
           const data = JSON.parse(event.payload);
@@ -1652,14 +1653,18 @@ window.addEventListener("DOMContentLoaded", async () => {
       }
     });
 
-    const result = await invoke<string>("run_first_launch_setup");
-    unlisten();
-
-    if (result !== "ready" && setupStatus) {
-      setupStatus.textContent = "Setup complete.";
-    }
-  } catch (e) {
-    console.warn("First-launch setup error (non-fatal):", e);
+    invoke<string>("run_first_launch_setup")
+      .then((result) => {
+        if (result !== "ready" && setupStatus) {
+          setupStatus.textContent = "Setup complete.";
+        }
+      })
+      .catch((e) => {
+        console.warn("First-launch setup error (non-fatal):", e);
+        if (setupStatus) {
+          setupStatus.textContent = "Setup skipped.";
+        }
+      });
   }
 
   // Check for updates (non-blocking)

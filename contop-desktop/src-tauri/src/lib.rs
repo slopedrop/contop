@@ -72,11 +72,13 @@ fn kill_server_process(child: &mut Child) {
 
     #[cfg(target_os = "windows")]
     {
+        const CREATE_NO_WINDOW: u32 = 0x0800_0000;
         // taskkill /T kills the entire process tree rooted at PID
         let _ = StdCommand::new("taskkill")
             .args(["/T", "/F", "/PID", &pid.to_string()])
             .stdout(Stdio::null())
             .stderr(Stdio::null())
+            .creation_flags(CREATE_NO_WINDOW)
             .status();
     }
 
@@ -93,7 +95,16 @@ fn kill_server_process(child: &mut Child) {
         }
     }
 
-    // Reap the direct child process
+    // Reap the direct child process with a timeout to prevent hanging on close
+    for _ in 0..20 {
+        match child.try_wait() {
+            Ok(Some(_)) => break,
+            Ok(None) => std::thread::sleep(std::time::Duration::from_millis(100)),
+            Err(_) => break,
+        }
+    }
+    // Force kill if still alive after 2 seconds
+    let _ = child.kill();
     let _ = child.wait();
 }
 
@@ -1012,18 +1023,28 @@ pub fn run() {
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app_handle, event| {
-            // RunEvent::Exit fires on ALL exit paths: window close, Ctrl+C, etc.
-            // This ensures the server process tree is always cleaned up.
-            if let tauri::RunEvent::Exit = event {
-                let state = app_handle.state::<ServerState>();
-                let mut guard = match state.process.lock() {
-                    Ok(g) => g,
-                    Err(_) => return,
-                };
-                if let Some(mut child) = guard.take() {
-                    kill_server_process(&mut child);
+            match event {
+                tauri::RunEvent::ExitRequested { .. } => {
+                    // Kill server and proxies immediately when exit is requested
+                    let state = app_handle.state::<ServerState>();
+                    if let Ok(mut guard) = state.process.lock() {
+                        if let Some(mut child) = guard.take() {
+                            kill_server_process(&mut child);
+                        }
+                    }
+                    sidecar::shutdown_all(&app_handle.state::<sidecar::ProxyRegistry>());
                 }
-                sidecar::shutdown_all(&app_handle.state::<sidecar::ProxyRegistry>());
+                tauri::RunEvent::Exit => {
+                    // Final cleanup — process may already be killed by ExitRequested
+                    let state = app_handle.state::<ServerState>();
+                    if let Ok(mut guard) = state.process.lock() {
+                        if let Some(mut child) = guard.take() {
+                            kill_server_process(&mut child);
+                        }
+                    }
+                    sidecar::shutdown_all(&app_handle.state::<sidecar::ProxyRegistry>());
+                }
+                _ => {}
             }
         });
 }
