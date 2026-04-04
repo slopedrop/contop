@@ -71,7 +71,7 @@ const config: Config = {
         { type: 'docSidebar', sidebarId: 'apiReferenceSidebar', position: 'left', label: 'API Reference' },
         { type: 'docSidebar', sidebarId: 'securitySidebar', position: 'left', label: 'Security' },
         {
-          href: 'https://github.com/swaroop-contop/contop',
+          href: 'https://github.com/slopedrop/contop',
           position: 'right',
           className: 'header-github-link',
           'aria-label': 'GitHub repository',

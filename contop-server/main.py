@@ -748,6 +748,16 @@ async def get_default_prompts():
     })
 
 
+@app.get("/api/ml-status")
+async def get_ml_status():
+    """Return GPU type, torch version, CUDA availability, and device name."""
+    from tools.setup_ml import check_torch_status, detect_gpu
+
+    gpu_info = detect_gpu()
+    torch_status = check_torch_status()
+    return JSONResponse(content={**gpu_info, **torch_status})
+
+
 def main():
     """Run the FastAPI server with uvicorn."""
     host = os.environ.get("CONTOP_HOST", "0.0.0.0")

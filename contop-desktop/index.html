@@ -593,6 +593,22 @@ codex auth          # authenticates with your OpenAI account</pre>
       </div>
     </main>
   </div>
+
+  <!-- First-launch setup status (hidden when not active) -->
+  <div id="setup-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
+    <div style="font-size:18px;font-weight:500;color:#fff;">Setting up Contop...</div>
+    <div id="setup-status" style="color:#aaa;font-size:14px;">Checking installation...</div>
+    <div class="spinner" style="width:24px;height:24px;border:3px solid #333;border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+  </div>
+
+  <!-- Update toast -->
+  <div id="update-toast" style="display:none;position:fixed;bottom:20px;right:20px;background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:12px 16px;z-index:9998;align-items:center;gap:12px;color:#fff;font-size:13px;">
+    <span>Update available: v<span id="update-version"></span></span>
+    <button id="update-restart" style="background:#4a6cf7;color:#fff;border:none;border-radius:4px;padding:4px 12px;cursor:pointer;font-size:12px;">Restart to update</button>
+    <button id="update-dismiss" style="background:transparent;color:#888;border:none;cursor:pointer;font-size:16px;">&times;</button>
+  </div>
+
+  <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 </body>
 
 </html>

@@ -129,7 +129,7 @@ class OmniParserLocal:
         if self._device.type == "cpu":
             logger.warning(
                 "CUDA not available. OmniParser running on CPU (slower). "
-                "To enable GPU: pip install torch --index-url https://download.pytorch.org/whl/cu126"
+                "Run the ML setup to enable GPU acceleration."
             )
 
         # YOLO icon detector

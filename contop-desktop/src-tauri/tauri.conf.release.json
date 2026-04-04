@@ -1,0 +1,10 @@
+{
+  "bundle": {
+    "resources": [
+      "resources/uv.exe",
+      "resources/contop-server/**",
+      "resources/git-bash/**",
+      "resources/pinchtab.exe"
+    ]
+  }
+}

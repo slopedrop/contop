@@ -1,6 +1,8 @@
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { listen } from "@tauri-apps/api/event";
 import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/plugin-notification";
+import { check } from "@tauri-apps/plugin-updater";
 
 type ServerStatus = "stopped" | "starting" | "running" | "error";
 
@@ -1633,6 +1635,49 @@ async function loadSkills() {
 
 window.addEventListener("DOMContentLoaded", async () => {
   updateStatus("stopped");
+
+  // First-launch setup — runs GPU detection + dependency installation if needed
+  try {
+    const setupStatus = document.getElementById("setup-status");
+    const result = await invoke<string>("run_first_launch_setup");
+    if (result !== "ready") {
+      // Show setup progress via event listener
+      await listen<string>("setup-progress", (event) => {
+        if (setupStatus) {
+          try {
+            const data = JSON.parse(event.payload);
+            setupStatus.textContent = data.message || event.payload;
+          } catch {
+            setupStatus.textContent = event.payload;
+          }
+        }
+      });
+    }
+  } catch (e) {
+    console.warn("First-launch setup error (non-fatal):", e);
+  }
+
+  // Check for updates (non-blocking)
+  try {
+    const update = await check();
+    if (update) {
+      const toast = document.getElementById("update-toast");
+      const versionEl = document.getElementById("update-version");
+      if (toast && versionEl) {
+        versionEl.textContent = update.version;
+        toast.style.display = "flex";
+        document.getElementById("update-restart")?.addEventListener("click", async () => {
+          await update.downloadAndInstall();
+          await invoke("plugin:process|restart");
+        });
+        document.getElementById("update-dismiss")?.addEventListener("click", () => {
+          toast.style.display = "none";
+        });
+      }
+    }
+  } catch (e) {
+    console.warn("Update check failed (non-fatal):", e);
+  }
 
   // Page navigation — refresh settings data when entering Settings page
   document.querySelectorAll(".nav-item").forEach((btn) => {

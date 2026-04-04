@@ -1,8 +1,8 @@
-use std::io::Read as _;
+use std::io::{BufRead, BufReader, Read as _};
 use std::path::PathBuf;
 use std::process::{Child, Command as StdCommand, Stdio};
 use std::sync::Mutex;
-use tauri::{Manager, State};
+use tauri::{Emitter, Manager, State};
 
 mod away_mode;
 mod sidecar;
@@ -119,8 +119,52 @@ fn find_uv() -> Result<PathBuf, String> {
     Err("Could not find 'uv'. Install it (https://docs.astral.sh/uv/) or add it to PATH.".into())
 }
 
+/// Resolved paths for the server, adapting to dev vs release mode.
+struct ServerPaths {
+    uv_path: PathBuf,
+    server_dir: PathBuf,
+    venv_dir: PathBuf,
+}
+
+/// Resolve paths for uv, server directory, and venv location.
+///
+/// **Release mode:** detected by checking if `resource_dir/contop-server` exists.
+///   - uv, server source, and git-bash come from Tauri's bundled resources.
+///   - venv lives at `~/.contop/server-venv/` (survives auto-updates).
+///
+/// **Dev mode:** falls back to compile-time CARGO_MANIFEST_DIR layout.
+fn resolve_server_paths(app: &tauri::AppHandle) -> Result<ServerPaths, String> {
+    let resource_server = app.path().resource_dir()
+        .map_err(|e| format!("Cannot get resource dir: {e}"))?
+        .join("contop-server");
+
+    if resource_server.exists() {
+        // Release mode
+        let resource_dir = app.path().resource_dir()
+            .map_err(|e| format!("Cannot get resource dir: {e}"))?;
+        let uv_path = resource_dir.join("uv.exe");
+        let server_dir = resource_server;
+        let venv_dir = dirs::home_dir()
+            .ok_or("Cannot determine home directory")?
+            .join(".contop")
+            .join("server-venv");
+        Ok(ServerPaths { uv_path, server_dir, venv_dir })
+    } else {
+        // Dev mode — use CARGO_MANIFEST_DIR layout
+        let uv_path = find_uv()?;
+        let server_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("..")
+            .join("..")
+            .join("contop-server")
+            .canonicalize()
+            .map_err(|e| format!("Cannot find contop-server directory: {e}"))?;
+        let venv_dir = server_dir.join(".venv");
+        Ok(ServerPaths { uv_path, server_dir, venv_dir })
+    }
+}
+
 #[tauri::command]
-fn start_server(state: State<'_, ServerState>) -> Result<(), String> {
+fn start_server(app: tauri::AppHandle, state: State<'_, ServerState>) -> Result<(), String> {
     let mut guard = state.process.lock().map_err(|e| e.to_string())?;
     // Clear stale handle if the process already exited (e.g., crash recovery)
     if let Some(ref mut child) = *guard {
@@ -140,33 +184,29 @@ fn start_server(state: State<'_, ServerState>) -> Result<(), String> {
             state.port
         ));
     }
-    let uv_path = find_uv()?;
-    // Resolve contop-server dir relative to the Cargo manifest (contop-desktop/src-tauri).
-    // Canonicalize to resolve ".." segments — Windows requires clean absolute paths.
-    let server_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("..")
-        .join("..")
-        .join("contop-server")
-        .canonicalize()
-        .map_err(|e| format!("Cannot find contop-server directory: {e}"))?;
+    let paths = resolve_server_paths(&app)?;
+
     // Resolve bundled Git Bash path for Python server.
-    // Uses current_exe() for runtime resolution — NOT CARGO_MANIFEST_DIR
-    // which is a compile-time constant that doesn't exist on the user's
-    // installed machine.  In dev mode, the bundled path won't have git-bash
-    // resources, so _discover_bash() falls back to system Git Bash.
+    // In release mode, git-bash is in the resource dir.
+    // In dev mode, falls back to system Git Bash.
     #[cfg(target_os = "windows")]
     let bash_path: Option<PathBuf> = {
-        // current_exe() gives us the running binary's location at runtime.
-        // Use the standard bundled path relative to the executable.
-        let exe_dir = std::env::current_exe()
+        let resource_bash = app.path().resource_dir()
             .ok()
-            .and_then(|p| p.parent().map(|d| d.to_path_buf()));
-        exe_dir
-            .map(|d| d.join("resources").join("git-bash").join("bin").join("bash.exe"))
-            .filter(|p| p.exists())
+            .map(|d| d.join("git-bash").join("bin").join("bash.exe"))
+            .filter(|p| p.exists());
+        if resource_bash.is_some() {
+            resource_bash
+        } else {
+            std::env::current_exe()
+                .ok()
+                .and_then(|p| p.parent().map(|d| d.to_path_buf()))
+                .map(|d| d.join("resources").join("git-bash").join("bin").join("bash.exe"))
+                .filter(|p| p.exists())
+        }
     };
 
-    let mut cmd = StdCommand::new(uv_path);
+    let mut cmd = StdCommand::new(&paths.uv_path);
     cmd.args([
             "run",
             "--extra",
@@ -178,7 +218,8 @@ fn start_server(state: State<'_, ServerState>) -> Result<(), String> {
             "--port",
             &state.port.to_string(),
         ])
-        .current_dir(&server_dir)
+        .current_dir(&paths.server_dir)
+        .env("UV_PROJECT_ENVIRONMENT", &paths.venv_dir)
         .stdout(Stdio::null())
         .stderr(Stdio::null());
 
@@ -209,6 +250,118 @@ fn start_server(state: State<'_, ServerState>) -> Result<(), String> {
         .map_err(|e| format!("Failed to start server: {e}"))?;
     *guard = Some(child);
     Ok(())
+}
+
+#[tauri::command]
+async fn run_first_launch_setup(app: tauri::AppHandle) -> Result<String, String> {
+    let paths = resolve_server_paths(&app)?;
+
+    // Check setup status — skip if already completed with matching hash
+    let contop_dir = dirs::home_dir()
+        .ok_or("Cannot determine home directory")?
+        .join(".contop");
+    let status_file = contop_dir.join("setup_status.json");
+    let pyproject_path = paths.server_dir.join("pyproject.toml");
+
+    let current_hash = std::fs::read(&pyproject_path)
+        .map(|bytes| format!("{:x}", md5_hash(&bytes)))
+        .unwrap_or_default();
+
+    if status_file.exists() {
+        if let Ok(contents) = std::fs::read_to_string(&status_file) {
+            if let Ok(status) = serde_json::from_str::<serde_json::Value>(&contents) {
+                if status.get("completed").and_then(|v| v.as_bool()) == Some(true)
+                    && status.get("pyproject_hash").and_then(|v| v.as_str()) == Some(&current_hash)
+                {
+                    return Ok("ready".to_string());
+                }
+            }
+        }
+    }
+
+    // Run setup_ml.py and stream progress via Tauri events
+    let app_clone = app.clone();
+    let uv_path = paths.uv_path.to_string_lossy().to_string();
+    let server_dir = paths.server_dir.to_string_lossy().to_string();
+    let venv_dir = paths.venv_dir.to_string_lossy().to_string();
+
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        let mut cmd = StdCommand::new(&uv_path);
+        cmd.args([
+            "run", "--directory", &server_dir,
+            "python", "-m", "tools.setup_ml",
+            "--uv-path", &uv_path,
+            "--server-dir", &server_dir,
+            "--venv-dir", &venv_dir,
+        ])
+        .env("UV_PROJECT_ENVIRONMENT", &venv_dir)
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped());
+
+        let mut child = cmd.spawn()
+            .map_err(|e| format!("Failed to start ML setup: {e}"))?;
+
+        if let Some(stdout) = child.stdout.take() {
+            let reader = BufReader::new(stdout);
+            for line in reader.lines() {
+                if let Ok(line) = line {
+                    let _ = app_clone.emit("setup-progress", &line);
+                }
+            }
+        }
+
+        let exit = child.wait()
+            .map_err(|e| format!("ML setup process error: {e}"))?;
+
+        if exit.success() {
+            Ok("success".to_string())
+        } else {
+            Err("ML setup failed".to_string())
+        }
+    }).await.map_err(|e| format!("Task join error: {e}"))??;
+
+    // Write status file
+    std::fs::create_dir_all(&contop_dir)
+        .map_err(|e| format!("Cannot create .contop dir: {e}"))?;
+
+    let status_json = serde_json::json!({
+        "completed": result == "success",
+        "pyproject_hash": current_hash,
+        "completed_at": chrono_now(),
+    });
+    std::fs::write(&status_file, status_json.to_string())
+        .map_err(|e| format!("Cannot write setup status: {e}"))?;
+
+    Ok(result)
+}
+
+/// Simple hash for pyproject.toml staleness detection.
+fn md5_hash(data: &[u8]) -> u64 {
+    // Using a simple FNV-1a hash — no crypto dependency needed for staleness check
+    let mut hash: u64 = 0xcbf29ce484222325;
+    for &byte in data {
+        hash ^= byte as u64;
+        hash = hash.wrapping_mul(0x100000001b3);
+    }
+    hash
+}
+
+fn chrono_now() -> String {
+    // Simple ISO 8601 timestamp without chrono crate
+    let dur = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default();
+    format!("{}", dur.as_secs())
+}
+
+#[tauri::command]
+async fn check_for_updates(app: tauri::AppHandle) -> Result<Option<String>, String> {
+    use tauri_plugin_updater::UpdaterExt;
+    let updater = app.updater()
+        .map_err(|e| format!("Updater error: {e}"))?;
+    let update = updater.check().await
+        .map_err(|e| format!("Update check failed: {e}"))?;
+    Ok(update.map(|u| u.version))
 }
 
 #[tauri::command]
@@ -772,6 +925,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .manage(ServerState {
             process: Mutex::new(None),
             port,
@@ -781,6 +935,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             start_server,
             stop_server,
+            run_first_launch_setup,
+            check_for_updates,
             kill_port_process,
             get_server_port,
             check_server_health,
