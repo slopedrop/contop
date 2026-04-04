@@ -15,7 +15,7 @@
 <p align="center">
   <a href="https://contop.app">Website</a> &bull;
   <a href="https://docs.contop.app">Docs</a> &bull;
-  <a href="https://github.com/SwaroopMeher/Contop/releases">Releases</a>
+  <a href="https://github.com/slopedrop/contop/releases">Releases</a>
 </p>
 
 <p align="center">
@@ -262,8 +262,8 @@ cd contop-mobile && npx jest                     # all mobile tests
 |---|---|
 | **Website** | [contop.app](https://contop.app) |
 | **Documentation** | [docs.contop.app](https://docs.contop.app) |
-| **Releases** | [GitHub Releases](https://github.com/SwaroopMeher/Contop/releases) |
-| **Issues** | [GitHub Issues](https://github.com/SwaroopMeher/Contop/issues) |
+| **Releases** | [GitHub Releases](https://github.com/slopedrop/contop/releases) |
+| **Issues** | [GitHub Issues](https://github.com/slopedrop/contop/issues) |
 
 ## License
 
