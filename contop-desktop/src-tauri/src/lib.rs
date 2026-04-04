@@ -95,17 +95,24 @@ fn kill_server_process(child: &mut Child) {
         }
     }
 
-    // Reap the direct child process with a timeout to prevent hanging on close
-    for _ in 0..20 {
+    // Reap the direct child process with a bounded timeout — never block indefinitely.
+    // child.wait() can hang forever on Windows even after taskkill, so we only use try_wait.
+    for _ in 0..30 {
         match child.try_wait() {
-            Ok(Some(_)) => break,
+            Ok(Some(_)) => return,
             Ok(None) => std::thread::sleep(std::time::Duration::from_millis(100)),
-            Err(_) => break,
+            Err(_) => return,
         }
     }
-    // Force kill if still alive after 2 seconds
+    // Still alive after 3 seconds — force kill and give it one more short window
     let _ = child.kill();
-    let _ = child.wait();
+    for _ in 0..10 {
+        match child.try_wait() {
+            Ok(Some(_)) | Err(_) => return,
+            Ok(None) => std::thread::sleep(std::time::Duration::from_millis(50)),
+        }
+    }
+    // Give up — don't block the close sequence
 }
 
 /// Find the `uv` binary by checking PATH first, then common install locations.
@@ -153,7 +160,8 @@ fn resolve_server_paths(app: &tauri::AppHandle) -> Result<ServerPaths, String> {
         // Release mode
         let resource_dir = app.path().resource_dir()
             .map_err(|e| format!("Cannot get resource dir: {e}"))?;
-        let uv_path = resource_dir.join("uv.exe");
+        let uv_bin = if cfg!(windows) { "uv.exe" } else { "uv" };
+        let uv_path = resource_dir.join(uv_bin);
         let server_dir = resource_server;
         let venv_dir = dirs::home_dir()
             .ok_or("Cannot determine home directory")?
@@ -371,6 +379,109 @@ fn chrono_now() -> String {
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap_or_default();
     format!("{}", dur.as_secs())
+}
+
+/// Ensure Python dependencies are installed (uv sync).
+/// On Windows the NSIS installer runs this at install time, so this is mainly
+/// for macOS/Linux (no installer hooks) and as a Windows fallback if the NSIS
+/// hook failed. Skips if the venv already has a pyvenv.cfg (deps already installed).
+/// Emits "dep-install-progress" events so the frontend can show status.
+#[tauri::command]
+async fn ensure_dependencies_installed(app: tauri::AppHandle) -> Result<String, String> {
+    let paths = resolve_server_paths(&app)?;
+
+    // Skip if venv already exists (deps already installed by NSIS or a prior run)
+    let pyvenv_cfg = paths.venv_dir.join("pyvenv.cfg");
+    if pyvenv_cfg.exists() {
+        return Ok("ready".to_string());
+    }
+
+    let app_clone = app.clone();
+    let uv_path = paths.uv_path.to_string_lossy().to_string();
+    let server_dir = paths.server_dir.to_string_lossy().to_string();
+    let venv_dir = paths.venv_dir.to_string_lossy().to_string();
+
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        let _ = app_clone.emit("dep-install-progress", "Detecting GPU...");
+
+        // Detect GPU: check for NVIDIA GPU
+        let has_nvidia = detect_nvidia_gpu();
+
+        let extras = if has_nvidia {
+            let _ = app_clone.emit("dep-install-progress", "NVIDIA GPU detected. Installing with CUDA support (this may take several minutes)...");
+            vec!["--extra", "omniparser", "--extra", "cu126"]
+        } else {
+            let _ = app_clone.emit("dep-install-progress", "No NVIDIA GPU detected. Installing CPU-only dependencies...");
+            vec!["--extra", "omniparser", "--extra", "cpu"]
+        };
+
+        let mut cmd = StdCommand::new(&uv_path);
+        cmd.arg("sync")
+            .args(&extras)
+            .args(["--directory", &server_dir, "--python-preference", "managed"])
+            .env("UV_PROJECT_ENVIRONMENT", &venv_dir)
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped());
+
+        #[cfg(target_os = "windows")]
+        {
+            const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+            cmd.creation_flags(CREATE_NO_WINDOW);
+        }
+
+        let mut child = cmd.spawn()
+            .map_err(|e| format!("Failed to start uv sync: {e}"))?;
+
+        // Stream stderr for progress (uv outputs progress to stderr)
+        if let Some(stderr) = child.stderr.take() {
+            let reader = BufReader::new(stderr);
+            for line in reader.lines() {
+                if let Ok(line) = line {
+                    let _ = app_clone.emit("dep-install-progress", &line);
+                }
+            }
+        }
+
+        let exit = child.wait()
+            .map_err(|e| format!("uv sync process error: {e}"))?;
+
+        if exit.success() {
+            let _ = app_clone.emit("dep-install-progress", "Dependencies installed successfully.");
+            Ok("success".to_string())
+        } else {
+            Err("Dependency installation failed. The app will retry on next launch.".to_string())
+        }
+    }).await.map_err(|e| format!("Task join error: {e}"))??;
+
+    Ok(result)
+}
+
+/// Detect if an NVIDIA GPU is available by running nvidia-smi.
+fn detect_nvidia_gpu() -> bool {
+    #[cfg(target_os = "windows")]
+    {
+        // Use full path — NSIS and installed apps may not have nvidia-smi on PATH
+        let windir = std::env::var("WINDIR").unwrap_or_else(|_| "C:\\Windows".to_string());
+        let nvidia_smi = format!("{}\\System32\\nvidia-smi.exe", windir);
+        StdCommand::new(&nvidia_smi)
+            .args(["--query-gpu=name", "--format=csv,noheader"])
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .status()
+            .map(|s| s.success())
+            .unwrap_or(false)
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        // On macOS/Linux, try nvidia-smi from PATH
+        StdCommand::new("nvidia-smi")
+            .args(["--query-gpu=name", "--format=csv,noheader"])
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .status()
+            .map(|s| s.success())
+            .unwrap_or(false)
+    }
 }
 
 #[tauri::command]
@@ -955,6 +1066,7 @@ pub fn run() {
             start_server,
             stop_server,
             run_first_launch_setup,
+            ensure_dependencies_installed,
             check_for_updates,
             kill_port_process,
             get_server_port,
@@ -1025,19 +1137,26 @@ pub fn run() {
         .run(|app_handle, event| {
             match event {
                 tauri::RunEvent::ExitRequested { .. } => {
-                    // Kill server and proxies immediately when exit is requested
-                    let state = app_handle.state::<ServerState>();
-                    if let Ok(mut guard) = state.process.lock() {
-                        if let Some(mut child) = guard.take() {
-                            kill_server_process(&mut child);
+                    // Spawn cleanup on a background thread so the event loop stays
+                    // responsive. Blocking here (e.g. sleeping in try_wait loops)
+                    // freezes the event loop and prevents the window from closing.
+                    let app = app_handle.clone();
+                    std::thread::spawn(move || {
+                        let state = app.state::<ServerState>();
+                        if let Ok(mut guard) = state.process.try_lock() {
+                            if let Some(mut child) = guard.take() {
+                                kill_server_process(&mut child);
+                            }
                         }
-                    }
-                    sidecar::shutdown_all(&app_handle.state::<sidecar::ProxyRegistry>());
+                        sidecar::shutdown_all(&app.state::<sidecar::ProxyRegistry>());
+                    });
                 }
                 tauri::RunEvent::Exit => {
-                    // Final cleanup — process may already be killed by ExitRequested
+                    // Final synchronous cleanup — runs after the event loop stops,
+                    // so blocking here is acceptable. Catches anything the background
+                    // thread from ExitRequested hasn't finished yet.
                     let state = app_handle.state::<ServerState>();
-                    if let Ok(mut guard) = state.process.lock() {
+                    if let Ok(mut guard) = state.process.try_lock() {
                         if let Some(mut child) = guard.take() {
                             kill_server_process(&mut child);
                         }

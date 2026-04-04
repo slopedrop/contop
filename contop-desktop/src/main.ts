@@ -1,10 +1,9 @@
 import { invoke } from "@tauri-apps/api/core";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
 import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/plugin-notification";
 import { check } from "@tauri-apps/plugin-updater";
 
-type ServerStatus = "stopped" | "starting" | "running" | "error";
+type ServerStatus = "stopped" | "starting" | "running" | "stopping" | "error";
 
 interface ProviderAuthEntry {
   mode: "api_key" | "cli_proxy";
@@ -130,6 +129,7 @@ function appConfirm(message: string): Promise<boolean> {
 const STATUS_COLORS: Record<ServerStatus, string> = {
   running: "#22c55e",
   starting: "#f59e0b",
+  stopping: "#f59e0b",
   stopped: "#6b7280",
   error: "#ef4444",
 };
@@ -137,6 +137,7 @@ const STATUS_COLORS: Record<ServerStatus, string> = {
 const STATUS_LABELS: Record<ServerStatus, string> = {
   stopped: "Stopped",
   starting: "Starting",
+  stopping: "Stopping...",
   running: "Running",
   error: "Error",
 };
@@ -940,6 +941,9 @@ async function startServer() {
 }
 
 async function stopServer() {
+  updateStatus("stopping");
+  startBtn().disabled = true;
+  stopBtn().disabled = true;
   stopPolling();
   stopStartupTimer();
   stopConnectionInfoPolling();
@@ -1667,6 +1671,40 @@ window.addEventListener("DOMContentLoaded", async () => {
       });
   }
 
+  // Ensure Python dependencies are installed (macOS/Linux first launch, or Windows NSIS fallback).
+  // Disables the Start Server button until deps are verified/installed.
+  {
+    const depStatus = document.getElementById("setup-status");
+    const sBtn = document.getElementById("start-btn") as HTMLButtonElement | null;
+
+    listen<string>("dep-install-progress", (event) => {
+      if (depStatus) {
+        depStatus.textContent = event.payload;
+        depStatus.style.display = "";
+      }
+    });
+
+    if (sBtn) sBtn.disabled = true;
+    invoke<string>("ensure_dependencies_installed")
+      .then((result) => {
+        if (result === "ready" && depStatus) {
+          // Already installed — hide status
+          depStatus.style.display = "none";
+        } else if (depStatus) {
+          depStatus.textContent = "Dependencies ready.";
+          setTimeout(() => { depStatus.style.display = "none"; }, 3000);
+        }
+        if (sBtn) sBtn.disabled = false;
+      })
+      .catch((e) => {
+        console.error("Dependency install failed:", e);
+        if (depStatus) {
+          depStatus.textContent = `Dependency install failed: ${e}. You can still try starting the server.`;
+        }
+        if (sBtn) sBtn.disabled = false;
+      });
+  }
+
   // Check for updates (non-blocking)
   try {
     const update = await check();
@@ -2031,15 +2069,10 @@ window.addEventListener("DOMContentLoaded", async () => {
     navigateTo("home");
   }
 
-  getCurrentWindow().onCloseRequested(async () => {
-    stopPolling();
-    stopStartupTimer();
-    stopConnectionInfoPolling();
-    stopDevicesPolling();
-    try {
-      await invoke("stop_server");
-    } catch {
-      // Already stopped
-    }
-  });
+  // NOTE: Do NOT register onCloseRequested here. Tauri v2 automatically calls
+  // api.prevent_close() when ANY JS listener exists for the close-requested event,
+  // which prevents the native window close and requires JS to call window.destroy()
+  // via IPC. If the Rust ExitRequested handler blocks the event loop (e.g. waiting
+  // for child processes to die), the IPC response never arrives → deadlock.
+  // Timer cleanup is unnecessary since the process is exiting.
 });

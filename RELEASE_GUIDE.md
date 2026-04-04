@@ -9,6 +9,7 @@ Before your first release, ensure all of these are configured:
 ### Desktop (Tauri)
 
 - [ ] **Tauri updater signing keypair** generated: `npx tauri signer generate -w ~/.tauri/contop.key`
+- [ ] **Public key** copied into `contop-desktop/src-tauri/tauri.conf.json` → `plugins.updater.pubkey` (the base64 string output by the generate command)
 - [ ] **GitHub secrets** configured on `slopedrop/contop`:
   - `TAURI_SIGNING_PRIVATE_KEY` — contents of `~/.tauri/contop.key`
   - `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` — password used during key generation
@@ -48,8 +49,12 @@ Stay on `v0.x.x` while the project is pre-stable. Pre-release tags (`-alpha`, `-
    git tag desktop-v0.2.0
    git push origin main desktop-v0.2.0
    ```
-4. CI builds on `windows-latest`, signs the NSIS installer, and publishes to GitHub Releases
-5. Verify: check the [Releases page](https://github.com/slopedrop/contop/releases) for `.exe` and `latest.json`
+4. CI builds on all 3 platforms (Windows, macOS, Linux), signs the update bundles, and publishes to GitHub Releases
+5. Verify: check the [Releases page](https://github.com/slopedrop/contop/releases) for:
+   - Windows: `.exe` (NSIS installer)
+   - macOS: `.dmg`
+   - Linux: `.AppImage`, `.deb`
+   - `latest.json` (required for auto-updater)
 
 Or use the helper script:
 
@@ -95,12 +100,13 @@ cd contop-mobile && eas update --branch production --message "fix: description"
 3. User clicks restart → app downloads the update, restarts
 4. After update, `run_first_launch_setup` checks `pyproject_hash` in `setup_status.json` — if dependencies changed, re-runs `uv sync` automatically
 
-## First-Launch Setup Behavior
+## Dependency Installation Behavior
 
-- Installer is ~80 MB (includes uv, Python source, MinGit, PinchTab)
-- First launch shows a setup screen: "Detecting GPU..." → "Installing dependencies..." → "Ready!"
-- Takes 5-15 minutes depending on internet speed and GPU variant (CUDA ~2.5 GB)
-- If setup fails, the server starts without GPU OmniParser (CPU fallback)
+- **Windows:** The NSIS installer detects NVIDIA GPU and runs `uv sync` with the correct extras during installation. Dependencies are ready when the app first launches.
+- **macOS / Linux:** No installer hook available (.dmg and .AppImage don't support post-install scripts). Dependencies are installed on first app launch — the app shows progress and disables "Start Server" until complete.
+- Installer is ~50 MB (includes uv, Python source, MinGit, PinchTab)
+- Dependency installation takes 5-15 minutes depending on internet speed and GPU variant (CUDA PyTorch ~2.5 GB)
+- If installation fails, the app will retry on next launch. The server can still start without GPU OmniParser (CPU fallback).
 
 ## Windows SmartScreen Warning
 

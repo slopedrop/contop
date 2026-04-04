@@ -110,13 +110,24 @@ fi
 
 # ── contop-server source ─────────────────────────────────────────
 echo "[stage] Copying contop-server source..."
-rsync -a --delete \
-  --exclude '.venv/' \
-  --exclude '__pycache__/' \
-  --exclude 'tests/' \
-  --exclude '.ruff_cache/' \
-  --exclude '.pytest_cache/' \
-  contop-server/ "$RESOURCES_DIR/contop-server/"
+if command -v rsync &>/dev/null; then
+  rsync -a --delete \
+    --exclude '.venv/' \
+    --exclude '__pycache__/' \
+    --exclude 'tests/' \
+    --exclude '.ruff_cache/' \
+    --exclude '.pytest_cache/' \
+    contop-server/ "$RESOURCES_DIR/contop-server/"
+else
+  # Fallback for Windows (no rsync)
+  rm -rf "$RESOURCES_DIR/contop-server"
+  cp -r contop-server "$RESOURCES_DIR/contop-server"
+  rm -rf "$RESOURCES_DIR/contop-server/.venv" \
+         "$RESOURCES_DIR/contop-server/tests" \
+         "$RESOURCES_DIR/contop-server/.ruff_cache" \
+         "$RESOURCES_DIR/contop-server/.pytest_cache"
+  find "$RESOURCES_DIR/contop-server" -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
+fi
 
 echo "[stage] All resources staged."
 echo "[stage] Contents:"

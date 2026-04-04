@@ -12,6 +12,12 @@ use std::io::Read as _;
 use std::process::{Child, Command as StdCommand, Stdio};
 use std::sync::Mutex;
 
+#[cfg(target_os = "windows")]
+use std::os::windows::process::CommandExt;
+
+#[cfg(target_os = "windows")]
+const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+
 pub struct ProxyRegistry {
     pub processes: Mutex<HashMap<String, Child>>,
 }
@@ -118,6 +124,7 @@ fn kill_proxy(child: &mut Child) {
             .args(["/T", "/F", "/PID", &pid.to_string()])
             .stdout(Stdio::null())
             .stderr(Stdio::null())
+            .creation_flags(CREATE_NO_WINDOW)
             .status();
     }
 
@@ -132,7 +139,14 @@ fn kill_proxy(child: &mut Child) {
         }
     }
 
-    let _ = child.wait();
+    // Bounded wait — never block indefinitely (child.wait() can hang on Windows)
+    for _ in 0..20 {
+        match child.try_wait() {
+            Ok(Some(_)) | Err(_) => return,
+            Ok(None) => std::thread::sleep(std::time::Duration::from_millis(100)),
+        }
+    }
+    let _ = child.kill();
 }
 
 /// Start a contop-cli-proxy process for the given provider.
@@ -223,12 +237,15 @@ pub fn start_proxy(
 
     if needs_build && src_dir.exists() {
         let npm_cmd = if cfg!(target_os = "windows") { "npm.cmd" } else { "npm" };
-        let build_status = StdCommand::new(npm_cmd)
+        let mut build_cmd = StdCommand::new(npm_cmd);
+        build_cmd
             .args(["run", "build"])
             .current_dir(&proxy_dir)
             .stdout(Stdio::null())
-            .stderr(Stdio::piped())
-            .status();
+            .stderr(Stdio::piped());
+        #[cfg(target_os = "windows")]
+        build_cmd.creation_flags(CREATE_NO_WINDOW);
+        let build_status = build_cmd.status();
         match build_status {
             Ok(s) if s.success() => { /* built successfully */ }
             Ok(s) => {
@@ -286,11 +303,26 @@ pub fn start_proxy(
     //   Linux   — desktop launchers skip .bashrc/.profile
     let resolved_path = resolve_cli_path();
 
-    let child = StdCommand::new(cmd)
+    let mut child_cmd = StdCommand::new(cmd);
+    child_cmd
         .args(&args)
         .env("PATH", &resolved_path)
         .stdout(stdout_stdio)
-        .stderr(stderr_stdio)
+        .stderr(stderr_stdio);
+    #[cfg(target_os = "windows")]
+    {
+        const CREATE_NEW_PROCESS_GROUP: u32 = 0x0000_0200;
+        child_cmd.creation_flags(CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP);
+    }
+    #[cfg(unix)]
+    unsafe {
+        use std::os::unix::process::CommandExt as _;
+        child_cmd.pre_exec(|| {
+            libc::setpgid(0, 0);
+            Ok(())
+        });
+    }
+    let child = child_cmd
         .spawn()
         .map_err(|e| format!("Failed to spawn contop-cli-proxy for '{}': {}", provider, e))?;
 
@@ -398,7 +430,7 @@ pub fn proxy_status(
 
 /// Shut down all running proxy processes. Call this from RunEvent::Exit.
 pub fn shutdown_all(registry: &ProxyRegistry) {
-    if let Ok(mut processes) = registry.processes.lock() {
+    if let Ok(mut processes) = registry.processes.try_lock() {
         for (_, mut child) in processes.drain() {
             kill_proxy(&mut child);
         }
