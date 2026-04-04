@@ -37,26 +37,167 @@ Before your first release, ensure all of these are configured:
 
 Stay on `v0.x.x` while the project is pre-stable. Pre-release tags (`-alpha`, `-beta`, `-rc`) are automatically marked as pre-release by CI and won't be served to auto-update users.
 
+## Changelog
+
+There is one shared `CHANGELOG.md` at the repo root covering both desktop and mobile. Entries are grouped under platform headings when needed.
+
+### How to Maintain It
+
+Keep a running `## [Unreleased]` section at the top. Add notable changes as you commit them — don't wait until release time and try to reconstruct from memory.
+
+```markdown
+## [Unreleased]
+
+### Desktop
+- Added cross-platform dependency installation
+- Fixed NVIDIA GPU detection in installer
+
+### Mobile
+- Fixed crash on Android 14 when pairing
+```
+
+### At Release Time
+
+1. Rename `[Unreleased]` to the version and date
+2. Add a fresh `[Unreleased]` section above it
+3. Include the changelog update in the release commit
+
+```markdown
+## [Unreleased]
+
+## Desktop [0.1.0-alpha.1] - 2026-04-04
+
+### Added
+- Cross-platform dependency installation
+- Stopping server status indicator
+
+### Fixed
+- NVIDIA GPU detection in NSIS installer
+```
+
+### What Goes In
+
+- **Add:** new features, new commands, new UI
+- **Fix:** bug fixes
+- **Change:** behavior changes, dependency updates
+- **Remove:** removed features or deprecated items
+
+Don't log every tiny commit — just the things a user or contributor would care about. If you forget, run `git log --oneline` since the last tag to jog your memory.
+
+## Day-to-Day Development Workflow
+
+### Regular Commits (no release)
+
+Nothing changes from what you've been doing:
+
+```bash
+git add ...
+git commit -m "feat: add new feature"
+git push origin main
+```
+
+No version bump, no tag. CI does not trigger. Just update the `[Unreleased]` section in the changelog if the change is notable.
+
+### Pre-Release Checklist
+
+When you're ready to ship a test release:
+
+- [ ] All changes committed and pushed to `main`
+- [ ] `CHANGELOG.md` — `[Unreleased]` section renamed to version + date, fresh `[Unreleased]` added
+- [ ] `README.md` — updated if there are new features, changed setup steps, or new screenshots
+- [ ] Docs site (`docs/`) — updated if features, setup, APIs, or architecture changed
+- [ ] Tested locally (`npm run tauri dev` for desktop, `npx expo start` for mobile)
+- [ ] Run the bump script:
+  ```bash
+  ./scripts/bump-version.sh desktop 0.1.0-alpha.1 --push
+  ```
+- [ ] Watch CI at github.com/slopedrop/contop/actions
+- [ ] Verify artifacts on the GitHub Releases page
+- [ ] Download and smoke-test the installer
+
+### Stable Release Checklist
+
+When promoting from alpha/beta to stable:
+
+- [ ] All pre-release checklist items above
+- [ ] `CHANGELOG.md` — consolidate all alpha/beta entries into one clean stable entry
+- [ ] `README.md` — ensure installation instructions point to stable release
+- [ ] Docs site (`docs/`) — all pages accurate for this version (installation, quick-start, architecture, API reference)
+- [ ] Website (`website/`) — any new features reflected in marketing copy
+- [ ] Website download section — verify it picks up the new stable release (happens automatically via GitHub API)
+- [ ] `RELEASE_GUIDE.md` — update if any process changed
+- [ ] `CONTRIBUTING.md` — update if dev setup steps changed
+- [ ] Run the bump script (no pre-release suffix):
+  ```bash
+  ./scripts/bump-version.sh desktop 0.1.0 --push
+  ```
+- [ ] Verify auto-updater works: open the previous version → should show update toast
+- [ ] Post announcement (GitHub Discussions, social media, etc.)
+
+### Mobile Release Checklist
+
+- [ ] All changes committed and pushed
+- [ ] `CHANGELOG.md` — mobile section updated under version heading
+- [ ] `app.json` version bumped
+- [ ] Tested on device/emulator
+- [ ] Run the bump script:
+  ```bash
+  ./scripts/bump-version.sh mobile 1.0.0-alpha.1 --push
+  ```
+- [ ] Verify APK on GitHub Releases page
+- [ ] Side-load APK and smoke-test
+- [ ] For stable: promote in Play Console / App Store Connect after testing
+
+### What to Update and When
+
+| What | When to update |
+|------|---------------|
+| `CHANGELOG.md` | Every notable commit (in `[Unreleased]`), finalize at release time |
+| `README.md` | When features, setup steps, or screenshots change |
+| Docs site (`docs/`) | When features, setup, architecture, or APIs change (see below) |
+| Website (`website/`) | When adding new features users should know about |
+| `RELEASE_GUIDE.md` | When the release process itself changes |
+| `CONTRIBUTING.md` | When dev setup or contribution process changes |
+| Download section | Automatic — pulls from GitHub Releases API |
+
+### Docusaurus Docs (`docs/`)
+
+The documentation site lives in `docs/` and covers user guides, architecture, API reference, and developer guides. Key pages to keep in sync:
+
+| Page | Update when... |
+|------|---------------|
+| `docs/getting-started/installation.md` | Install steps, system requirements, or download links change |
+| `docs/getting-started/quick-start.md` | First-run experience or setup flow changes |
+| `docs/developer-guide/build-and-release.md` | Build process, CI/CD, or release workflow changes |
+| `docs/user-guide/desktop-app.md` | Desktop features, UI, or settings change |
+| `docs/user-guide/mobile-app.md` | Mobile features or setup changes |
+| `docs/architecture/*.md` | When internals change (server, transport, state, etc.) |
+| `docs/api-reference/*.md` | When REST API, tools, or data channel protocol changes |
+| `docs/security/*.md` | When security model, pairing, or away mode changes |
+
+You don't need to update docs on every commit — batch it before releases. Add it to your release checklist: "Are the docs still accurate?"
+
 ## How to Cut a Desktop Release
 
-1. Bump version in `contop-desktop/src-tauri/tauri.conf.json` and `contop-desktop/package.json`
-2. Commit:
+1. Complete the pre-release or stable release checklist above
+2. Bump version in `contop-desktop/src-tauri/tauri.conf.json` and `contop-desktop/package.json`
+3. Commit:
    ```bash
    git commit -am "release: desktop v0.2.0"
    ```
-3. Tag and push:
+4. Tag and push:
    ```bash
    git tag desktop-v0.2.0
    git push origin main desktop-v0.2.0
    ```
-4. CI builds on all 3 platforms (Windows, macOS, Linux), signs the update bundles, and publishes to GitHub Releases
-5. Verify: check the [Releases page](https://github.com/slopedrop/contop/releases) for:
+5. CI builds on all 3 platforms (Windows, macOS, Linux), signs the update bundles, and publishes to GitHub Releases
+6. Verify: check the [Releases page](https://github.com/slopedrop/contop/releases) for:
    - Windows: `.exe` (NSIS installer)
    - macOS: `.dmg`
    - Linux: `.AppImage`, `.deb`
    - `latest.json` (required for auto-updater)
 
-Or use the helper script:
+Or use the helper script (handles steps 2-4):
 
 ```bash
 ./scripts/bump-version.sh desktop 0.2.0        # local only — creates commit + tag
@@ -65,18 +206,19 @@ Or use the helper script:
 
 ## How to Cut a Mobile Release
 
-1. Bump version in `contop-mobile/app.json`
-2. Commit, tag, and push:
+1. Complete the mobile release checklist above
+2. Bump version in `contop-mobile/app.json`
+3. Commit, tag, and push:
    ```bash
    git commit -am "release: mobile v1.0.1"
    git tag mobile-v1.0.1
    git push origin main mobile-v1.0.1
    ```
-3. CI runs EAS Build:
+4. CI runs EAS Build:
    - **APK** (preview profile) → attached to GitHub Release
    - **AAB** (production profile) → submitted to Google Play internal testing
    - **iOS** (production profile) → submitted to TestFlight
-4. Promote manually in Play Console / App Store Connect when ready
+5. Promote manually in Play Console / App Store Connect when ready
 
 ## How to Push an OTA Hotfix (Mobile JS-Only)
 
