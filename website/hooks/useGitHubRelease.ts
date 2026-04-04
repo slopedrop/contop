@@ -16,18 +16,22 @@ interface ReleaseData {
   date: string;
   assets: {
     windows: PlatformAsset | null;
-    android: PlatformAsset | null;
     macos: PlatformAsset | null;
+    linux: PlatformAsset | null;
+    android: PlatformAsset | null;
   };
   totalDownloads: number;
 }
 
-function categorizeAsset(name: string): "windows" | "android" | "macos" | null {
+type AssetPlatform = "windows" | "macos" | "linux" | "android";
+
+function categorizeAsset(name: string): AssetPlatform | null {
   const lower = name.toLowerCase();
   if (lower.endsWith(".nsis.exe") || (lower.endsWith(".exe") && !lower.includes("uninstall")))
     return "windows";
-  if (lower.endsWith(".apk")) return "android";
   if (lower.endsWith(".dmg")) return "macos";
+  if (lower.endsWith(".appimage") || lower.endsWith(".deb")) return "linux";
+  if (lower.endsWith(".apk")) return "android";
   return null;
 }
 
@@ -48,8 +52,9 @@ export function useGitHubRelease() {
       .then((data) => {
         const assets: ReleaseData["assets"] = {
           windows: null,
-          android: null,
           macos: null,
+          linux: null,
+          android: null,
         };
 
         let totalDownloads = 0;

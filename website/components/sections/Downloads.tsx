@@ -347,7 +347,8 @@ export default function Downloads() {
                 const detected = isDetected(card.platform);
                 const liveAsset =
                   card.platform === "windows" ? release?.assets.windows :
-                  card.platform === "macos" ? release?.assets.macos : null;
+                  card.platform === "macos" ? release?.assets.macos :
+                  card.platform === "linux" ? release?.assets.linux : null;
                 const href = liveAsset?.url || card.href;
                 return (
                   <div key={card.platform} className="relative p-5 sm:p-6">
