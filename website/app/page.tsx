@@ -66,7 +66,7 @@ export default function Home() {
                   Get Started
                 </a>
                 <a
-                  href="https://github.com/contop-app/contop"
+                  href="https://github.com/slopedrop/contop"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="rounded-full border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl px-7 py-2.5 text-center text-[13px] font-semibold tracking-[0.06em] uppercase text-text-secondary transition-all duration-300 hover:border-white/[0.16] hover:bg-white/[0.08] hover:text-text-primary"

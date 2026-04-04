@@ -148,7 +148,7 @@ export function Navbar() {
           <div className="flex items-center gap-4">
             {/* GitHub star badge */}
             <a
-              href="https://github.com/contop-app/contop"
+              href="https://github.com/slopedrop/contop"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-text-secondary transition-colors duration-200 hover:text-text-primary"

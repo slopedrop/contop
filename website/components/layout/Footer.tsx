@@ -1,17 +1,17 @@
 const PRODUCT_LINKS = [
   {
     label: "Download Desktop",
-    href: "https://github.com/contop-app/contop/releases/latest",
+    href: "https://github.com/slopedrop/contop/releases/latest",
     external: true,
   },
   {
     label: "Download Mobile",
-    href: "https://github.com/contop-app/contop/releases/latest",
+    href: "https://github.com/slopedrop/contop/releases/latest",
     external: true,
   },
   {
     label: "GitHub",
-    href: "https://github.com/contop-app/contop",
+    href: "https://github.com/slopedrop/contop",
     external: true,
   },
 ];
@@ -29,17 +29,17 @@ const RESOURCE_LINKS = [
 const PROJECT_LINKS = [
   {
     label: "Open Source",
-    href: "https://github.com/contop-app/contop",
+    href: "https://github.com/slopedrop/contop",
     external: true,
   },
   {
     label: "GitHub Stars",
-    href: "https://github.com/contop-app/contop/stargazers",
+    href: "https://github.com/slopedrop/contop/stargazers",
     external: true,
   },
   {
     label: "Credits",
-    href: "https://github.com/contop-app/contop#credits",
+    href: "https://github.com/slopedrop/contop#credits",
     external: true,
   },
 ];

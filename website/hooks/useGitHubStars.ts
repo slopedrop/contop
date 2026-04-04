@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-const GITHUB_REPO = "contop-app/contop";
+const GITHUB_REPO = "slopedrop/contop";
 
 function formatCount(count: number): string {
   if (count >= 1_000_000) {

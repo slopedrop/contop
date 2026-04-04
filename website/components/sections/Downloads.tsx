@@ -1,8 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useGitHubRelease } from "@/hooks/useGitHubRelease";
+import { useOSDetection, type OS } from "@/hooks/useOSDetection";
 
 const EASING = "cubic-bezier(0.16, 1, 0.3, 1)";
+
+type Platform = OS;
 
 /* ================================================
    Animation helpers (inline per-section convention)
@@ -35,23 +39,15 @@ function FadeUp({
   );
 }
 
-/* ================================================
-   Platform detection (client-side only)
-   ================================================ */
+function formatBytes(bytes: number): string {
+  if (bytes >= 1_073_741_824) return `${(bytes / 1_073_741_824).toFixed(1)} GB`;
+  if (bytes >= 1_048_576) return `${(bytes / 1_048_576).toFixed(1)} MB`;
+  return `${(bytes / 1024).toFixed(0)} KB`;
+}
 
-type Platform = "windows" | "macos" | "linux" | "android" | "ios" | "unknown";
-
-function detectPlatform(): Platform {
-  if (typeof navigator === "undefined") return "unknown";
-  const ua = navigator.userAgent.toLowerCase();
-  const platform = (navigator.platform || "").toLowerCase();
-
-  if (/android/.test(ua)) return "android";
-  if (/iphone|ipad|ipod/.test(ua)) return "ios";
-  if (/win/.test(platform) || /windows/.test(ua)) return "windows";
-  if (/mac/.test(platform) || /macintosh/.test(ua)) return "macos";
-  if (/linux/.test(platform) || /linux/.test(ua)) return "linux";
-  return "unknown";
+function formatCount(count: number): string {
+  if (count >= 1000) return `${(count / 1000).toFixed(1).replace(/\.0$/, "")}k`;
+  return count.toString();
 }
 
 /* ================================================
@@ -187,7 +183,7 @@ function ArrowRightIcon() {
    Platform card data
    ================================================ */
 
-const RELEASES_URL = "https://github.com/contop-app/contop/releases/latest";
+const RELEASES_URL = "https://github.com/slopedrop/contop/releases/latest";
 const PLAY_STORE_URL =
   "https://play.google.com/store/apps/details?id=com.contop.mobile";
 const APP_STORE_URL =
@@ -279,13 +275,8 @@ const descriptions = [
 export default function Downloads() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
-  const [detectedPlatform, setDetectedPlatform] =
-    useState<Platform>("unknown");
-
-  /* Client-side platform detection after hydration */
-  useEffect(() => {
-    setDetectedPlatform(detectPlatform());
-  }, []);
+  const { os: detectedPlatform, isMobile } = useOSDetection();
+  const { release } = useGitHubRelease();
 
   /* IntersectionObserver for scroll-triggered animations */
   useEffect(() => {
@@ -330,6 +321,18 @@ export default function Downloads() {
         <p className="mx-auto max-w-lg text-[15px] leading-relaxed text-text-secondary">
           Get Contop running on your machine in minutes.
         </p>
+        {release && (
+          <div className="mt-3 flex items-center justify-center gap-4">
+            <span className="inline-block rounded-full bg-accent/15 border border-accent/25 px-3 py-0.5 font-mono text-[11px] text-accent-light">
+              {release.version}
+            </span>
+            {release.totalDownloads > 0 && (
+              <span className="font-mono text-[11px] text-text-muted">
+                {formatCount(release.totalDownloads)} downloads
+              </span>
+            )}
+          </div>
+        )}
       </FadeUp>
 
       <div
@@ -342,6 +345,10 @@ export default function Downloads() {
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
               {desktopCards.map((card) => {
                 const detected = isDetected(card.platform);
+                const liveAsset =
+                  card.platform === "windows" ? release?.assets.windows :
+                  card.platform === "macos" ? release?.assets.macos : null;
+                const href = liveAsset?.url || card.href;
                 return (
                   <div key={card.platform} className="relative p-5 sm:p-6">
                     {detected && (
@@ -363,10 +370,15 @@ export default function Downloads() {
                     </h3>
                     <p className="font-mono text-[11px] text-text-muted mb-4">
                       {card.subtitle}
+                      {liveAsset && (
+                        <span className="ml-2 text-text-muted/60">
+                          ({formatBytes(liveAsset.size)})
+                        </span>
+                      )}
                     </p>
 
                     <a
-                      href={card.href}
+                      href={href}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={
