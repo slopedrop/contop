@@ -461,7 +461,7 @@ async function fetchConnectionInfo() {
           notice.style.display = "block";
           if (tempQRBtnEl) {
             tempQRBtnEl.textContent = "Show QR";
-            tempQRBtnEl.disabled = false;
+            (tempQRBtnEl as HTMLButtonElement).disabled = false;
             tempQRBtnEl.style.display = "";
           }
           const cancelBtnEl = $("cancel-temp-qr-btn");
@@ -477,7 +477,7 @@ async function fetchConnectionInfo() {
         tempDeviceConnected = false;
         if (tempQRBtnEl) {
           tempQRBtnEl.textContent = "Generate Temp QR";
-          tempQRBtnEl.disabled = false;
+          (tempQRBtnEl as HTMLButtonElement).disabled = false;
         }
         const cancelBtnEl2 = $("cancel-temp-qr-btn");
         if (cancelBtnEl2) cancelBtnEl2.style.display = "none";
@@ -752,7 +752,7 @@ function updateSetupStep1() {
 
 // --- QR Code ---
 
-async function fetchQRCode(force = false, connectionType?: string) {
+async function fetchQRCode(_force = false, connectionType?: string) {
   try {
     // Omit connection_type param entirely when not specified — Tauri Option<String>
     // requires the key to be absent (not null) to deserialize as None
