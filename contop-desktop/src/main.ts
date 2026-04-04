@@ -1639,19 +1639,24 @@ window.addEventListener("DOMContentLoaded", async () => {
   // First-launch setup — runs GPU detection + dependency installation if needed
   try {
     const setupStatus = document.getElementById("setup-status");
-    const result = await invoke<string>("run_first_launch_setup");
-    if (result !== "ready") {
-      // Show setup progress via event listener
-      await listen<string>("setup-progress", (event) => {
-        if (setupStatus) {
-          try {
-            const data = JSON.parse(event.payload);
-            setupStatus.textContent = data.message || event.payload;
-          } catch {
-            setupStatus.textContent = event.payload;
-          }
+
+    // Register progress listener BEFORE invoking (events stream during the invoke)
+    const unlisten = await listen<string>("setup-progress", (event) => {
+      if (setupStatus) {
+        try {
+          const data = JSON.parse(event.payload);
+          setupStatus.textContent = data.message || event.payload;
+        } catch {
+          setupStatus.textContent = event.payload;
         }
-      });
+      }
+    });
+
+    const result = await invoke<string>("run_first_launch_setup");
+    unlisten();
+
+    if (result !== "ready" && setupStatus) {
+      setupStatus.textContent = "Setup complete.";
     }
   } catch (e) {
     console.warn("First-launch setup error (non-fatal):", e);

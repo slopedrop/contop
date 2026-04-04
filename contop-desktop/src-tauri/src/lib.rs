@@ -209,6 +209,7 @@ fn start_server(app: tauri::AppHandle, state: State<'_, ServerState>) -> Result<
     let mut cmd = StdCommand::new(&paths.uv_path);
     cmd.args([
             "run",
+            "--no-sync",
             "--extra",
             "omniparser",
             "uvicorn",
@@ -243,7 +244,8 @@ fn start_server(app: tauri::AppHandle, state: State<'_, ServerState>) -> Result<
     #[cfg(target_os = "windows")]
     {
         const CREATE_NEW_PROCESS_GROUP: u32 = 0x0000_0200;
-        cmd.creation_flags(CREATE_NEW_PROCESS_GROUP);
+        const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+        cmd.creation_flags(CREATE_NEW_PROCESS_GROUP | CREATE_NO_WINDOW);
     }
 
     let child = cmd.spawn()
@@ -297,6 +299,12 @@ async fn run_first_launch_setup(app: tauri::AppHandle) -> Result<String, String>
         .env("UV_PROJECT_ENVIRONMENT", &venv_dir)
         .stdout(Stdio::piped())
         .stderr(Stdio::piped());
+
+        #[cfg(target_os = "windows")]
+        {
+            const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+            cmd.creation_flags(CREATE_NO_WINDOW);
+        }
 
         let mut child = cmd.spawn()
             .map_err(|e| format!("Failed to start ML setup: {e}"))?;
