@@ -65,9 +65,10 @@ playwright-report/
 # Notes
 pending.txt
 
-# Sync script (local only)
+# Local-only scripts
 sync-public.sh
-scripts
+scripts/setup-public-repo.sh
+scripts/generate-icons.py
 
 # skills
 skills.json
