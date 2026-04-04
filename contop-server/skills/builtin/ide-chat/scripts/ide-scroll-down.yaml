@@ -1,0 +1,6 @@
+name: ide-scroll-down
+description: Scroll the active editor or chat panel down
+steps:
+  - action: scroll
+    direction: down
+    amount: 5

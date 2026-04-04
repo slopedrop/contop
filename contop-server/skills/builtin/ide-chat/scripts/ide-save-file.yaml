@@ -1,0 +1,5 @@
+name: ide-save-file
+description: Save the current file
+steps:
+  - action: hotkey
+    keys: [ctrl, s]

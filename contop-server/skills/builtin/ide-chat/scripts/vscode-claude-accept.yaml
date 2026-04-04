@@ -1,0 +1,13 @@
+name: vscode-claude-accept
+description: Accept Claude Code's pending suggestion or diff
+steps:
+  - action: hotkey
+    keys: [ctrl, shift, p]
+  - action: wait
+    seconds: 0.5
+  - action: type_text
+    text: "Claude Code: Accept"
+  - action: wait
+    seconds: 0.3
+  - action: hotkey
+    keys: [enter]

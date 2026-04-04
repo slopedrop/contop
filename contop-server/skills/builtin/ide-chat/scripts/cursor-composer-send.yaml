@@ -1,0 +1,13 @@
+name: cursor-composer-send
+description: Send a message in Cursor Composer
+steps:
+  - action: hotkey
+    keys: [ctrl, i]
+  - action: wait
+    seconds: 0.5
+  - action: type_text
+    text: "{message}"
+  - action: wait
+    seconds: 0.3
+  - action: hotkey
+    keys: [enter]

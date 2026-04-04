@@ -1,0 +1,21 @@
+name: vscode-claude-send
+description: Send a message in Claude Code chat in VS Code
+steps:
+  - action: hotkey
+    keys: [ctrl, shift, p]
+  - action: wait
+    seconds: 0.5
+  - action: type_text
+    text: "Claude Code: Open"
+  - action: wait
+    seconds: 0.3
+  - action: hotkey
+    keys: [enter]
+  - action: wait
+    seconds: 1.0
+  - action: type_text
+    text: "{message}"
+  - action: wait
+    seconds: 0.3
+  - action: hotkey
+    keys: [enter]

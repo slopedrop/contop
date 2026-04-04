@@ -1,0 +1,5 @@
+name: ide-close-tab
+description: Close the current editor tab
+steps:
+  - action: hotkey
+    keys: [ctrl, w]

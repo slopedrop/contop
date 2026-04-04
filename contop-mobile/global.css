@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base bg/text enforced by ScreenContainer (bg-space-black) and Text (font-sans text-white) components.
+   NativeWind does not support :root pseudo-selector for direct property application in React Native. */

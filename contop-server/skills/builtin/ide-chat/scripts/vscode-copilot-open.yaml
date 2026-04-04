@@ -1,0 +1,13 @@
+name: vscode-copilot-open
+description: Open GitHub Copilot Chat panel in VS Code
+steps:
+  - action: hotkey
+    keys: [ctrl, shift, p]
+  - action: wait
+    seconds: 0.5
+  - action: type_text
+    text: "GitHub Copilot: Open Chat"
+  - action: wait
+    seconds: 0.3
+  - action: hotkey
+    keys: [enter]

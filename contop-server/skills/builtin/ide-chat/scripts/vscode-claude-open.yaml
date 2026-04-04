@@ -1,0 +1,13 @@
+name: vscode-claude-open
+description: Open Claude Code chat panel in VS Code
+steps:
+  - action: hotkey
+    keys: [ctrl, shift, p]
+  - action: wait
+    seconds: 0.5
+  - action: type_text
+    text: "Claude Code: Open"
+  - action: wait
+    seconds: 0.3
+  - action: hotkey
+    keys: [enter]

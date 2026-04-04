@@ -1,0 +1,5 @@
+name: ide-toggle-terminal
+description: Toggle the integrated terminal
+steps:
+  - action: hotkey
+    keys: [ctrl, grave]

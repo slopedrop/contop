@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Away Mode</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background: #000;
+        font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+        color: #fff;
+        user-select: none;
+        cursor: none;
+      }
+      .overlay {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.97);
+      }
+      .lock-icon {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 24px;
+        opacity: 0.6;
+      }
+      .status-text {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.4);
+        margin-bottom: 32px;
+        letter-spacing: 0.5px;
+      }
+      .pin-dots {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 32px;
+        height: 16px;
+      }
+      .pin-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        transition: background 0.15s, border-color 0.15s;
+      }
+      .pin-dot.filled {
+        background: #fff;
+        border-color: #fff;
+      }
+      .pin-dot.error {
+        border-color: #ef4444;
+        background: #ef4444;
+      }
+      .keypad {
+        display: grid;
+        grid-template-columns: repeat(3, 80px);
+        gap: 12px;
+      }
+      .key {
+        width: 80px;
+        height: 64px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-size: 24px;
+        font-family: 'IBM Plex Mono', monospace;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.1s;
+      }
+      .key:active, .key:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+      .key.fn-key {
+        font-size: 14px;
+        letter-spacing: 1px;
+      }
+      .error-text {
+        color: #ef4444;
+        font-size: 13px;
+        margin-top: 16px;
+        height: 20px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .error-text.visible { opacity: 1; }
+    </style>
+  </head>
+  <body>
+    <div class="overlay">
+      <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+      <p class="status-text">AWAY MODE</p>
+      <div class="pin-dots" id="pin-dots"></div>
+      <div class="keypad" id="keypad">
+        <button class="key" data-key="1">1</button>
+        <button class="key" data-key="2">2</button>
+        <button class="key" data-key="3">3</button>
+        <button class="key" data-key="4">4</button>
+        <button class="key" data-key="5">5</button>
+        <button class="key" data-key="6">6</button>
+        <button class="key" data-key="7">7</button>
+        <button class="key" data-key="8">8</button>
+        <button class="key" data-key="9">9</button>
+        <button class="key fn-key" data-key="back">DEL</button>
+        <button class="key" data-key="0">0</button>
+        <button class="key fn-key" data-key="enter">OK</button>
+      </div>
+      <p class="error-text" id="error-text">Invalid PIN</p>
+    </div>
+
+    <script>
+      const { invoke } = window.__TAURI__.core;
+      const MAX_PIN = 12;
+      let pin = "";
+
+      const dotsContainer = document.getElementById("pin-dots");
+      const errorText = document.getElementById("error-text");
+
+      function renderDots() {
+        dotsContainer.innerHTML = "";
+        for (let i = 0; i < Math.max(pin.length, 4); i++) {
+          const dot = document.createElement("div");
+          dot.className = "pin-dot" + (i < pin.length ? " filled" : "");
+          dotsContainer.appendChild(dot);
+        }
+      }
+      renderDots();
+
+      function showError() {
+        errorText.classList.add("visible");
+        dotsContainer.querySelectorAll(".pin-dot").forEach(d => d.classList.add("error"));
+        setTimeout(() => {
+          errorText.classList.remove("visible");
+          pin = "";
+          renderDots();
+        }, 1000);
+      }
+
+      async function submitPin() {
+        if (pin.length < 4) return;
+        try {
+          await invoke("disengage_away_mode", { pin });
+        } catch (e) {
+          showError();
+        }
+      }
+
+      function handleKey(key) {
+        errorText.classList.remove("visible");
+        if (key === "back") {
+          pin = pin.slice(0, -1);
+          renderDots();
+        } else if (key === "enter") {
+          submitPin();
+        } else if (pin.length < MAX_PIN) {
+          pin += key;
+          renderDots();
+        }
+      }
+
+      // Keypad click handler
+      document.getElementById("keypad").addEventListener("click", (e) => {
+        const btn = e.target.closest(".key");
+        if (btn) handleKey(btn.dataset.key);
+      });
+
+      // Physical keyboard handler (for allowed keys that pass through the hook)
+      document.addEventListener("keydown", (e) => {
+        if (e.key >= "0" && e.key <= "9") handleKey(e.key);
+        else if (e.key === "Backspace") handleKey("back");
+        else if (e.key === "Enter") handleKey("enter");
+      });
+    </script>
+  </body>
+</html>

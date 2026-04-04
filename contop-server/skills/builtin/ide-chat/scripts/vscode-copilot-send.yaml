@@ -1,0 +1,21 @@
+name: vscode-copilot-send
+description: Send a message in GitHub Copilot Chat in VS Code
+steps:
+  - action: hotkey
+    keys: [ctrl, shift, p]
+  - action: wait
+    seconds: 0.5
+  - action: type_text
+    text: "GitHub Copilot: Open Chat"
+  - action: wait
+    seconds: 0.3
+  - action: hotkey
+    keys: [enter]
+  - action: wait
+    seconds: 1.0
+  - action: type_text
+    text: "{message}"
+  - action: wait
+    seconds: 0.3
+  - action: hotkey
+    keys: [enter]

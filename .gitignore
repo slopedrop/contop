@@ -1,0 +1,91 @@
+# BMAD framework (installed tooling, not project code)
+_bmad
+.agent
+.agents
+commands.txt
+.kiro
+_bmad-output
+
+# IDE / CLI config
+.claude
+.cursor
+.windsurf
+
+# Dependencies
+node_modules/
+
+# Python
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.venv
+
+# Expo / React Native
+.expo/
+web-build/
+expo-env.d.ts
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+.metro-health-check*
+
+# Debug logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Environment files
+.env
+.env*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.tsbuildinfo
+*.pem
+
+# Next.js (website)
+website/.next/
+website/out/
+
+# Test artifacts
+coverage/
+.pytest_cache/
+test-results/
+playwright-report/
+
+# Notes
+pending.txt
+
+# Sync script (local only)
+sync-public.sh
+scripts
+
+# skills
+skills.json
+skills-lock.json
+
+# ruff
+.ruff_cache
+
+# Docusaurus
+docs/.docusaurus/
+docs/build/
+docs/cli-proxy-issues.md
+docs/cli-proxy-examples.md
+docs/cli-proxy-sessions.md
+docs/adk-persistent-sessions.md
+
+# video
+website/frames
+website/capture-howit.mjs
+website/how-it-works.mp4
+

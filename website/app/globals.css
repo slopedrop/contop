@@ -1,0 +1,353 @@
+@import "tailwindcss";
+
+/* Hide scrollbar for screen recording */
+html {
+  scrollbar-width: none; /* Firefox */
+}
+html::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Edge */
+}
+
+/* ============================================
+   Contop Design System — Tailwind v4 Theme
+   ============================================ */
+
+@theme {
+  /* Colors */
+  --color-bg-primary: #000000;
+  --color-accent: #095BB9;
+  --color-accent-light: #3B82F6;
+  --color-cyan: #06B6D4;
+  --color-purple: #7C3AED;
+  --color-surface-0: #000000;
+  --color-surface-1: #101113;
+  --color-surface-2: #1A1B1E;
+  --color-glass-bg: rgba(16, 17, 19, 0.6);
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A1A1AA;
+  --color-text-muted: #71717A;
+
+  /* Spacing — 8px base grid */
+  --spacing-grid-1: 8px;
+  --spacing-grid-2: 16px;
+  --spacing-grid-3: 24px;
+  --spacing-grid-4: 32px;
+  --spacing-grid-5: 40px;
+  --spacing-grid-6: 48px;
+  --spacing-grid-7: 56px;
+  --spacing-grid-8: 64px;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* Font Families */
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* CSS Custom Properties for runtime use */
+:root {
+  --color-accent: #095BB9;
+  --color-accent-light: #3B82F6;
+  --color-cyan: #06B6D4;
+  --color-purple: #7C3AED;
+  --color-bg-primary: #000000;
+  --color-surface-0: #000000;
+  --color-surface-1: #101113;
+  --color-surface-2: #1A1B1E;
+  --color-glass-bg: rgba(16, 17, 19, 0.6);
+  --color-glass-border: rgba(255, 255, 255, 0.06);
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A1A1AA;
+  --color-text-muted: #71717A;
+}
+
+/* ============================================
+   Base
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   Atmosphere — Dot Grid
+   Subtle precision-engineering texture
+   ============================================ */
+
+.dot-grid {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.04) 1px,
+    transparent 1px
+  );
+  background-size: 32px 32px;
+}
+
+/* ============================================
+   Mobile menu
+   ============================================ */
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-down {
+  animation: slide-down 0.2s ease-out;
+}
+
+/* ============================================
+   Hero entrance animations
+   ============================================ */
+
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-animate {
+  opacity: 0;
+  animation: hero-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hero-animate-delay-1 { animation-delay: 0.1s; }
+.hero-animate-delay-2 { animation-delay: 0.2s; }
+.hero-animate-delay-3 { animation-delay: 0.35s; }
+.hero-animate-delay-4 { animation-delay: 0.5s; }
+.hero-animate-delay-5 { animation-delay: 0.65s; }
+
+/* ============================================
+   Utilities
+   ============================================ */
+
+/* Status chip pulse */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.status-dot {
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
+/* CTA hover glow */
+.cta-primary {
+  position: relative;
+}
+
+.cta-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  box-shadow: 0 0 28px rgba(9, 91, 185, 0.45), 0 0 56px rgba(9, 91, 185, 0.15);
+  pointer-events: none;
+}
+
+.cta-primary:hover::after {
+  opacity: 1;
+}
+
+/* ============================================
+   Section scroll-triggered animations
+   ============================================ */
+
+.section-animate {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.section-animate-visible {
+  opacity: 1;
+  transform: translateY(0);
+  will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-animate {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+}
+
+/* Terminal cursor blink */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.terminal-cursor {
+  animation: cursor-blink 1s step-end infinite;
+}
+
+/* ============================================
+   Architecture diagram — How It Works section
+   ============================================ */
+
+/* Illustration container — top row */
+.arch-container {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    180deg,
+    rgba(8, 8, 10, 0.96) 0%,
+    rgba(4, 4, 6, 0.92) 100%
+  );
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  overflow: hidden;
+}
+
+.arch-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(59, 130, 246, 0.15),
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* Stage description cards — bottom row */
+.arch-stage-card {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+  background: rgba(8, 8, 10, 0.92);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  padding: 20px 24px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.arch-stage-card:hover {
+  border-color: rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arch-container *,
+  .arch-stage-card * {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* ============================================
+   How It Works — Explainer Page
+   ============================================ */
+
+.explainer-beat {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+/* Cinematic explainer — pinned scenes */
+.scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+}
+
+/* Animated connector lines between diagram elements */
+.explainer-connector {
+  position: relative;
+}
+
+.explainer-connector::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(59, 130, 246, 0.3),
+    transparent
+  );
+  animation: explainer-flow 2s linear infinite;
+}
+
+@keyframes explainer-flow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Orbital particle animation (for agentic loop) */
+@keyframes explainer-orbit {
+  0% { transform: rotate(0deg) translateX(100px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+}
+
+.explainer-particle {
+  animation: explainer-orbit 4s linear infinite;
+}
+
+/* Accent glow on key elements */
+.explainer-glow {
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.12),
+              0 0 48px rgba(59, 130, 246, 0.06);
+}
+
+/* Typing cursor animation for chat bubbles */
+.explainer-typing::after {
+  content: "|";
+  animation: cursor-blink 1s step-end infinite;
+}
+
+/* Respect reduced motion for all explainer animations */
+@media (prefers-reduced-motion: reduce) {
+  .explainer-beat *,
+  .explainer-particle,
+  .explainer-connector::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

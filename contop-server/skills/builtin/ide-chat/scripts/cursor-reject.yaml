@@ -1,0 +1,5 @@
+name: cursor-reject
+description: Reject Cursor's pending suggestion
+steps:
+  - action: press_key
+    key: escape

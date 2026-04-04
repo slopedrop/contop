@@ -1,0 +1,5 @@
+name: ide-next-tab
+description: Switch to the next editor tab
+steps:
+  - action: hotkey
+    keys: [ctrl, tab]

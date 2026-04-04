@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Phone (behind, 1:2 ratio) -->
+  <rect x="106" y="106" width="150" height="300" rx="14" stroke="#095BB9" stroke-width="36" fill="#000"/>
+  <!-- Desktop (foreground, 16:10 ratio, occludes phone) -->
+  <rect x="166" y="256" width="240" height="150" rx="12" stroke="#095BB9" stroke-width="36" fill="#000"/>
+  <!-- Terminal prompt ">" -->
+  <polyline points="226,298 270,331 226,364" stroke="#095BB9" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Underscore "_" -->
+  <line x1="288" y1="364" x2="356" y2="364" stroke="#095BB9" stroke-width="28" stroke-linecap="round"/>
+</svg>

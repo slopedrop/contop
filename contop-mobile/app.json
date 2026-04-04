@@ -1,0 +1,51 @@
+{
+  "expo": {
+    "name": "Contop Mobile",
+    "slug": "contop-mobile",
+    "version": "1.0.0",
+    "scheme": "contop",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "dark",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.contop.mobile",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Contop needs camera access to scan QR codes for pairing with your host machine.",
+        "NSFaceIDUsageDescription": "Contop uses Face ID to securely authenticate you before accessing the app.",
+        "NSMicrophoneUsageDescription": "Contop needs microphone access to capture voice commands for your AI assistant",
+        "UIBackgroundModes": ["audio"]
+      }
+    },
+    "android": {
+      "package": "com.contop.mobile",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon-foreground.png",
+        "backgroundColor": "#000000"
+      },
+      "softwareKeyboardLayoutMode": "adjustNothing",
+      "permissions": ["android.permission.BLUETOOTH_CONNECT"]
+    },
+    "splash": {
+      "image": "./assets/images/splash-logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-audio",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Contop uses your location to show where your device is connecting from."
+        }
+      ],
+      "./plugins/withDataPersistence",
+      "./plugins/withSplashIconPadding"
+    ]
+  }
+}

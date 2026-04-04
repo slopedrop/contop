@@ -1,0 +1,13 @@
+name: cursor-send
+description: Send a message in Cursor chat
+steps:
+  - action: hotkey
+    keys: [ctrl, l]
+  - action: wait
+    seconds: 0.5
+  - action: type_text
+    text: "{message}"
+  - action: wait
+    seconds: 0.3
+  - action: hotkey
+    keys: [enter]

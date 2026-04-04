@@ -1,0 +1,5 @@
+name: cursor-accept
+description: Accept Cursor's pending suggestion
+steps:
+  - action: hotkey
+    keys: [ctrl, shift, enter]

@@ -1,0 +1,13 @@
+name: vscode-claude-new
+description: Start a new Claude Code conversation in VS Code
+steps:
+  - action: hotkey
+    keys: [ctrl, shift, p]
+  - action: wait
+    seconds: 0.5
+  - action: type_text
+    text: "Claude Code: New Conversation"
+  - action: wait
+    seconds: 0.3
+  - action: hotkey
+    keys: [enter]

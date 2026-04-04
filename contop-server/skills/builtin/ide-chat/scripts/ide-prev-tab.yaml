@@ -1,0 +1,5 @@
+name: ide-prev-tab
+description: Switch to the previous editor tab
+steps:
+  - action: hotkey
+    keys: [ctrl, shift, tab]

@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contop</title>
+  <script type="module" src="/src/main.ts" defer></script>
+</head>
+
+<body>
+  <div id="app">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+      <div id="sidebar-brand">
+        <svg class="brand-icon" viewBox="0 0 512 512" fill="none">
+          <rect x="106" y="106" width="150" height="300" rx="14" stroke="currentColor" stroke-width="36" fill="#000" />
+          <rect x="166" y="256" width="240" height="150" rx="12" stroke="currentColor" stroke-width="36" fill="#000" />
+          <polyline points="226,298 270,331 226,364" stroke="currentColor" stroke-width="28" stroke-linecap="round"
+            stroke-linejoin="round" fill="none" />
+          <line x1="288" y1="364" x2="356" y2="364" stroke="currentColor" stroke-width="28" stroke-linecap="round" />
+        </svg>
+        <span class="brand-name">Contop</span>
+      </div>
+      <div id="sidebar-nav">
+        <button class="nav-item active" data-page="home">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          <span>Home</span>
+        </button>
+        <button class="nav-item" data-page="setup">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+          </svg>
+          <span>Setup</span>
+        </button>
+        <button class="nav-item" data-page="skills">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+          <span>Skills</span>
+        </button>
+        <button class="nav-item" data-page="devices">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+            <line x1="12" y1="18" x2="12.01" y2="18" />
+          </svg>
+          <span>Devices</span>
+        </button>
+        <button class="nav-item" data-page="settings">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+          <span>Settings</span>
+        </button>
+      </div>
+      <div id="sidebar-footer">
+        <div id="sidebar-status">
+          <span id="sidebar-status-dot"></span>
+          <span id="sidebar-status-text">Server stopped</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="content">
+      <!-- HOME PAGE -->
+      <div id="page-home" class="page active">
+        <div class="page-header">
+          <h1>Home</h1>
+        </div>
+        <div class="page-body">
+          <!-- Server Status Card -->
+          <div class="card" id="server-card">
+            <div class="card-row">
+              <div class="server-status-group">
+                <span id="status-dot"></span>
+                <span id="status-text">Stopped</span>
+                <span id="startup-timer" style="display:none"></span>
+              </div>
+              <div id="controls">
+                <button id="start-btn">Start Server</button>
+                <button id="stop-btn" disabled>Stop Server</button>
+                <button id="restart-btn" disabled>Restart</button>
+              </div>
+            </div>
+            <p id="startup-detail" style="display:none"></p>
+          </div>
+
+          <!-- API Key Prompt -->
+          <div id="api-key-prompt" class="card card-warn" style="display:none">
+            <div class="card-icon-row">
+              <svg class="card-icon warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              <p id="api-key-prompt-text">A Gemini API key is required before starting the server.</p>
+            </div>
+            <div class="api-key-control">
+              <input id="prompt-key-input" type="password" placeholder="Paste your Gemini API key" autocomplete="off" />
+              <button id="prompt-key-toggle" class="btn-sm" title="Show/hide key">Show</button>
+            </div>
+            <button id="prompt-key-save" class="btn-accent">Save Key</button>
+          </div>
+
+          <!-- Connection Info -->
+          <div id="connection-info" class="card" style="display:none">
+            <h3 class="card-title">Connection</h3>
+            <div class="info-row">
+              <span class="info-label">LAN</span>
+              <span id="info-lan-ip" class="info-value">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Tailscale</span>
+              <span id="info-tailscale" class="info-value">—</span>
+              <span id="info-tailscale-badge" class="info-badge" style="display:none">Active</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Tunnel</span>
+              <span id="info-tunnel" class="info-value">—</span>
+              <span id="info-tunnel-badge" class="info-badge" style="display:none">Active</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Clients</span>
+              <span id="info-clients" class="info-value">0</span>
+            </div>
+            <p id="connection-hint"></p>
+          </div>
+
+          <!-- QR Code -->
+          <div id="qr-area" class="card">
+            <h3 class="card-title">Pair Mobile</h3>
+            <div class="qr-content">
+              <p id="paired-status" style="display:none">Device paired <span id="token-expiry" class="info-badge"
+                  style="display:none"></span></p>
+              <img id="qr-image" alt="Pairing QR Code" />
+              <p id="qr-placeholder">Start the server to generate a pairing QR code</p>
+              <p id="qr-notice" style="display:none"></p>
+            </div>
+            <button id="temp-qr-btn" class="btn-sm" style="display:none; margin-top:12px; width:100%">Generate Temp
+              QR</button>
+            <button id="cancel-temp-qr-btn" class="btn-sm" style="display:none; margin-top:8px; width:100%">Back to
+              Permanent QR</button>
+            <button id="forget-connection-btn" class="btn-danger btn-sm"
+              style="display:none; margin-top:12px; width:100%">Forget Connection</button>
+            <button id="manual-details-toggle" class="btn-sm"
+              style="display:none; margin-top:12px; width:100%; opacity:0.7">Can't scan? Enter manually</button>
+            <div id="manual-details" style="display:none; margin-top:12px">
+              <div class="info-row">
+                <span class="info-label">Token</span>
+                <span id="manual-token" class="info-value" style="font-family:monospace; font-size:11px; word-break:break-all; user-select:all">—</span>
+                <button id="copy-token-btn" class="btn-sm" style="padding:2px 8px; font-size:11px">Copy</button>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Host</span>
+                <span id="manual-host" class="info-value" style="user-select:all">—</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Port</span>
+                <span id="manual-port" class="info-value" style="user-select:all">—</span>
+              </div>
+              <p style="margin:8px 0 0; font-size:11px; color:#888">Enter these on the mobile app's "Enter Manually" screen.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETUP PAGE -->
+      <div id="page-setup" class="page">
+        <div class="page-header">
+          <h1>Setup</h1>
+          <p class="page-subtitle">Get your devices connected and ready to go</p>
+        </div>
+        <div class="page-body">
+          <!-- Getting Started -->
+          <div class="setup-section">
+            <h2 class="setup-section-title">Getting Started</h2>
+            <div class="setup-cards">
+              <div class="setup-card" id="setup-step-server">
+                <div class="setup-card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
+                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
+                    <line x1="6" y1="6" x2="6.01" y2="6" />
+                    <line x1="6" y1="18" x2="6.01" y2="18" />
+                  </svg>
+                </div>
+                <div class="setup-card-body">
+                  <h3>Start the Server</h3>
+                  <p id="setup-step-1-text">Go to the Home page and click "Start Server". The server hosts the AI agent
+                    that will control your desktop.</p>
+                </div>
+                <span class="setup-card-status" id="setup-server-status"></span>
+              </div>
+
+              <div class="setup-card">
+                <div class="setup-card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                    <line x1="12" y1="18" x2="12.01" y2="18" />
+                  </svg>
+                </div>
+                <div class="setup-card-body">
+                  <h3>Install Contop Mobile</h3>
+                  <p>Download the Contop app on your phone. It's your voice remote for controlling the desktop agent.
+                  </p>
+                </div>
+                <span class="setup-card-status coming-soon">Coming soon</span>
+              </div>
+
+              <div class="setup-card">
+                <div class="setup-card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <path d="M7 7h.01M7 12h.01M12 7h.01M12 12h.01M17 7h.01M17 12h.01M7 17h.01M12 17h.01M17 17h.01" />
+                  </svg>
+                </div>
+                <div class="setup-card-body">
+                  <h3>Scan QR Code</h3>
+                  <p>Open the Contop app on your phone and scan the QR code shown on the Home page. Both devices pair
+                    automatically over Wi-Fi.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tailscale Setup -->
+          <div class="setup-section">
+            <div class="setup-section-header">
+              <h2 class="setup-section-title">Tailscale — Remote Access</h2>
+              <span class="setup-badge optional">Optional</span>
+            </div>
+            <p class="setup-section-desc">Tailscale creates a private network between your devices so you can control
+              your desktop from anywhere — not just the same Wi-Fi.</p>
+
+            <div class="setup-steps-visual">
+              <div class="setup-step-card">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <h4>Create a Tailscale Account</h4>
+                  <p>Visit <strong>tailscale.com</strong> and sign up with your Google, Microsoft, or GitHub account.
+                    It's free for personal use.</p>
+                  <button class="btn-link" id="tailscale-signup-link">Open tailscale.com &rarr;</button>
+                </div>
+              </div>
+
+              <div class="step-connector"></div>
+
+              <div class="setup-step-card">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <h4>Install on This Computer</h4>
+                  <p>Download and install Tailscale for your operating system. Once installed, sign in with the same
+                    account you just created.</p>
+                  <button class="btn-link" id="tailscale-download-link">Download Tailscale &rarr;</button>
+                </div>
+              </div>
+
+              <div class="step-connector"></div>
+
+              <div class="setup-step-card">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <h4>Install on Your Phone</h4>
+                  <p>Get the Tailscale app from the App Store (iOS) or Google Play (Android). Sign in with the
+                    <strong>same account</strong> so both devices join the same network.
+                  </p>
+                </div>
+              </div>
+
+              <div class="step-connector"></div>
+
+              <div class="setup-step-card">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                  <h4>You're Connected</h4>
+                  <p>Both devices now share a private network. Contop will automatically detect Tailscale and use it for
+                    stable remote connections. You'll see a green "Active" badge on the Home page.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Docker Setup -->
+          <div class="setup-section">
+            <div class="setup-section-header">
+              <h2 class="setup-section-title">Docker — Sandboxed Execution</h2>
+              <span class="setup-badge optional">Optional</span>
+            </div>
+            <p class="setup-section-desc">Docker lets Contop run potentially dangerous commands in isolated containers
+              instead of directly on your system. This keeps your computer safe while still letting the AI do its work.
+            </p>
+
+            <div class="setup-steps-visual">
+              <div class="setup-step-card">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <h4>Install Docker Desktop</h4>
+                  <p>Download Docker Desktop for your operating system. It includes everything needed to run containers.
+                  </p>
+                  <button class="btn-link" id="docker-download-link">Download Docker Desktop &rarr;</button>
+                </div>
+              </div>
+
+              <div class="step-connector"></div>
+
+              <div class="setup-step-card">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <h4>Automatic Start &amp; Detection</h4>
+                  <p>Contop automatically starts Docker Desktop when needed — no manual launch required. Dangerous
+                    commands flagged by the safety evaluator will run in sandboxed containers with memory limits,
+                    network isolation, and read-only filesystems.</p>
+                </div>
+              </div>
+
+              <div class="step-connector"></div>
+
+              <div class="setup-step-card">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <h4>No Docker? No Problem</h4>
+                  <p>If Docker isn't installed, Contop falls back to running commands directly with restricted
+                    permissions, shorter timeouts, and path-based safety checks.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CLI Subscription Setup -->
+          <div class="setup-section">
+            <div class="setup-section-header">
+              <h2 class="setup-section-title">CLI Subscriptions — Use Your Existing Plan</h2>
+              <span class="setup-badge optional">Optional</span>
+            </div>
+            <p class="setup-section-desc">If you have a Claude Max, Gemini Advanced, or ChatGPT Plus subscription,
+              Contop can route AI requests through the provider's CLI instead of consuming API credits. Install the CLI,
+              authenticate, then enable subscription mode in Settings.</p>
+
+            <div class="setup-steps-visual">
+              <div class="setup-step-card">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <h4>Install a Provider CLI</h4>
+                  <p>Install one or more CLIs for the providers you subscribe to:</p>
+                  <pre class="setup-code">npm install -g @anthropic-ai/claude-code  # Claude Max / Pro
+npm install -g @google/gemini-cli    # Gemini Advanced
+npm install -g @openai/codex              # ChatGPT Plus / Pro</pre>
+                </div>
+              </div>
+
+              <div class="step-connector"></div>
+
+              <div class="setup-step-card">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <h4>Authenticate with Your Account</h4>
+                  <p>Log in to each CLI so it can use your subscription:</p>
+                  <pre class="setup-code">claude /login       # opens browser to sign in
+gemini auth login   # authenticates with your Google account
+codex auth          # authenticates with your OpenAI account</pre>
+                </div>
+              </div>
+
+              <div class="step-connector"></div>
+
+              <div class="setup-step-card">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <h4>Enable in Settings</h4>
+                  <p>Go to the Settings page and toggle the auth mode from "API Key" to "Subscription" for each
+                    provider. The proxy starts automatically with the server and routes requests through the CLI.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- SETTINGS PAGE -->
+      <div id="page-skills" class="page">
+        <div class="page-header">
+          <h1>Skills</h1>
+        </div>
+        <div class="page-body">
+          <div class="card">
+            <h3 class="card-title">Installed Skills</h3>
+            <p class="card-hint">Extend Contop with custom skills, workflows, and tools. Add new skills to
+              <code>~/.contop/skills/</code> and restart the server.
+            </p>
+            <div id="skill-restart-banner" class="skill-restart-banner">Skill changes require a server restart to take
+              effect. Restart the server to apply.</div>
+            <div id="skills-list"></div>
+            <div id="skills-empty" class="empty-state" style="display:none;">
+              <p>No skills installed. Add skills to <code>~/.contop/skills/</code></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="page-devices" class="page">
+        <div class="page-header">
+          <h1>Paired Devices</h1>
+          <p class="page-subtitle">Manage devices that can connect to this computer</p>
+        </div>
+        <div class="page-body">
+          <div id="devices-list"></div>
+          <div id="devices-empty" class="card" style="display: none;">
+            <p style="color: var(--text-secondary); text-align: center;">No paired devices. Scan a QR code from the Home
+              tab to pair a device.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="page-settings" class="page">
+        <div class="page-header">
+          <h1>Settings</h1>
+        </div>
+        <div class="page-body">
+          <div class="card">
+            <h3 class="card-title">Gemini</h3>
+            <p class="card-hint">For Gemini 2.5 Flash, Pro, and other Google models.</p>
+            <div class="api-key-control" id="api-key-row-gemini">
+              <input id="gemini-key-input" type="password" placeholder="Enter your Gemini API key" autocomplete="off" />
+              <button id="toggle-key-visibility" class="btn-sm" title="Show/hide key">Show</button>
+            </div>
+            <div class="sub-proxy-row" id="sub-proxy-gemini">
+              <span class="proxy-dot stopped" id="proxy-dot-gemini" title="Stopped"></span>
+              <span class="proxy-label">Gemini Advanced proxy</span>
+              <label class="port-label">Port</label>
+              <input id="sub-port-gemini" type="number" value="3457" min="1024" max="65535" class="port-input" />
+              <button class="btn-sm" id="sub-start-gemini">Start</button>
+              <button class="btn-sm btn-danger" id="sub-stop-gemini" disabled>Stop</button>
+              <button class="btn-sm" id="sub-test-gemini">Test</button>
+              <span class="sub-status" id="sub-status-gemini"></span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">OpenAI</h3>
+            <p class="card-hint">For GPT-4.1, o3, o4-mini, and other OpenAI models.</p>
+            <div class="api-key-control" id="api-key-row-openai">
+              <input id="openai-key-input" type="password" placeholder="Enter your OpenAI API key" autocomplete="off" />
+              <button id="toggle-openai-visibility" class="btn-sm" title="Show/hide key">Show</button>
+            </div>
+            <div class="sub-proxy-row" id="sub-proxy-openai">
+              <span class="proxy-dot stopped" id="proxy-dot-openai" title="Stopped"></span>
+              <span class="proxy-label">ChatGPT Plus proxy</span>
+              <label class="port-label">Port</label>
+              <input id="sub-port-openai" type="number" value="3458" min="1024" max="65535" class="port-input" />
+              <button class="btn-sm" id="sub-start-openai">Start</button>
+              <button class="btn-sm btn-danger" id="sub-stop-openai" disabled>Stop</button>
+              <button class="btn-sm" id="sub-test-openai">Test</button>
+              <span class="sub-status" id="sub-status-openai"></span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Anthropic</h3>
+            <p class="card-hint">For Claude Sonnet 4.6, Opus 4.6, and other Anthropic models.</p>
+            <div class="api-key-control" id="api-key-row-anthropic">
+              <input id="anthropic-key-input" type="password" placeholder="Enter your Anthropic API key"
+                autocomplete="off" />
+              <button id="toggle-anthropic-visibility" class="btn-sm" title="Show/hide key">Show</button>
+            </div>
+            <div class="sub-proxy-row" id="sub-proxy-anthropic">
+              <span class="proxy-dot stopped" id="proxy-dot-anthropic" title="Stopped"></span>
+              <span class="proxy-label">Claude Max proxy</span>
+              <label class="port-label">Port</label>
+              <input id="sub-port-anthropic" type="number" value="3456" min="1024" max="65535" class="port-input" />
+              <button class="btn-sm" id="sub-start-anthropic">Start</button>
+              <button class="btn-sm btn-danger" id="sub-stop-anthropic" disabled>Stop</button>
+              <button class="btn-sm" id="sub-test-anthropic">Test</button>
+              <span class="sub-status" id="sub-status-anthropic"></span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="away-mode-row">
+              <label for="proxy-autostart-toggle">Auto-start proxies on server start</label>
+              <button id="proxy-autostart-toggle" class="toggle-btn" data-on="true">On</button>
+            </div>
+            <p class="card-hint">When enabled, subscription proxies start automatically with the server. When disabled,
+              use the Start buttons above to launch them manually.</p>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">OpenRouter API Key</h3>
+            <p class="card-hint">Optional. Enables UI-TARS 1.5 7B for improved screen element detection. Get a free key
+              at openrouter.ai</p>
+            <div class="api-key-control">
+              <input id="openrouter-key-input" type="password" placeholder="Enter your OpenRouter API key"
+                autocomplete="off" />
+              <button id="toggle-openrouter-visibility" class="btn-sm" title="Show/hide key">Show</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Restricted Paths</h3>
+            <p class="card-hint">Paths the AI assistant cannot access or modify.</p>
+            <ul id="restricted-paths-list"></ul>
+            <div class="add-control">
+              <input id="new-path-input" type="text" placeholder="/path/to/restrict" />
+              <button id="add-path-btn" class="btn-sm">Add</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Forbidden Commands</h3>
+            <p class="card-hint">Commands the AI assistant is never allowed to execute.</p>
+            <ul id="forbidden-commands-list"></ul>
+            <div class="add-control">
+              <input id="new-command-input" type="text" placeholder="dangerous-command" />
+              <button id="add-command-btn" class="btn-sm">Add</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Away Mode</h3>
+            <p class="card-hint">Physical access protection while automation keeps running. Locks the screen with a PIN
+              overlay invisible to screen capture.</p>
+
+            <div class="away-mode-row">
+              <label for="away-enabled-toggle">Enable Away Mode</label>
+              <button id="away-enabled-toggle" class="toggle-btn" data-on="false">Off</button>
+            </div>
+
+            <div id="away-pin-section">
+              <h4 class="card-subtitle">Screen PIN (4-12 digits)</h4>
+              <div class="away-pin-control">
+                <input id="away-pin-input" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="Enter PIN"
+                  maxlength="12" autocomplete="off" />
+                <input id="away-pin-confirm" type="password" inputmode="numeric" pattern="[0-9]*"
+                  placeholder="Confirm PIN" maxlength="12" autocomplete="off" />
+                <button id="set-away-pin-btn" class="btn-sm btn-accent">Set PIN</button>
+              </div>
+              <p id="away-pin-status" class="away-status"></p>
+            </div>
+
+            <div id="away-emergency-section">
+              <h4 class="card-subtitle">Emergency PIN (6-12 digits)</h4>
+              <p class="card-hint">Separate recovery PIN in case you forget your screen PIN.</p>
+              <div class="away-pin-control">
+                <input id="emergency-pin-input" type="password" inputmode="numeric" pattern="[0-9]*"
+                  placeholder="Enter emergency PIN" maxlength="12" autocomplete="off" />
+                <input id="emergency-pin-confirm" type="password" inputmode="numeric" pattern="[0-9]*"
+                  placeholder="Confirm" maxlength="12" autocomplete="off" />
+                <button id="set-emergency-pin-btn" class="btn-sm btn-accent">Set</button>
+              </div>
+              <p id="emergency-pin-status" class="away-status"></p>
+            </div>
+
+            <div class="away-mode-row">
+              <label for="away-idle-toggle">Auto-engage on idle</label>
+              <button id="away-idle-toggle" class="toggle-btn" data-on="false">Off</button>
+            </div>
+
+            <div id="away-idle-minutes-row" class="away-mode-row" style="display:none">
+              <label for="away-idle-minutes">Idle timeout (minutes)</label>
+              <div class="stepper">
+                <button id="idle-minutes-dec" class="stepper-btn">&minus;</button>
+                <input id="away-idle-minutes" class="stepper-input" type="text" inputmode="numeric" value="5" />
+                <button id="idle-minutes-inc" class="stepper-btn">+</button>
+              </div>
+              <button id="save-idle-minutes-btn" class="btn-sm">Save</button>
+            </div>
+
+            <div class="away-mode-row" style="margin-top:12px">
+              <button id="engage-away-btn" class="btn-sm btn-accent" disabled>Engage Now</button>
+            </div>
+          </div>
+
+          <div id="settings-controls">
+            <button id="restore-defaults-btn">Restore Defaults</button>
+            <button id="save-settings-btn" class="btn-accent">Save</button>
+          </div>
+          <p id="settings-status"></p>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+
+</html>

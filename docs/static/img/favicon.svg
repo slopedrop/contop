@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="70 70 372 372" fill="none">
+  <defs>
+    <clipPath id="c">
+      <path d="M0,0 H512 V512 H0 Z M178,256 L394,256 A12,12 0 0,1 406,268 L406,394 A12,12 0 0,1 394,406 L178,406 A12,12 0 0,1 166,394 L166,268 A12,12 0 0,1 178,256 Z" clip-rule="evenodd"/>
+    </clipPath>
+  </defs>
+  <rect x="106" y="106" width="150" height="300" rx="14" stroke="#3B82F6" stroke-width="36" clip-path="url(#c)"/>
+  <rect x="166" y="256" width="240" height="150" rx="12" stroke="#3B82F6" stroke-width="36"/>
+  <polyline points="226,298 270,331 226,364" stroke="#3B82F6" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="288" y1="364" x2="356" y2="364" stroke="#3B82F6" stroke-width="28" stroke-linecap="round"/>
+</svg>

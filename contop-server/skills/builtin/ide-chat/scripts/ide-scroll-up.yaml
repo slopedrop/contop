@@ -1,0 +1,6 @@
+name: ide-scroll-up
+description: Scroll the active editor or chat panel up
+steps:
+  - action: scroll
+    direction: up
+    amount: 5

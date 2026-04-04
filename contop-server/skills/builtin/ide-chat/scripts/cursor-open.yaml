@@ -1,0 +1,5 @@
+name: cursor-open
+description: Open Cursor chat panel
+steps:
+  - action: hotkey
+    keys: [ctrl, l]

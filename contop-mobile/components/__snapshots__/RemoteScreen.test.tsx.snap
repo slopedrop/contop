@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RemoteScreen snapshot test for default rendering with null stream 1`] = `
+<View
+  className="flex-1 bg-space-black "
+  onLayout={[Function]}
+  testID="remote-screen-fallback"
+/>
+`;

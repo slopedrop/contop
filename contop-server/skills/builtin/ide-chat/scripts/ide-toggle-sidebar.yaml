@@ -1,0 +1,5 @@
+name: ide-toggle-sidebar
+description: Toggle the IDE sidebar panel
+steps:
+  - action: hotkey
+    keys: [ctrl, b]
