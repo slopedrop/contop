@@ -22,7 +22,12 @@ if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]]; then
   exit 1
 fi
 
+# Convert to mixed-mode path (forward slashes) if running in Git Bash / MSYS2
+# so Node.js resolves paths correctly (e.g. C:/Users/... not /c/Users/...)
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+if command -v cygpath &>/dev/null; then
+  REPO_ROOT="$(cygpath -m "$REPO_ROOT")"
+fi
 
 case "$PLATFORM" in
   desktop)
