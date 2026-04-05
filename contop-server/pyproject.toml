@@ -46,8 +46,14 @@ omniparser = [
     "numpy>=1.26.0",
     "opencv-python-headless>=4.8.0",
 ]
-cu126 = []  # marker extra — triggers uv.sources to use CUDA index
-cpu = []    # marker extra — triggers uv.sources to use CPU index
+cu126 = [  # triggers uv.sources to use CUDA index for torch
+    "torch==2.11.0",
+    "torchvision==0.26.0",
+]
+cpu = [    # triggers uv.sources to use CPU index for torch
+    "torch==2.11.0",
+    "torchvision==0.26.0",
+]
 
 [dependency-groups]
 dev = [
@@ -71,6 +77,9 @@ markers = [
 asyncio_mode = "auto"
 
 [tool.uv]
+# cu126 and cpu extras are mutually exclusive — you install one or the other
+conflicts = [[{ extra = "cu126" }, { extra = "cpu" }]]
+
 # Use PyTorch CUDA index for torch/torchvision so GPU wheels are resolved
 # automatically. Other packages still come from PyPI.
 [[tool.uv.index]]
