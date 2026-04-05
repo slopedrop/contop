@@ -222,15 +222,15 @@ describe('hasValidPairingData (Story 5.1)', () => {
     expect(result.reason).toBe('no_token');
   });
 
-  test('[P0] 5.1-UNIT-006: returns valid:false with reason no_gemini_key when key is missing', async () => {
+  test('[P0] 5.1-UNIT-006: returns valid:false with reason no_credentials when no API keys or subscriptions exist', async () => {
     const payload = buildFakePairingPayload();
     mockedSecureStore.getItemAsync
       .mockResolvedValueOnce(JSON.stringify(payload))  // pairing token exists
-      .mockResolvedValueOnce(null);                     // no Gemini key
+      .mockResolvedValueOnce(null);                     // no API keys
 
     const result = await hasValidPairingData();
     expect(result.valid).toBe(false);
-    expect(result.reason).toBe('no_api_key');
+    expect(result.reason).toBe('no_credentials');
   });
 
   test('[P0] 5.1-UNIT-007: returns valid:false when token is expired', async () => {

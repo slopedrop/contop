@@ -538,20 +538,24 @@ class TestGeminiApiKeyInQRPayload:
             f"gemini_api_key in payload must match env var, got '{payload['g']}'"
         )
 
-    async def test_qr_generation_raises_error_when_gemini_api_key_not_set(self, monkeypatch):
-        """[P0] generate_qr_code() must raise ValueError when GEMINI_API_KEY is missing.
+    async def test_qr_generation_raises_error_when_no_api_keys_configured(self, monkeypatch):
+        """[P0] generate_qr_code() must raise ValueError when no API keys or subscriptions exist.
 
-        Given: GEMINI_API_KEY is not set in the environment and settings has no key
+        Given: No API keys are set in the environment or settings
         When:  We attempt to generate a QR code
         Then:  It must raise a ValueError with a descriptive message
         """
         # Given
         monkeypatch.delenv("GEMINI_API_KEY", raising=False)
         monkeypatch.setattr("core.settings.get_gemini_api_key", lambda: "")
+        monkeypatch.setattr("core.settings.get_openai_api_key", lambda: "")
+        monkeypatch.setattr("core.settings.get_anthropic_api_key", lambda: "")
+        monkeypatch.setattr("core.settings.get_openrouter_api_key", lambda: "")
+        monkeypatch.setattr("core.settings.is_subscription_mode", lambda p: False)
         pairing_token = await generate_token()
 
         # When / Then
-        with pytest.raises(ValueError, match="Gemini API key is not configured"):
+        with pytest.raises(ValueError, match="No API keys or subscription providers configured"):
             await generate_qr_code(pairing_token)
 
 

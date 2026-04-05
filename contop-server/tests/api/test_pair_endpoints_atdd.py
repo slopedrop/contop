@@ -269,31 +269,34 @@ class TestDeletePairRevocation:
 class TestPostPairGeminiApiKey:
     """1.6-API-001: POST /api/pair behaviour with respect to GEMINI_API_KEY"""
 
-    def test_post_pair_returns_500_when_gemini_api_key_missing(self, client, monkeypatch, tmp_path):
-        """[P0] POST /api/pair must return HTTP 500 when GEMINI_API_KEY env var is not set.
+    def test_post_pair_returns_500_when_no_api_keys_configured(self, client, monkeypatch, tmp_path):
+        """[P0] POST /api/pair must return HTTP 500 when no API keys or subscriptions are configured.
 
-        Given: GEMINI_API_KEY is not configured in the environment or settings
+        Given: No API keys are configured in the environment or settings
         When:  A client sends POST /api/pair
         Then:  The server must respond with HTTP 500 and a descriptive error body
         """
-        # Given — isolate settings so get_gemini_api_key() falls through to env var
+        # Given — isolate settings so all key getters fall through to env vars
         settings_file = tmp_path / ".contop" / "settings.json"
         monkeypatch.setattr("core.settings._resolve_settings_path", lambda: settings_file)
         monkeypatch.setattr("core.settings._cached_settings", None)
         monkeypatch.setattr("core.settings._cached_mtime", None)
         monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+        monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+        monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
 
         # When
         response = client.post("/api/pair")
 
         # Then
         assert response.status_code == 500, (
-            f"Expected 500 when GEMINI_API_KEY is missing, got {response.status_code}"
+            f"Expected 500 when no API keys are configured, got {response.status_code}"
         )
         data = response.json()
         assert "message" in data, "Error response must include 'message' field"
-        assert "GEMINI_API_KEY" in data["message"], (
-            "Error message must mention GEMINI_API_KEY"
+        assert "No API keys" in data["message"], (
+            "Error message must mention missing API keys"
         )
 
     def test_post_pair_succeeds_when_gemini_api_key_set(self, client, monkeypatch):

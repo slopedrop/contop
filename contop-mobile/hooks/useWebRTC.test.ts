@@ -929,7 +929,7 @@ describe('useWebRTC hook', () => {
       jest.useRealTimers();
     });
 
-    test('[P0] 1.5-UNIT-005: Max reconnect attempts (3) exhausted → disconnected + aiState disconnected (temp connection)', async () => {
+    test('[P0] 1.5-UNIT-005: Max reconnect attempts (5) exhausted → disconnected + aiState disconnected (temp connection)', async () => {
       // Given — an active temp connection that keeps failing to reconnect
       const payload = buildFakePairingPayload({ connection_type: 'temp' });
       let connectionStateHandler: (() => void) | undefined;
@@ -966,15 +966,15 @@ describe('useWebRTC hook', () => {
         jest.advanceTimersByTime(2000);
       });
 
-      // Subsequent disconnects trigger attempts 2 and 3 (counter: 1→2, 2→3)
-      for (let attempt = 0; attempt < 2; attempt++) {
+      // Subsequent disconnects trigger attempts 2 through 5 (counter: 1→2, 2→3, 3→4, 4→5)
+      for (let attempt = 0; attempt < 4; attempt++) {
         mockPC.connectionState = 'disconnected';
         await act(async () => {
           connectionStateHandler?.();
         });
       }
 
-      // Final disconnect hits exhaustion check (counter=3 >= MAX=3)
+      // Final disconnect hits exhaustion check (counter=5 >= MAX=5)
       mockPC.connectionState = 'disconnected';
       await act(async () => {
         connectionStateHandler?.();

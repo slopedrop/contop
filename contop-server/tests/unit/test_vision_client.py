@@ -63,7 +63,7 @@ class TestGroundSuccess:
         result = await client.ground("base64data", "Find all buttons")
 
         assert result is not None
-        assert result["source"] == "ui_tars"
+        assert result["source"] == UI_TARS_MODEL
         assert "Submit" in result["description"]
 
     @pytest.mark.asyncio
@@ -162,18 +162,19 @@ class TestObserveScreenUITarsIntegration:
     @pytest.mark.asyncio
     async def test_ui_tars_used_when_key_configured(self):
         """AC 14: When OpenRouter key configured, VisionClient.ground() is called BEFORE OmniParser."""
-        mock_tars = MagicMock()
-        mock_tars.return_value.ground = AsyncMock(return_value={
+        mock_instance = AsyncMock()
+        mock_instance.ground = AsyncMock(return_value={
             "action": "ground",
             "description": "Found 3 buttons",
-            "source": "ui_tars",
+            "source": UI_TARS_MODEL,
         })
+        mock_tars = MagicMock(return_value=mock_instance)
 
         with patch("core.agent_tools._capture_screen_sync", return_value=("b64", 1280, 720, 1920, 1080)), \
              patch("core.agent_tools.get_omniparser") as mock_omni, \
              patch("core.settings.get_settings", return_value={"openrouter_api_key": "sk-test"}), \
-             patch("tools.vision_client.VisionClient", mock_tars):
-            # Need to patch the lazy imports inside observe_screen
+             patch("tools.vision_client.VisionClient", mock_tars), \
+             patch("core.agent_tools._vision_clients", {}):
             import core.agent_tools as at
             with patch.object(at, "VisionClient", mock_tars, create=True):
                 result = await at.observe_screen()

@@ -153,7 +153,8 @@ class TestAfterToolCallback:
             {"status": "success", "stdout": "CONTAINER ID"},
         )
 
-        assert result is None  # Don't modify result
+        # after_tool returns the tool_response dict (with image blobs stripped)
+        assert isinstance(result, dict)
         # Verify progress message was sent with tool output fields
         call_args = mock_send.call_args[0]
         assert call_args[0] == "agent_progress"
@@ -220,16 +221,16 @@ class TestProgressStreaming:
         await agent._before_tool_callback(mock_tool, {"command": "ls"}, mock_context)
 
         # First call should be agent_progress with status=running
-        mock_send.assert_called_with(
-            "agent_progress",
-            {
-                "step": 1,
-                "tool": "execute_cli",
-                "detail": "Running: ls",
-                "command": "ls",
-                "status": "running",
-            },
-        )
+        call_args = mock_send.call_args[0]
+        assert call_args[0] == "agent_progress"
+        payload = call_args[1]
+        assert payload["step"] == 1
+        assert payload["tool"] == "execute_cli"
+        assert payload["detail"] == "Running: ls"
+        assert payload["command"] == "ls"
+        assert payload["status"] == "running"
+        assert "model" in payload
+        assert "backend" in payload
 
 
 # ─── Task 16: Disconnect resilience ──────────────────────────────────────────
