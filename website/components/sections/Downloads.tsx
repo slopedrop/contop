@@ -186,8 +186,7 @@ function ArrowRightIcon() {
 const RELEASES_URL = "https://github.com/slopedrop/contop/releases/latest";
 const PLAY_STORE_URL =
   "https://play.google.com/store/apps/details?id=com.contop.mobile";
-const APP_STORE_URL =
-  "https://apps.apple.com/app/contop-mobile/id000000000";
+const APP_STORE_URL = ""; // iOS coming soon — no store listing yet
 const DOCS_URL = "https://docs.contop.app";
 
 interface DesktopCard {
@@ -242,7 +241,7 @@ const mobileCards: MobileCard[] = [
     platform: "ios",
     icon: <AppleIcon />,
     name: "iOS",
-    subtitle: "App Store",
+    subtitle: "Coming Soon",
     href: APP_STORE_URL,
   },
 ];
@@ -258,7 +257,7 @@ const descriptions = [
     icon: <SmartphoneIcon />,
     category: "MOBILE",
     title: "Mobile Commander",
-    desc: "Voice and text control from your phone. Android and iOS.",
+    desc: "Voice and text control from your phone. Android (iOS coming soon).",
   },
   {
     icon: <BookIcon />,
@@ -464,21 +463,27 @@ export default function Downloads() {
                         </p>
 
                         {/* Store link — mobile/tablet only */}
-                        <a
-                          href={card.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`md:hidden ${
-                            detected
-                              ? "inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-1.5 text-xs font-medium tracking-[0.06em] uppercase text-text-primary transition-all duration-200 hover:bg-accent-light hover:shadow-[0_0_20px_rgba(9,91,185,0.3)] w-fit"
-                              : "inline-flex items-center gap-1.5 rounded-full border border-white/[0.1] bg-white/[0.04] px-5 py-1.5 text-xs font-medium tracking-[0.06em] uppercase text-text-secondary transition-all duration-200 hover:bg-white/[0.08] hover:text-text-primary w-fit"
-                          }`}
-                        >
-                          <DownloadIcon />
-                          {card.platform === "android"
-                            ? "Google Play"
-                            : "App Store"}
-                        </a>
+                        {card.href ? (
+                          <a
+                            href={card.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`md:hidden ${
+                              detected
+                                ? "inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-1.5 text-xs font-medium tracking-[0.06em] uppercase text-text-primary transition-all duration-200 hover:bg-accent-light hover:shadow-[0_0_20px_rgba(9,91,185,0.3)] w-fit"
+                                : "inline-flex items-center gap-1.5 rounded-full border border-white/[0.1] bg-white/[0.04] px-5 py-1.5 text-xs font-medium tracking-[0.06em] uppercase text-text-secondary transition-all duration-200 hover:bg-white/[0.08] hover:text-text-primary w-fit"
+                            }`}
+                          >
+                            <DownloadIcon />
+                            {card.platform === "android"
+                              ? "Google Play"
+                              : "App Store"}
+                          </a>
+                        ) : (
+                          <span className="md:hidden inline-flex items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] px-5 py-1.5 text-xs font-medium tracking-[0.06em] uppercase text-text-muted/50 w-fit cursor-default">
+                            Coming Soon
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
