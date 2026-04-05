@@ -6,8 +6,14 @@ on:
       - "mobile-v*"
 
 jobs:
-  build:
+  build-apk:
+    name: Build APK & GitHub Release
     runs-on: ubuntu-latest
+
+    outputs:
+      tag: ${{ steps.release_info.outputs.tag }}
+      version: ${{ steps.release_info.outputs.version }}
+      prerelease: ${{ steps.release_info.outputs.prerelease }}
 
     steps:
       - name: Validate tag format
@@ -48,7 +54,7 @@ jobs:
             echo "prerelease=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Build APK (for GitHub release)
+      - name: Build APK
         run: |
           cd contop-mobile
           eas build --platform android --profile preview --non-interactive --json > build-result.json
@@ -63,6 +69,30 @@ jobs:
           prerelease: ${{ steps.release_info.outputs.prerelease }}
           generate_release_notes: true
           files: contop-mobile/contop-mobile.apk
+
+  submit-stores:
+    name: Build & Submit to Stores
+    needs: build-apk
+    if: needs.build-apk.outputs.prerelease == 'false'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: cd contop-mobile && npm ci
 
       - name: Build AAB (Play Store)
         run: cd contop-mobile && eas build --platform android --profile production --non-interactive

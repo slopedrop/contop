@@ -18,7 +18,9 @@
         "NSCameraUsageDescription": "Contop needs camera access to scan QR codes for pairing with your host machine.",
         "NSFaceIDUsageDescription": "Contop uses Face ID to securely authenticate you before accessing the app.",
         "NSMicrophoneUsageDescription": "Contop needs microphone access to capture voice commands for your AI assistant",
-        "UIBackgroundModes": ["audio"]
+        "UIBackgroundModes": [
+          "audio"
+        ]
       }
     },
     "android": {
@@ -28,7 +30,15 @@
         "backgroundColor": "#000000"
       },
       "softwareKeyboardLayoutMode": "adjustNothing",
-      "permissions": ["android.permission.BLUETOOTH_CONNECT"]
+      "permissions": [
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "splash": {
       "image": "./assets/images/splash-logo.png",
@@ -54,6 +64,12 @@
       ],
       "./plugins/withDataPersistence",
       "./plugins/withSplashIconPadding"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5af67171-d956-494f-b8c1-6a79e2f2c899"
+      }
+    },
+    "owner": "swaroop_meher"
   }
 }
