@@ -103,6 +103,12 @@ No version bump, no tag. CI does not trigger. Just update the `[Unreleased]` sec
 When you're ready to ship a test release:
 
 - [ ] All changes committed and pushed to `main`
+- [ ] **Tests pass:**
+  - [ ] Server: `cd contop-server && uv run pytest tests/ --tb=short`
+  - [ ] Mobile: `cd contop-mobile && npx jest`
+  - [ ] Desktop: `cd contop-desktop && npx tsc --noEmit`
+  - [ ] Website: `cd website && npm run build`
+- [ ] **New/updated tests** written for any new or changed functionality
 - [ ] `CHANGELOG.md` — `[Unreleased]` section renamed to version + date, fresh `[Unreleased]` added
 - [ ] `README.md` — updated if there are new features, changed setup steps, or new screenshots
 - [ ] Docs site (`docs/`) — updated if features, setup, APIs, or architecture changed
@@ -119,7 +125,7 @@ When you're ready to ship a test release:
 
 When promoting from alpha/beta to stable:
 
-- [ ] All pre-release checklist items above
+- [ ] All pre-release checklist items above (including tests)
 - [ ] `CHANGELOG.md` — consolidate all alpha/beta entries into one clean stable entry
 - [ ] `README.md` — ensure installation instructions point to stable release
 - [ ] Docs site (`docs/`) — all pages accurate for this version (installation, quick-start, architecture, API reference)
@@ -137,6 +143,8 @@ When promoting from alpha/beta to stable:
 ### Mobile Release Checklist
 
 - [ ] All changes committed and pushed
+- [ ] **Tests pass:** `cd contop-mobile && npx jest`
+- [ ] **New/updated tests** written for any new or changed functionality
 - [ ] `CHANGELOG.md` — mobile section updated under version heading
 - [ ] `app.json` version bumped
 - [ ] Tested on device/emulator
