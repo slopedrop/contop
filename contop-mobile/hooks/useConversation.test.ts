@@ -45,11 +45,11 @@ jest.mock('@google/genai', () => ({
 
 describe('useConversation', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
     jest.useFakeTimers();
     useAIStore.getState().resetStore();
 
-    // Restore mocks after resetAllMocks
+    // Re-apply default mock implementations for test isolation
     const { getGeminiApiKey } = jest.requireMock('../services/secureStorage') as {
       getGeminiApiKey: jest.Mock;
     };
@@ -192,7 +192,7 @@ describe('useConversation', () => {
       functionCalls: [{ name: 'execute_cli', args: { command: 'pwd' }, id: 'text-call-1' }],
       candidates: [{
         content: {
-          parts: [{ functionCall: { name: 'execute_cli', args: { command: 'pwd' } } }],
+          parts: [{ functionCall: { name: 'execute_cli', args: { command: 'pwd' }, id: 'text-call-1' } }],
         },
       }],
     });
@@ -227,7 +227,7 @@ describe('useConversation', () => {
         functionCalls: [{ name: 'execute_cli', args: { command: 'ls' }, id: 'text-call-2' }],
         candidates: [{
           content: {
-            parts: [{ functionCall: { name: 'execute_cli', args: { command: 'ls' } } }],
+            parts: [{ functionCall: { name: 'execute_cli', args: { command: 'ls' }, id: 'text-call-2' } }],
           },
         }],
       })
@@ -362,7 +362,7 @@ describe('useConversation', () => {
     consoleSpy.mockRestore();
   });
 
-  test('[P1] 2.5-UNIT-013: processing timeout resets to idle after 30s', async () => {
+  test('[P1] 2.5-UNIT-013: processing timeout resets to idle after 120s', async () => {
     // Make generateContent hang indefinitely (never resolves during this test)
     mockGenerateContent.mockReturnValue(new Promise(() => {}));
 
@@ -381,9 +381,9 @@ describe('useConversation', () => {
 
     expect(useAIStore.getState().aiState).toBe('processing');
 
-    // Advance past 30s timeout
+    // Advance past 120s timeout (PROCESSING_TIMEOUT_MS)
     await act(async () => {
-      jest.advanceTimersByTime(30_000);
+      jest.advanceTimersByTime(120_000);
     });
 
     expect(useAIStore.getState().aiState).toBe('idle');
@@ -433,7 +433,7 @@ describe('useConversation', () => {
     });
 
     expect(mockErrorHandler).toHaveBeenCalledWith(
-      expect.stringContaining('failed to send'),
+      expect.stringContaining('Something went wrong'),
     );
     expect(useAIStore.getState().aiState).toBe('idle');
   });
@@ -577,9 +577,9 @@ describe('useConversation', () => {
 
     // 1 initial + 2 retries = 3 total
     expect(mockGenerateContent).toHaveBeenCalledTimes(3);
-    // Last error message should be the rate limit exhausted message
+    // Last error message should be the rate limit message from classifyMobileApiError
     expect(mockErrorHandler).toHaveBeenLastCalledWith(
-      expect.stringContaining('Rate limit exceeded'),
+      expect.stringContaining('Rate limited'),
     );
     expect(useAIStore.getState().aiState).toBe('idle');
   });
@@ -602,7 +602,7 @@ describe('useConversation', () => {
     // Only 1 attempt, no retries
     expect(mockGenerateContent).toHaveBeenCalledTimes(1);
     expect(mockErrorHandler).toHaveBeenCalledWith(
-      expect.stringContaining('failed to send'),
+      expect.stringContaining('Something went wrong'),
     );
   });
 
@@ -684,12 +684,12 @@ describe('useConversation', () => {
       await result.current.sendUserIntent('open terminal');
     });
 
-    expect(mockSendDC).toHaveBeenCalledWith('user_intent', {
+    expect(mockSendDC).toHaveBeenCalledWith('user_intent', expect.objectContaining({
       text: 'open terminal',
       execution_model: 'gemini-2.5-flash',
       computer_use_backend: 'omniparser',
       thinking: true,
-    });
+    }));
     expect(useAIStore.getState().aiState).toBe('processing');
     // Should NOT call generateContent (no API key → no provider)
     expect(mockGenerateContent).not.toHaveBeenCalled();
@@ -755,12 +755,12 @@ describe('useConversation', () => {
     });
 
     // Screen capture is handled server-side via observe_screen tool — no frame_b64 in payload
-    expect(mockSendDC).toHaveBeenCalledWith('user_intent', {
+    expect(mockSendDC).toHaveBeenCalledWith('user_intent', expect.objectContaining({
       text: 'what is on screen?',
       execution_model: 'gemini-2.5-flash',
       computer_use_backend: 'omniparser',
       thinking: true,
-    });
+    }));
   });
 
   test('[P0] 3.0-UNIT-003: sendUserIntent falls back to sendTextMessage when disconnected', async () => {

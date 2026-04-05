@@ -370,6 +370,12 @@ class TestAC7_SandboxRouting:
             agent._send_message_fn = MagicMock()
             agent._confirmation_futures = {}
             agent._action_history = deque(maxlen=50)
+            agent._message_queue = deque(maxlen=100)
+            agent._computer_use_backend = "ui_tars"
+            agent._active_tool_spans = {}
+            agent._last_classified_command = ""
+            agent._last_confirmation_outcome = ""
+            agent._agent = MagicMock()
 
             # Simulate: classify returns sandbox, user approves
             async def mock_before_tool():

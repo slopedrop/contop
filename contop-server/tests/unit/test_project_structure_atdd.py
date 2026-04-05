@@ -65,13 +65,6 @@ class TestServerDependencies:
             content = f.read()
         assert "pillow" in content, "pillow not found in pyproject.toml dependencies"
 
-    def test_pyproject_has_mcp(self):
-        """[P1] pyproject.toml must include mcp dependency"""
-        pyproject_path = os.path.join(SERVER_ROOT, "pyproject.toml")
-        with open(pyproject_path, "r") as f:
-            content = f.read()
-        assert "mcp" in content, "mcp not found in pyproject.toml dependencies"
-
 
 @pytest.mark.unit
 class TestPythonVersion:

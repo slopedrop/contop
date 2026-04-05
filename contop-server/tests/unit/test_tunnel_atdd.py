@@ -392,7 +392,8 @@ class TestAC6SignalingUrlFormat:
             await generate_qr_code(token)
 
         assert captured
-        assert captured[0]["signaling_url"] == "wss://my-tunnel-xyz.trycloudflare.com/ws/signaling"
+        # Compact key "s" is used for signaling_url in temp connections
+        assert captured[0]["s"] == "wss://my-tunnel-xyz.trycloudflare.com/ws/signaling"
 
     @pytest.mark.asyncio
     async def test_signaling_url_absent_when_no_tunnel(self, monkeypatch):
@@ -415,7 +416,7 @@ class TestAC6SignalingUrlFormat:
             await generate_qr_code(token)
 
         assert captured
-        assert "signaling_url" not in captured[0]
+        assert "s" not in captured[0]
 
 
 # ──────────────────────────────────────────────

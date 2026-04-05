@@ -231,15 +231,19 @@ class TestActions:
 
     @pytest.mark.asyncio
     async def test_extract_text(self, client):
-        """Mock POST response, verify text returned."""
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {"text": "Hello, World! This is page content."}
-        mock_response.raise_for_status = MagicMock()
+        """Mock snapshot response, verify text returned from accessibility nodes."""
+        mock_snapshot = {
+            "title": "Hello, World!",
+            "nodes": [
+                {"name": "Hello, World!"},
+                {"name": "This is page content."},
+            ],
+        }
 
-        with patch.object(client._client, "post", new_callable=AsyncMock, return_value=mock_response):
+        with patch.object(client, "snapshot", new_callable=AsyncMock, return_value=mock_snapshot):
             text = await client.extract_text("tab-abc")
             assert "Hello, World!" in text
+            assert "This is page content." in text
 
 
 # ---------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 import React from 'react';
+import { View, Text as RNText, Pressable } from 'react-native';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react-native';
 import HistoryScreen from './history';
 
@@ -10,10 +11,15 @@ jest.mock('../../services/sessionStorage', () => ({
 }));
 
 const mockRestoreSession = jest.fn();
-jest.mock('../../stores/useAIStore', () => ({
-  __esModule: true,
-  default: { getState: () => ({ restoreSession: mockRestoreSession }) },
-}));
+jest.mock('../../stores/useAIStore', () => {
+  const mockStore: any = (selector?: (s: any) => any) => {
+    const state = { connectionType: 'permanent', restoreSession: mockRestoreSession };
+    return selector ? selector(state) : state;
+  };
+  mockStore.getState = () => ({ connectionType: 'permanent', restoreSession: mockRestoreSession });
+  mockStore.subscribe = jest.fn(() => jest.fn());
+  return { __esModule: true, default: mockStore };
+});
 
 const mockBack = jest.fn();
 jest.mock('expo-router', () => ({
@@ -22,54 +28,52 @@ jest.mock('expo-router', () => ({
 
 jest.mock('@expo/vector-icons', () => ({ Ionicons: () => null }));
 
-// Mock individual component files to avoid CSS interop barrel issues
-jest.mock('../../components/SessionList', () => {
-  return {
-    __esModule: true,
-    default: ({ sessions, onSelectSession }: { sessions: any[]; onSelectSession: (s: any) => void }) => {
-      const RN = require('react-native');
-      return require('react').createElement(RN.View, { testID: 'session-list' },
-        sessions.map((s: any) =>
-          require('react').createElement(RN.Pressable, { key: s.id, testID: `session-card-${s.id}`, onPress: () => onSelectSession(s) },
-            require('react').createElement(RN.Text, null, s.id)
-          )
+// Mock component files — avoid require('react-native') inside factory
+// to prevent NativeWind babel transform from injecting _ReactNativeCSSInterop.
+// Components are rendered lazily via require('react') + mockRN* variables.
+const mockRNView = View;
+const mockRNText = RNText;
+const mockRNPressable = Pressable;
+
+jest.mock('../../components/Text', () => ({
+  __esModule: true,
+  default: (props: any) => require('react').createElement(mockRNText, props),
+}));
+
+jest.mock('../../components/SessionList', () => ({
+  __esModule: true,
+  default: ({ sessions, onSelectSession }: { sessions: any[]; onSelectSession: (s: any) => void }) =>
+    require('react').createElement(mockRNView, { testID: 'session-list' },
+      sessions.map((s: any) =>
+        require('react').createElement(mockRNPressable, { key: s.id, testID: `session-card-${s.id}`, onPress: () => onSelectSession(s) },
+          require('react').createElement(mockRNText, null, s.id)
         )
-      );
-    },
-    formatSessionDate: (ts: number) => new Date(ts).toLocaleString('en-US', {
-      month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true,
-    }),
-  };
-});
+      )
+    ),
+  formatSessionDate: (ts: number) => new Date(ts).toLocaleString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true,
+  }),
+}));
 
-jest.mock('../../components/ScreenContainer', () => {
-  return {
-    __esModule: true,
-    default: (props: any) => require('react').createElement(require('react-native').View, { testID: 'screen-container' }, props.children),
-  };
-});
+jest.mock('../../components/ScreenContainer', () => ({
+  __esModule: true,
+  default: (props: any) => require('react').createElement(mockRNView, { testID: 'screen-container' }, props.children),
+}));
 
-jest.mock('../../components/ExecutionEntryCard', () => {
-  return {
-    __esModule: true,
-    default: (props: any) => require('react').createElement(require('react-native').View, { testID: `entry-card-${props.entry.id}` }),
-  };
-});
+jest.mock('../../components/ExecutionEntryCard', () => ({
+  __esModule: true,
+  default: (props: any) => require('react').createElement(mockRNView, { testID: `entry-card-${props.entry.id}` }),
+}));
 
-jest.mock('../../components/ExecutionThread', () => {
-  return {
-    __esModule: true,
-    default: (props: any) => {
-      const RN = require('react-native');
-      const React = require('react');
-      return React.createElement(RN.View, { testID: 'execution-thread' },
-        (props.entries ?? []).map((e: any) =>
-          React.createElement(RN.View, { key: e.id, testID: `thread-entry-${e.id}` })
-        )
-      );
-    },
-  };
-});
+jest.mock('../../components/ExecutionThread', () => ({
+  __esModule: true,
+  default: (props: any) =>
+    require('react').createElement(mockRNView, { testID: 'execution-thread' },
+      (props.entries ?? []).map((e: any) =>
+        require('react').createElement(mockRNView, { key: e.id, testID: `thread-entry-${e.id}` })
+      )
+    ),
+}));
 
 const sessionStorage = jest.requireMock('../../services/sessionStorage') as {
   loadSessionIndex: jest.Mock;

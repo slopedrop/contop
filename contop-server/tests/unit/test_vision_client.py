@@ -174,7 +174,8 @@ class TestObserveScreenUITarsIntegration:
              patch("core.agent_tools.get_omniparser") as mock_omni, \
              patch("core.settings.get_settings", return_value={"openrouter_api_key": "sk-test"}), \
              patch("tools.vision_client.VisionClient", mock_tars), \
-             patch("core.agent_tools._vision_clients", {}):
+             patch("core.agent_tools._vision_clients", {}), \
+             patch("core.agent_tools._active_vision_backend", "ui_tars"):
             import core.agent_tools as at
             with patch.object(at, "VisionClient", mock_tars, create=True):
                 result = await at.observe_screen()
@@ -195,7 +196,8 @@ class TestObserveScreenUITarsIntegration:
 
         with patch("core.agent_tools._capture_screen_sync", return_value=("b64", 1280, 720, 1920, 1080)), \
              patch("core.agent_tools.get_omniparser") as mock_omni, \
-             patch("core.settings.get_settings", return_value={"openrouter_api_key": "sk-test"}):
+             patch("core.settings.get_settings", return_value={"openrouter_api_key": "sk-test"}), \
+             patch("core.agent_tools._active_vision_backend", "omniparser"):
             mock_omni.return_value.parse = AsyncMock(return_value=mock_parse_result)
             mock_omni.return_value.get_loading_status.return_value = None
             import core.agent_tools as at
@@ -215,7 +217,8 @@ class TestObserveScreenUITarsIntegration:
 
         with patch("core.agent_tools._capture_screen_sync", return_value=("b64", 1280, 720, 1920, 1080)), \
              patch("core.agent_tools.get_omniparser") as mock_omni, \
-             patch("core.settings.get_settings", return_value={"openrouter_api_key": ""}):
+             patch("core.settings.get_settings", return_value={"openrouter_api_key": ""}), \
+             patch("core.agent_tools._active_vision_backend", "omniparser"):
             mock_omni.return_value.parse = AsyncMock(return_value=mock_parse_result)
             mock_omni.return_value.get_loading_status.return_value = None
             from core.agent_tools import observe_screen

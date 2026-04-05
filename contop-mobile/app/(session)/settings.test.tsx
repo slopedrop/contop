@@ -52,9 +52,30 @@ jest.mock('../../constants/providerConfig', () => ({
   canToggleThinking: jest.fn(() => true),
 }));
 
+jest.mock('../../constants/modelRegistry', () => {
+  const models = [
+    { value: 'gemini-3.1-pro-preview', label: 'Gemini 3.1 Pro', provider: 'gemini', thinking: 'always', supportsTools: true, supportsVision: true },
+    { value: 'gemini-3-flash-preview', label: 'Gemini 3 Flash', provider: 'gemini', thinking: 'optional', supportsTools: true, supportsVision: true },
+    { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro', provider: 'gemini', thinking: 'always', supportsTools: true, supportsVision: true },
+    { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash', provider: 'gemini', thinking: 'optional', supportsTools: true, supportsVision: true },
+    { value: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite', provider: 'gemini', thinking: 'off-by-default', supportsTools: true, supportsVision: true },
+  ];
+  const registry = [{ provider: 'gemini', label: 'Gemini', models }];
+  return {
+    MODEL_REGISTRY: registry,
+    getAllModels: () => models,
+    findModel: (value: string) => models.find((m) => m.value === value),
+    getProviderForModel: () => 'gemini',
+  };
+});
+
 const mockSendDeviceControl = jest.fn();
 jest.mock('../../services/deviceControl', () => ({
   sendDeviceControl: (...args: any[]) => mockSendDeviceControl(...args),
+  sendAwayModeEngage: jest.fn(),
+  sendAwayModeDisengage: jest.fn(),
+  sendAwayModeStatus: jest.fn(),
+  sendRefreshProxyStatus: jest.fn(),
 }));
 
 const mockGetPairingToken = jest.fn();
@@ -63,6 +84,7 @@ const mockClearAllApiKeys = jest.fn();
 jest.mock('../../services/secureStorage', () => ({
   getPairingToken: (...args: any[]) => mockGetPairingToken(...args),
   clearPairingToken: (...args: any[]) => mockClearPairingToken(...args),
+  getAllApiKeys: jest.fn(() => Promise.resolve({})),
   clearAllApiKeys: (...args: any[]) => mockClearAllApiKeys(...args),
 }));
 
@@ -79,21 +101,24 @@ let mockIsHostKeepAwake = false;
 let mockConnectionType = 'permanent';
 
 jest.mock('../../stores/useAIStore', () => {
+  const getFullState = () => ({
+    isHostKeepAwake: mockIsHostKeepAwake,
+    setIsHostKeepAwake: mockSetIsHostKeepAwake,
+    isAwayMode: false,
+    providerAuth: {},
+    mobileAuthPreference: null,
+    setMobileAuthPreference: jest.fn(),
+    connectionType: mockConnectionType,
+    hardReset: mockHardReset,
+    softReset: mockSoftReset,
+    isSubscriptionActive: () => false,
+  });
   return {
     __esModule: true,
     default: Object.assign(
-      () => ({
-        isHostKeepAwake: mockIsHostKeepAwake,
-        setIsHostKeepAwake: mockSetIsHostKeepAwake,
-      }),
+      () => getFullState(),
       {
-        getState: () => ({
-          isHostKeepAwake: mockIsHostKeepAwake,
-          setIsHostKeepAwake: mockSetIsHostKeepAwake,
-          connectionType: mockConnectionType,
-          hardReset: mockHardReset,
-          softReset: mockSoftReset,
-        }),
+        getState: getFullState,
         subscribe: () => () => {},
       },
     ),
@@ -110,13 +135,13 @@ const DEFAULT_SETTINGS = {
 
 describe('SettingsScreen', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
     jest.useFakeTimers();
     mockLoadAISettings.mockResolvedValue(DEFAULT_SETTINGS);
     mockSaveAISettings.mockResolvedValue(undefined);
     mockIsHostKeepAwake = false;
 
-    // Restore mocks after resetAllMocks clears mock implementations
+    // Restore router/webRTC mocks (clearAllMocks preserves factory impls but tests may override)
     const { useRouter } = jest.requireMock('expo-router') as { useRouter: jest.Mock };
     useRouter.mockReturnValue({ back: mockBack, push: jest.fn(), replace: mockReplace });
     const { useWebRTC } = jest.requireMock('../../hooks/useWebRTC') as { useWebRTC: jest.Mock };
@@ -274,7 +299,7 @@ describe('SettingsScreen', () => {
 
 describe('Device Controls', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
     jest.useFakeTimers();
     mockLoadAISettings.mockResolvedValue(DEFAULT_SETTINGS);
     mockSaveAISettings.mockResolvedValue(undefined);
@@ -402,7 +427,7 @@ describe('Forget Connection', () => {
   const mockFetch = jest.fn();
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
     jest.useRealTimers();
     mockLoadAISettings.mockResolvedValue(DEFAULT_SETTINGS);
     mockSaveAISettings.mockResolvedValue(undefined);

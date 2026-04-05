@@ -3,9 +3,21 @@ ATDD-style acceptance tests for Story 3.0 — ADK Execution Agent Foundation.
 
 Tests the acceptance criteria from the story specification at the integration level.
 """
+import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+
+
+async def _wait_for_confirmation(sent_messages: list, *, timeout: float = 2.0) -> dict:
+    """Poll until an agent_confirmation_request appears in sent_messages."""
+    deadline = asyncio.get_event_loop().time() + timeout
+    while asyncio.get_event_loop().time() < deadline:
+        confirm_msgs = [(t, p) for t, p in sent_messages if t == "agent_confirmation_request"]
+        if confirm_msgs:
+            return confirm_msgs[0][1]
+        await asyncio.sleep(0.01)
+    raise TimeoutError("Confirmation request not received within timeout")
 
 
 class TestAC1_AgentInitialization:
@@ -26,7 +38,8 @@ class TestAC1_AgentInitialization:
 
         agent = ExecutionAgent()
         tool_names = sorted([getattr(t, "name", None) or t.__name__ for t in agent._agent.tools])
-        # 7 core + 8 file/window/clipboard + 4 document + 3 system + 12 workflow = 34 tools
+        # 7 core + 5 file + 5 window/clipboard + 4 document + 3 system + 2 dialog + 2 app + 2 skill = 28 tools
+        # Advanced workflow tools (fill_form, extract_text, etc.) moved to on-demand skill
         expected = sorted([
             "execute_cli", "execute_gui", "get_action_history", "get_ui_context",
             "maximize_active_window", "observe_screen", "wait",
@@ -35,10 +48,9 @@ class TestAC1_AgentInitialization:
             "clipboard_read", "clipboard_write",
             "read_pdf", "read_image", "read_excel", "write_excel",
             "process_info", "system_info", "download_file",
-            "save_dialog", "open_dialog", "find_and_replace_in_files",
-            "launch_app", "install_app", "close_app", "app_menu",
-            "copy_between_apps", "fill_form", "extract_text",
-            "set_env_var", "change_setting",
+            "save_dialog", "open_dialog",
+            "launch_app", "close_app",
+            "create_skill", "edit_skill",
         ])
         assert tool_names == expected
 
@@ -103,8 +115,6 @@ class TestAC5_SandboxConfirmation:
 
     @patch("core.settings.get_gemini_api_key", return_value="test-key")
     async def test_sandbox_sends_confirmation_with_correct_fields(self, mock_key):
-        import asyncio
-
         from core.dual_tool_evaluator import ClassificationResult
         from core.execution_agent import ExecutionAgent
 
@@ -133,12 +143,9 @@ class TestAC5_SandboxConfirmation:
             )
 
         task = asyncio.create_task(run())
-        await asyncio.sleep(0.05)
+        payload = await _wait_for_confirmation(sent_messages)
 
         # Verify confirmation request was sent with all required fields
-        confirm_msgs = [(t, p) for t, p in sent_messages if t == "agent_confirmation_request"]
-        assert len(confirm_msgs) == 1
-        payload = confirm_msgs[0][1]
         assert "request_id" in payload
         assert payload["tool"] == "execute_cli"
         assert payload["command"] == "rm -rf /"
@@ -280,8 +287,6 @@ class TestAC_DestructiveConfirmation:
     @patch("core.settings.get_gemini_api_key", return_value="test-key")
     async def test_destructive_sends_confirmation_request(self, mock_key):
         """[P0] 7.6: _before_tool_callback sends agent_confirmation_request for destructive commands."""
-        import asyncio
-
         from core.dual_tool_evaluator import ClassificationResult
         from core.execution_agent import ExecutionAgent
 
@@ -311,12 +316,9 @@ class TestAC_DestructiveConfirmation:
             )
 
         task = asyncio.create_task(run())
-        await asyncio.sleep(0.05)
+        payload = await _wait_for_confirmation(sent_messages)
 
         # Verify confirmation request was sent
-        confirm_msgs = [(t, p) for t, p in sent_messages if t == "agent_confirmation_request"]
-        assert len(confirm_msgs) == 1
-        payload = confirm_msgs[0][1]
         assert payload["reason"] == "destructive_command"
         assert payload["command"] == "rm myfile.txt"
         assert "request_id" in payload
@@ -330,8 +332,6 @@ class TestAC_DestructiveConfirmation:
     @patch("core.settings.get_gemini_api_key", return_value="test-key")
     async def test_approved_destructive_returns_none(self, mock_key):
         """[P0] 7.7: Approved destructive command → returns None (host execution proceeds)."""
-        import asyncio
-
         from core.dual_tool_evaluator import ClassificationResult
         from core.execution_agent import ExecutionAgent
 
@@ -361,19 +361,16 @@ class TestAC_DestructiveConfirmation:
             )
 
         task = asyncio.create_task(run())
-        await asyncio.sleep(0.05)
+        payload = await _wait_for_confirmation(sent_messages)
 
-        # Find and approve
-        confirm_msgs = [(t, p) for t, p in sent_messages if t == "agent_confirmation_request"]
-        agent.resolve_confirmation(confirm_msgs[0][1]["request_id"], approved=True)
+        # Approve to unblock
+        agent.resolve_confirmation(payload["request_id"], approved=True)
         result = await task
         assert result is None  # None = proceed with host execution
 
     @patch("core.settings.get_gemini_api_key", return_value="test-key")
     async def test_rejected_destructive_returns_user_cancelled(self, mock_key):
         """[P0] 7.8: Rejected destructive command → returns rejected dict with user_cancelled."""
-        import asyncio
-
         from core.dual_tool_evaluator import ClassificationResult
         from core.execution_agent import ExecutionAgent
 
@@ -403,11 +400,10 @@ class TestAC_DestructiveConfirmation:
             )
 
         task = asyncio.create_task(run())
-        await asyncio.sleep(0.05)
+        payload = await _wait_for_confirmation(sent_messages)
 
         # Reject
-        confirm_msgs = [(t, p) for t, p in sent_messages if t == "agent_confirmation_request"]
-        agent.resolve_confirmation(confirm_msgs[0][1]["request_id"], approved=False)
+        agent.resolve_confirmation(payload["request_id"], approved=False)
         result = await task
 
         assert result is not None
@@ -418,7 +414,6 @@ class TestAC_DestructiveConfirmation:
     @patch("core.settings.get_gemini_api_key", return_value="test-key")
     async def test_destructive_confirmation_timeout_returns_timeout(self, mock_key):
         """[P1] L1: Destructive confirmation timeout → returns timeout dict."""
-        import asyncio
         from unittest.mock import patch as mock_patch
 
         from core.dual_tool_evaluator import ClassificationResult
