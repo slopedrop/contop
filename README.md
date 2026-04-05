@@ -258,12 +258,10 @@ cd contop-mobile && npx jest                     # all mobile tests
 
 ## Links
 
-| | |
-|---|---|
-| **Website** | [contop.app](https://contop.app) |
-| **Documentation** | [docs.contop.app](https://docs.contop.app) |
-| **Releases** | [GitHub Releases](https://github.com/slopedrop/contop/releases) |
-| **Issues** | [GitHub Issues](https://github.com/slopedrop/contop/issues) |
+- **Website** — [contop.app](https://contop.app)
+- **Documentation** — [docs.contop.app](https://docs.contop.app)
+- **Releases** — [GitHub Releases](https://github.com/slopedrop/contop/releases)
+- **Issues** — [GitHub Issues](https://github.com/slopedrop/contop/issues)
 
 ## License
 
