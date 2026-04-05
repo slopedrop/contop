@@ -594,11 +594,16 @@ codex auth          # authenticates with your OpenAI account</pre>
     </main>
   </div>
 
-  <!-- First-launch setup status (hidden when not active) -->
-  <div id="setup-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
-    <div style="font-size:18px;font-weight:500;color:#fff;">Setting up Contop...</div>
-    <div id="setup-status" style="color:#aaa;font-size:14px;">Checking installation...</div>
-    <div class="spinner" style="width:24px;height:24px;border:3px solid #333;border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+  <!-- First-launch setup overlay (hidden by default, shown by JS when deps need installing) -->
+  <div id="setup-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:32px;">
+    <div style="font-size:20px;font-weight:600;color:#fff;">Setting up Contop</div>
+    <div id="setup-status" style="color:#ccc;font-size:15px;text-align:center;max-width:480px;">Checking installation...</div>
+    <div style="width:320px;height:4px;background:#222;border-radius:2px;overflow:hidden;margin-top:4px;">
+      <div id="setup-progress-bar" style="width:0%;height:100%;background:#4a6cf7;border-radius:2px;transition:width 0.3s ease;"></div>
+    </div>
+    <div id="setup-detail" style="color:#666;font-size:12px;font-family:monospace;max-width:480px;text-align:center;min-height:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+    <div class="spinner" style="width:24px;height:24px;border:3px solid #333;border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;margin-top:4px;"></div>
+    <div id="setup-hint" style="color:#555;font-size:12px;margin-top:8px;text-align:center;max-width:400px;"></div>
   </div>
 
   <!-- Update toast -->

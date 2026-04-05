@@ -1673,34 +1673,88 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   // Ensure Python dependencies are installed (macOS/Linux first launch, or Windows NSIS fallback).
   // Disables the Start Server button until deps are verified/installed.
+  // Shows a full-screen overlay with progress when installation is needed.
   {
-    const depStatus = document.getElementById("setup-status");
+    const overlay = document.getElementById("setup-overlay");
+    const statusEl = document.getElementById("setup-status");
+    const detailEl = document.getElementById("setup-detail");
+    const progressBar = document.getElementById("setup-progress-bar");
+    const hintEl = document.getElementById("setup-hint");
     const sBtn = document.getElementById("start-btn") as HTMLButtonElement | null;
 
+    const showOverlay = () => {
+      if (overlay) overlay.style.display = "flex";
+    };
+    const hideOverlay = (delay = 0) => {
+      setTimeout(() => {
+        if (overlay) overlay.style.display = "none";
+      }, delay);
+    };
+
+    // Progress bar stages: gpu-detect=10%, installing=20%, progress=20-90%, done=100%
+    const setProgress = (pct: number) => {
+      if (progressBar) progressBar.style.width = `${pct}%`;
+    };
+    let progressPct = 0;
+
     listen<string>("dep-install-progress", (event) => {
-      if (depStatus) {
-        depStatus.textContent = event.payload;
-        depStatus.style.display = "";
+      try {
+        const data = JSON.parse(event.payload);
+        showOverlay();
+
+        if (data.stage === "gpu-detect") {
+          if (statusEl) statusEl.textContent = data.message;
+          setProgress(10);
+        } else if (data.stage === "installing") {
+          if (statusEl) statusEl.textContent = data.message;
+          if (hintEl) hintEl.textContent = data.detail;
+          setProgress(20);
+          progressPct = 20;
+        } else if (data.stage === "progress") {
+          if (statusEl) statusEl.textContent = data.message;
+          if (detailEl) detailEl.textContent = data.detail;
+          // Slowly increment progress bar during uv output (caps at 90%)
+          progressPct = Math.min(90, progressPct + 0.5);
+          setProgress(progressPct);
+        } else if (data.stage === "done") {
+          if (statusEl) statusEl.textContent = data.message;
+          if (detailEl) detailEl.textContent = "";
+          if (hintEl) hintEl.textContent = "";
+          setProgress(100);
+          hideOverlay(2000);
+        } else if (data.stage === "error") {
+          if (statusEl) statusEl.textContent = data.message;
+          if (detailEl) detailEl.textContent = data.detail;
+          if (hintEl) hintEl.textContent = "You can still try starting the server.";
+          setProgress(0);
+          hideOverlay(5000);
+        }
+      } catch {
+        // Fallback for non-JSON payloads
+        showOverlay();
+        if (statusEl) statusEl.textContent = event.payload;
       }
     });
 
     if (sBtn) sBtn.disabled = true;
     invoke<string>("ensure_dependencies_installed")
       .then((result) => {
-        if (result === "ready" && depStatus) {
-          // Already installed — hide status
-          depStatus.style.display = "none";
-        } else if (depStatus) {
-          depStatus.textContent = "Dependencies ready.";
-          setTimeout(() => { depStatus.style.display = "none"; }, 3000);
+        if (result === "ready") {
+          // Already installed — don't show overlay at all
+        } else if (statusEl) {
+          statusEl.textContent = "Dependencies ready.";
+          setProgress(100);
+          hideOverlay(2000);
         }
         if (sBtn) sBtn.disabled = false;
       })
       .catch((e) => {
         console.error("Dependency install failed:", e);
-        if (depStatus) {
-          depStatus.textContent = `Dependency install failed: ${e}. You can still try starting the server.`;
-        }
+        showOverlay();
+        if (statusEl) statusEl.textContent = "Dependency installation failed.";
+        if (detailEl) detailEl.textContent = String(e);
+        if (hintEl) hintEl.textContent = "You can still try starting the server. The app will retry on next launch.";
+        setProgress(0);
         if (sBtn) sBtn.disabled = false;
       });
   }

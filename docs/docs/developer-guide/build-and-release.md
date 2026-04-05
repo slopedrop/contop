@@ -10,9 +10,10 @@ The Tauri bundler produces platform-specific installers:
 
 | Platform | Format | Output |
 |----------|--------|--------|
-| Windows | NSIS installer | `contop-desktop_x.x.x_x64-setup.exe` |
-| macOS | DMG | `contop-desktop_x.x.x_universal.dmg` |
-| Linux | AppImage | `contop-desktop_x.x.x_amd64.AppImage` |
+| Windows | NSIS installer | `Contop Desktop_x.x.x_x64-setup.nsis.exe` |
+| Windows | Portable zip (for Scoop) | `Contop-Desktop_x.x.x_x64-portable.zip` |
+| macOS | DMG | `Contop Desktop_x.x.x_aarch64.dmg` |
+| Linux | AppImage + DEB | `Contop Desktop_x.x.x_amd64.AppImage`, `.deb` |
 
 ### Building
 
@@ -25,16 +26,20 @@ Output is placed in `src-tauri/target/release/bundle/`.
 
 ### Code Signing
 
-- **Windows**: Authenticode signing (certificate required for production)
-- **macOS**: Apple Developer ID signing + notarization
-- **Linux**: No signing required for AppImage
+Currently unsigned (open-source alpha). Users install via package managers (Homebrew, Scoop) to avoid security warnings, or accept the OS-level warning on manual installs.
+
+- **Windows**: Authenticode signing planned for production (certificate ~$60-80/year, or [SignPath OSS](https://signpath.io/open-source))
+- **macOS**: Apple Developer ID signing + notarization planned ($99/year)
+- **Linux**: No signing required
 
 ### Server Sidecar Bundling
 
 The Python server is bundled as a sidecar. The Tauri app manages it via `uv run uvicorn`:
 
-- The `uv` binary and server code are included in the installer
-- Server dependencies are resolved at install or first run via `uv sync`
+- The `uv` binary and server code are included in the installer / portable zip
+- Server dependencies are resolved at install (NSIS) or first launch (all other methods) via `uv sync`
+- NVIDIA GPU is auto-detected — CUDA PyTorch (~2.5 GB) is installed if available, otherwise CPU-only (~500 MB)
+- First-launch setup shows a progress overlay with download status
 - The sidecar is spawned on app startup and killed on exit
 
 ## Mobile App (Expo EAS Build)
@@ -64,15 +69,26 @@ Production builds require EAS Build or `expo run:android` / `expo run:ios` with 
 
 ## Distribution Channels
 
-| Platform | Channel | Status |
-|----------|---------|--------|
-| Windows | Direct download (NSIS) | Active |
-| macOS | Direct download (DMG) | Active |
-| Linux | Direct download (AppImage) | Active |
-| iOS | TestFlight | Beta |
-| Android | Direct APK | Beta |
-| iOS App Store | Planned | — |
-| Google Play | Planned | — |
+| Platform | Channel | Status | Security Warning? |
+|----------|---------|--------|-------------------|
+| macOS | Homebrew (`brew install slopedrop/contop/contop`) | Active | None |
+| macOS | Direct download (DMG) | Active | Gatekeeper (right-click → Open) |
+| Windows | Scoop (`scoop install contop`) | Active | None |
+| Windows | Direct download (NSIS installer) | Active | SmartScreen (More info → Run anyway) |
+| Linux | Direct download (AppImage / DEB) | Active | None |
+| Android | Direct APK | Beta | Install from unknown sources |
+| iOS | — | Not yet available | — |
+| iOS App Store | Planned | — | — |
+| Google Play | Planned | — | — |
+
+### Package Manager Repos
+
+After each desktop release, update the Homebrew tap and Scoop bucket with the new version and SHA256 hash. See the [Release Guide](https://github.com/slopedrop/contop/blob/main/RELEASE_GUIDE.md#package-manager-update) for step-by-step instructions.
+
+| Manager | Repo | Manifest |
+|---------|------|----------|
+| Homebrew | [slopedrop/homebrew-contop](https://github.com/slopedrop/homebrew-contop) | `Casks/contop.rb` |
+| Scoop | [slopedrop/scoop-contop](https://github.com/slopedrop/scoop-contop) | `bucket/contop.json` |
 
 ---
 

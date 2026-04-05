@@ -31,6 +31,50 @@
 
 ---
 
+## Install
+
+### Desktop App
+
+**macOS (Homebrew — recommended):**
+```bash
+brew install slopedrop/contop/contop
+```
+No security warnings. Python dependencies install automatically on first launch.
+
+**macOS (manual):**
+Download the `.dmg` from [Releases](https://github.com/slopedrop/contop/releases), open it, and drag to Applications.
+> First launch: right-click the app → **Open** → click **Open** in the dialog. This is standard for open-source apps without code signing.
+
+**Windows (Scoop — recommended):**
+```powershell
+scoop bucket add contop https://github.com/slopedrop/scoop-contop
+scoop install contop
+```
+No SmartScreen warnings. Python dependencies install automatically on first launch. NVIDIA GPU with CUDA is auto-detected.
+
+**Windows (manual):**
+Download the `.exe` installer from [Releases](https://github.com/slopedrop/contop/releases) and run it.
+> SmartScreen may show a warning — click **More info** → **Run anyway**. This is standard for open-source apps without code signing.
+
+**Linux:**
+```bash
+# AppImage (any distro)
+chmod +x Contop*.AppImage && ./Contop*.AppImage
+
+# Debian / Ubuntu
+sudo dpkg -i contop-desktop_*.deb
+```
+Download from [Releases](https://github.com/slopedrop/contop/releases).
+
+### Mobile App
+
+Download the Android `.apk` from [Releases](https://github.com/slopedrop/contop/releases).
+> Enable **Install from unknown sources** when prompted.
+
+iOS is not yet available for public alpha.
+
+---
+
 Contop turns your phone into an AI remote control for any desktop. Speak or type a command on your mobile, and an autonomous agent on your computer observes your screen, runs CLI commands, clicks buttons, fills forms, automates browsers, and streams progress back — all in real time over a peer-to-peer WebRTC tunnel.
 
 No port forwarding. No VPN. No SSH. Scan a QR code and start working.

@@ -402,16 +402,27 @@ async fn ensure_dependencies_installed(app: tauri::AppHandle) -> Result<String, 
     let venv_dir = paths.venv_dir.to_string_lossy().to_string();
 
     let result = tauri::async_runtime::spawn_blocking(move || {
-        let _ = app_clone.emit("dep-install-progress", "Detecting GPU...");
+        // Helper to emit structured JSON progress events
+        let emit = |stage: &str, message: &str, detail: &str| {
+            let payload = format!(
+                r#"{{"stage":"{}","message":"{}","detail":"{}"}}"#,
+                stage,
+                message.replace('"', r#"\""#),
+                detail.replace('"', r#"\""#)
+            );
+            let _ = app_clone.emit("dep-install-progress", &payload);
+        };
+
+        emit("gpu-detect", "Detecting your GPU...", "");
 
         // Detect GPU: check for NVIDIA GPU
         let has_nvidia = detect_nvidia_gpu();
 
         let extras = if has_nvidia {
-            let _ = app_clone.emit("dep-install-progress", "NVIDIA GPU detected. Installing with CUDA support (this may take several minutes)...");
+            emit("installing", "NVIDIA GPU detected — downloading Python dependencies with CUDA support", "This download is ~2.5 GB and may take several minutes");
             vec!["--extra", "omniparser", "--extra", "cu126"]
         } else {
-            let _ = app_clone.emit("dep-install-progress", "No NVIDIA GPU detected. Installing CPU-only dependencies...");
+            emit("installing", "Downloading Python dependencies", "This download is ~500 MB and may take a few minutes");
             vec!["--extra", "omniparser", "--extra", "cpu"]
         };
 
@@ -437,7 +448,7 @@ async fn ensure_dependencies_installed(app: tauri::AppHandle) -> Result<String, 
             let reader = BufReader::new(stderr);
             for line in reader.lines() {
                 if let Ok(line) = line {
-                    let _ = app_clone.emit("dep-install-progress", &line);
+                    emit("progress", "Installing dependencies...", &line);
                 }
             }
         }
@@ -446,9 +457,10 @@ async fn ensure_dependencies_installed(app: tauri::AppHandle) -> Result<String, 
             .map_err(|e| format!("uv sync process error: {e}"))?;
 
         if exit.success() {
-            let _ = app_clone.emit("dep-install-progress", "Dependencies installed successfully.");
+            emit("done", "Dependencies installed successfully!", "");
             Ok("success".to_string())
         } else {
+            emit("error", "Dependency installation failed", "The app will retry on next launch");
             Err("Dependency installation failed. The app will retry on next launch.".to_string())
         }
     }).await.map_err(|e| format!("Task join error: {e}"))??;

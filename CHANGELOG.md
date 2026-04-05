@@ -11,11 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 - First-launch setup wizard with automatic GPU detection and ML dependency installation
+- First-launch setup overlay with progress bar, human-readable status, and download size estimates
 - Auto-update support via Tauri updater plugin
 - NSIS installer runs Python/ML dependency installation with GPU auto-detection (Windows)
 - First-launch dependency installer for macOS and Linux
 - "Stopping server..." UI feedback when closing the app
 - macOS and Linux builds (DMG, AppImage, DEB) alongside Windows NSIS installer
+- Portable `.zip` build for Windows alongside NSIS installer
+- Homebrew tap for macOS — `brew install slopedrop/contop/contop` (no Gatekeeper warnings)
+- Scoop bucket for Windows — `scoop install contop` (no SmartScreen warnings)
+- CI auto-updates Homebrew tap and Scoop bucket on every desktop release
 - `/api/ml-status` endpoint to check ML stack readiness
 
 ### Fixed
@@ -23,9 +28,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Close button deadlock — cleanup now runs on a background thread
 - Terminal windows no longer flash on screen during server start (Windows)
 - GPU/CPU dependency resolution errors when installing ML stack with `uv sync`
+- First-launch setup overlay was never shown (broken `display:none` in HTML)
 
 ### Changed
 - First-launch setup runs in the background so the app window loads immediately
+- First-launch dependency install emits structured progress events (stage, message, detail)
 
 ## Mobile [0.1.0-alpha.1] - 2026-04-04
 

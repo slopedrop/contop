@@ -8,37 +8,56 @@ sidebar_position: 2
 
 The [Tauri desktop app](/user-guide/desktop-app) provides a GUI for settings management, [QR code](/user-guide/connection-methods) pairing, and automatic server lifecycle management.
 
-### Windows
-
-Download and run the NSIS installer:
-
-```
-contop-desktop_x.x.x_x64-setup.exe
-```
-
-The installer registers Contop in the Start Menu and handles all dependencies.
-
 ### macOS
 
-Download and mount the DMG:
+**Homebrew (recommended — no security warnings):**
 
-```
-contop-desktop_x.x.x_universal.dmg
+```bash
+brew install slopedrop/contop/contop
 ```
 
-Drag Contop to the Applications folder. On first launch, grant Accessibility permissions when prompted.
+**Manual download:**
+
+Download the `.dmg` from the [Releases page](https://github.com/slopedrop/contop/releases), open it, and drag Contop to the Applications folder.
+
+On first launch, macOS may show a security warning since the app is not code-signed. Right-click the app → **Open** → click **Open** in the dialog. Grant Accessibility permissions when prompted.
+
+### Windows
+
+**Scoop (recommended — no SmartScreen warnings):**
+
+```powershell
+scoop bucket add contop https://github.com/slopedrop/scoop-contop
+scoop install contop
+```
+
+**Manual download:**
+
+Download and run the NSIS installer (`.exe`) from the [Releases page](https://github.com/slopedrop/contop/releases). The installer registers Contop in the Start Menu and handles all dependencies including CUDA if an NVIDIA GPU is detected.
+
+Windows SmartScreen may show a warning since the app is not code-signed. Click **More info** → **Run anyway**.
 
 ### Linux
 
-Download the AppImage:
+Download from the [Releases page](https://github.com/slopedrop/contop/releases):
 
 ```bash
+# AppImage (any distro)
 chmod +x contop-desktop_x.x.x_amd64.AppImage
 ./contop-desktop_x.x.x_amd64.AppImage
+
+# Debian / Ubuntu
+sudo dpkg -i contop-desktop_x.x.x_amd64.deb
 ```
 
-:::info
-Download links will be available on the [Contop website](https://contop.dev) once the desktop app reaches public release.
+### First-Launch Setup
+
+When you install via Homebrew, Scoop, or download the macOS/Linux build directly, Python dependencies are installed automatically on first launch. The app shows a progress overlay with download status — this takes a few minutes depending on your internet speed (~500 MB for CPU, ~2.5 GB with CUDA).
+
+The Windows NSIS installer handles this during installation instead.
+
+:::tip
+All download links are available on the [Releases page](https://github.com/slopedrop/contop/releases).
 :::
 
 ## Mobile App

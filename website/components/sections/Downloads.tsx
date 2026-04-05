@@ -202,21 +202,21 @@ const desktopCards: DesktopCard[] = [
     platform: "windows",
     icon: <WindowsIcon />,
     name: "Windows",
-    subtitle: "NSIS Installer (.exe)",
+    subtitle: "Installer (.exe)",
     href: RELEASES_URL,
   },
   {
     platform: "macos",
     icon: <AppleIcon />,
     name: "macOS",
-    subtitle: "Universal Binary (.dmg)",
+    subtitle: "Disk Image (.dmg)",
     href: RELEASES_URL,
   },
   {
     platform: "linux",
     icon: <LinuxIcon />,
     name: "Linux",
-    subtitle: "AppImage",
+    subtitle: "AppImage / .deb",
     href: RELEASES_URL,
   },
 ];
@@ -403,6 +403,39 @@ export default function Downloads() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        </FadeUp>
+
+        {/* Package manager install hint */}
+        <FadeUp visible={visible} delay={180} className="mb-3">
+          <div className="arch-container">
+            <div className="px-5 py-3 sm:px-6 sm:py-4 flex flex-col gap-3">
+              <p className="text-[12px] text-text-secondary leading-relaxed">
+                <span className="font-semibold text-text-primary">Or install via package manager</span>
+                <span className="text-text-muted mx-1.5">—</span>
+                no security warnings
+              </p>
+              <div className="flex flex-col gap-2 font-mono text-[11px]">
+                <span className="flex items-center gap-2">
+                  <span className="text-text-muted shrink-0">macOS:</span>
+                  <code className="rounded bg-white/[0.06] border border-white/[0.08] px-2 py-0.5 text-accent-light select-all">
+                    brew install slopedrop/contop/contop
+                  </code>
+                </span>
+                <span className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                  <span className="text-text-muted shrink-0">Windows:</span>
+                  <span className="flex flex-wrap items-center gap-1">
+                    <code className="rounded bg-white/[0.06] border border-white/[0.08] px-2 py-0.5 text-accent-light select-all">
+                      scoop bucket add contop https://github.com/slopedrop/scoop-contop
+                    </code>
+                    <span className="text-text-muted">then</span>
+                    <code className="rounded bg-white/[0.06] border border-white/[0.08] px-2 py-0.5 text-accent-light select-all">
+                      scoop install contop
+                    </code>
+                  </span>
+                </span>
+              </div>
             </div>
           </div>
         </FadeUp>

@@ -119,7 +119,8 @@ When you're ready to ship a test release:
   ```
 - [ ] Watch CI at github.com/slopedrop/contop/actions
 - [ ] Verify artifacts on the GitHub Releases page
-- [ ] Download and smoke-test the installer
+- [ ] Download and smoke-test the installer (or portable zip)
+- [ ] Verify Homebrew tap and Scoop bucket were auto-updated (check [homebrew-contop](https://github.com/slopedrop/homebrew-contop) and [scoop-contop](https://github.com/slopedrop/scoop-contop) for new commits)
 
 ### Stable Release Checklist
 
@@ -200,10 +201,11 @@ You don't need to update docs on every commit — batch it before releases. Add 
    ```
 5. CI builds on all 3 platforms (Windows, macOS, Linux), signs the update bundles, and publishes to GitHub Releases
 6. Verify: check the [Releases page](https://github.com/slopedrop/contop/releases) for:
-   - Windows: `.exe` (NSIS installer)
+   - Windows: `.exe` (NSIS installer) + portable `.zip` (for Scoop)
    - macOS: `.dmg`
    - Linux: `.AppImage`, `.deb`
    - `latest.json` (required for auto-updater)
+7. Homebrew tap and Scoop bucket are auto-updated by CI (see [Package Manager Update](#package-manager-update))
 
 Or use the helper script (handles steps 2-4):
 
@@ -250,21 +252,60 @@ cd contop-mobile && eas update --branch production --message "fix: description"
 3. User clicks restart → app downloads the update, restarts
 4. After update, `run_first_launch_setup` checks `pyproject_hash` in `setup_status.json` — if dependencies changed, re-runs `uv sync` automatically
 
+## Package Manager Update
+
+The Homebrew tap and Scoop bucket are **updated automatically** by the `update-package-managers` job in the desktop release workflow. After the GitHub Release is published, CI computes SHA256 hashes from the build artifacts and pushes updated manifests to both repos.
+
+| Manager | Repo | Install command |
+|---------|------|-----------------|
+| Homebrew | [slopedrop/homebrew-contop](https://github.com/slopedrop/homebrew-contop) | `brew install slopedrop/contop/contop` |
+| Scoop | [slopedrop/scoop-contop](https://github.com/slopedrop/scoop-contop) | `scoop bucket add contop https://github.com/slopedrop/scoop-contop` then `scoop install contop` |
+
+### Requirements
+
+- GitHub secret `PACKAGE_MANAGER_TOKEN` must be set on `slopedrop/contop` — a fine-grained PAT scoped to `slopedrop/homebrew-contop` and `slopedrop/scoop-contop` with `Contents: Read and write` permission.
+
+### Manual update (if CI fails)
+
+```bash
+# Homebrew — get SHA256 of the .dmg, update version + sha256 in Casks/contop.rb
+shasum -a 256 "Contop Desktop_x.x.x_aarch64.dmg"
+cd homebrew-contop && git commit -am "Update contop to x.x.x" && git push
+
+# Scoop — get SHA256 of the portable .zip, update version + url + hash in bucket/contop.json
+sha256sum "Contop-Desktop_x.x.x_x64-portable.zip"
+cd scoop-contop && git commit -am "Update contop to x.x.x" && git push
+```
+
+### When package managers are NOT updated
+
+- Regular commits to main
+- Mobile releases
+- OTA hotfixes
+
+Only desktop releases (tags matching `desktop-v*`) trigger the update.
+
 ## Dependency Installation Behavior
 
-- **Windows:** The NSIS installer detects NVIDIA GPU and runs `uv sync` with the correct extras during installation. Dependencies are ready when the app first launches.
-- **macOS / Linux:** No installer hook available (.dmg and .AppImage don't support post-install scripts). Dependencies are installed on first app launch — the app shows progress and disables "Start Server" until complete.
-- Installer is ~50 MB (includes uv, Python source, MinGit, PinchTab)
-- Dependency installation takes 5-15 minutes depending on internet speed and GPU variant (CUDA PyTorch ~2.5 GB)
+- **Windows (NSIS installer):** The installer detects NVIDIA GPU and runs `uv sync` with the correct extras during installation. Dependencies are ready when the app first launches.
+- **Windows (Scoop / portable zip):** No installer runs. Dependencies are installed on first app launch via the setup overlay.
+- **macOS / Linux:** No installer hook available (.dmg and .AppImage don't support post-install scripts). Dependencies are installed on first app launch via the setup overlay.
+- Installer / portable zip is ~50 MB (includes uv, Python source, MinGit, PinchTab)
+- Dependency installation takes 5-15 minutes depending on internet speed and GPU variant (CUDA PyTorch ~2.5 GB, CPU-only ~500 MB)
+- First-launch setup shows a full-screen overlay with progress bar, human-readable status, and uv output detail
 - If installation fails, the app will retry on next launch. The server can still start without GPU OmniParser (CPU fallback).
 
-## Windows SmartScreen Warning
+## Security Warnings by Install Method
 
-Without code signing, users see "Windows protected your PC" on first install. They must click **"More info" → "Run anyway"**.
+| Install method | Warning? | Notes |
+|---------------|----------|-------|
+| Homebrew (macOS) | None | Brew removes quarantine flag |
+| Scoop (Windows) | None | Portable zip extraction strips Mark of the Web |
+| `.dmg` manual (macOS) | Gatekeeper | Right-click → Open → Open |
+| `.exe` installer (Windows) | SmartScreen | More info → Run anyway |
+| `.AppImage` / `.deb` (Linux) | None | No gatekeeper on Linux |
 
-This is the #1 UX friction point for new users. It's documented on the download page and README.
-
-**Fast-follow:** purchase an Authenticode code signing certificate ($200-400/year) or apply for the free [SignPath OSS program](https://signpath.io/open-source).
+**Fast-follow:** purchase an Authenticode code signing certificate ($60-80/year) + Apple Developer ($99/year) to eliminate warnings for manual installs. Or apply for the free [SignPath OSS program](https://signpath.io/open-source).
 
 ## Rollback Strategy
 
