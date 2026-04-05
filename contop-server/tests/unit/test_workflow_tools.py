@@ -8,6 +8,7 @@ core.agent_tools and core.window_tools, so mocks target those modules.
 Module under test: core.workflow_tools
 """
 import json
+import sys
 from unittest.mock import AsyncMock, patch, MagicMock
 
 import pytest
@@ -115,6 +116,7 @@ class TestLaunchApp:
         assert result["status"] == "success"
         assert result["wait_seconds"] == 0
 
+    @pytest.mark.skipif(sys.platform != "win32", reason="Windows-specific app launch fallback (cmd.exe /c start)")
     async def test_launch_app_falls_back_to_uri(self, monkeypatch):
         """If start command doesn't produce a window, fall back to URI scheme."""
         cli_calls = []

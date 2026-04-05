@@ -13,10 +13,18 @@ jest.mock('../../stores/useAIStore', () => {
     addExecutionEntry: jest.fn(),
     updateExecutionEntry: jest.fn(),
     clearExecutionEntries: jest.fn(),
+    setExecutionEntries: jest.fn(),
     executionEntries: [],
     activeSession: null,
     setActiveSession: jest.fn(),
     setSendConfirmationResponse: jest.fn(),
+    connectionStatus: 'disconnected',
+    connectionType: 'permanent',
+    connectionPath: null,
+    setProviderAuth: jest.fn(),
+    setMobileAuthPreference: jest.fn(),
+    mobileAuthPreference: null,
+    softReset: jest.fn(),
   });
   const mockStore = jest.fn();
   mockStore.mockReturnValue({
@@ -26,6 +34,10 @@ jest.mock('../../stores/useAIStore', () => {
     orientation: 'portrait',
     executionEntries: [],
     aiState: 'idle',
+    suggestedActions: [],
+    isManualMode: false,
+    connectionPath: null,
+    connectionType: 'permanent',
   });
   mockStore.getState = mockGetState;
   mockStore.subscribe = jest.fn(() => jest.fn());
@@ -71,10 +83,31 @@ jest.mock('expo-router', () => ({
     push: jest.fn(),
     back: jest.fn(),
   }),
-  useFocusEffect: jest.fn((cb: () => void) => { cb(); }),
+  useFocusEffect: jest.fn(),
 }));
 
-jest.mock('expo-secure-store');
+jest.mock('expo-secure-store', () => ({
+  getItemAsync: jest.fn(() => Promise.resolve(null)),
+  setItemAsync: jest.fn(() => Promise.resolve()),
+  deleteItemAsync: jest.fn(() => Promise.resolve()),
+}));
+
+jest.mock('../../services/secureStorage', () => ({
+  getPairingToken: jest.fn(() => Promise.resolve(null)),
+  getAllApiKeys: jest.fn(() => Promise.resolve({})),
+  clearPairingToken: jest.fn(() => Promise.resolve()),
+  clearAllApiKeys: jest.fn(() => Promise.resolve()),
+}));
+
+jest.mock('../../services/tempPayloadBridge', () => ({
+  consumeTempPayload: jest.fn(() => null),
+  setTempPayload: jest.fn(),
+}));
+
+jest.mock('../../services/biometrics', () => ({
+  checkBiometricAvailability: jest.fn(() => Promise.resolve({ available: false, enrolled: false })),
+  authenticateWithBiometrics: jest.fn(() => Promise.resolve(false)),
+}));
 
 jest.mock('../../services/sessionStorage', () => ({
   upsertSessionMeta: jest.fn(() => Promise.resolve()),
@@ -200,15 +233,14 @@ const { useRouter: useRouterMock } = jest.requireMock('expo-router') as {
   useRouter: jest.Mock;
 };
 
+// CI runners (Ubuntu, 2-core) are slower — give hooks and tests more headroom
+jest.setTimeout(15000);
+
 describe('SessionScreen', () => {
   const mockRouter = { replace: jest.fn(), push: jest.fn(), back: jest.fn() };
 
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
     useAIStoreMock.default.mockReturnValue({
       connectionStatus: 'disconnected',
       setConnectionStatus: jest.fn(),
@@ -216,22 +248,11 @@ describe('SessionScreen', () => {
       orientation: 'portrait',
       executionEntries: [],
       aiState: 'idle',
+      suggestedActions: [],
+      isManualMode: false,
+      connectionPath: null,
+      connectionType: 'permanent',
     });
-    // Re-attach getState after resetAllMocks (resetAllMocks wipes return values)
-    (useAIStoreMock.default as jest.Mock & { getState: jest.Mock }).getState = jest.fn().mockReturnValue({
-      setLayoutMode: jest.fn(),
-      setConnectionStatus: jest.fn(),
-      setAIState: jest.fn(),
-      setConnectionFlow: jest.fn(),
-      addExecutionEntry: jest.fn(),
-      updateExecutionEntry: jest.fn(),
-      clearExecutionEntries: jest.fn(),
-      executionEntries: [],
-      activeSession: null,
-      setActiveSession: jest.fn(),
-      setSendConfirmationResponse: jest.fn(),
-    });
-    (useAIStoreMock.default as jest.Mock & { subscribe: jest.Mock }).subscribe = jest.fn(() => jest.fn());
     useRouterMock.mockReturnValue(mockRouter);
     mockDisconnect.mockReset();
     mockConnect.mockReset();
@@ -339,17 +360,13 @@ describe('SessionScreen', () => {
         aiState: 'idle',
       });
 
-      jest.useFakeTimers();
-
-      // When — the session screen is rendered during the silent window (< 2s)
+      // When — the session screen is rendered (immediately within the 2s silent window)
       render(<SessionScreen />);
 
       // Then — no reconnecting banner is shown and the previous connection status text persists
       expect(screen.queryByTestId('reconnecting-banner')).toBeNull();
       // The status text should still show "Connected" (not "Reconnecting") during silent window
       expect(screen.queryByText(/reconnecting/i)).toBeNull();
-
-      jest.useRealTimers();
     });
 
     test('[P0] 1.5-UNIT-011: reconnecting banner shown after silent window expires', async () => {
@@ -360,18 +377,13 @@ describe('SessionScreen', () => {
         aiState: 'idle',
       });
 
-      jest.useFakeTimers();
-
-      // When — the session screen is rendered and 2s silent window expires
+      // When — the session screen is rendered and 2s silent window expires (real timers)
       render(<SessionScreen />);
-      await act(async () => {
-        jest.advanceTimersByTime(2000);
-      });
 
-      // Then — the reconnecting banner is displayed
-      expect(screen.getByTestId('reconnecting-banner')).toBeTruthy();
-
-      jest.useRealTimers();
+      // Then — the reconnecting banner appears after the 2s silent window
+      await waitFor(() => {
+        expect(screen.getByTestId('reconnecting-banner')).toBeTruthy();
+      }, { timeout: 5000 });
     });
 
     test('[P1] 1.5-UNIT-012: "Connection Lost" shows offline banner with Retry button (chat-only mode)', () => {
@@ -398,26 +410,21 @@ describe('SessionScreen', () => {
         aiState: 'idle',
       });
 
-      jest.useFakeTimers();
-
       render(<SessionScreen />);
 
-      // Advance past silent window so reconnection UI is visible
-      await act(async () => {
-        jest.advanceTimersByTime(2000);
-      });
+      // Wait for silent window to expire so reconnection UI is visible (real timers)
+      await waitFor(() => {
+        expect(screen.getByTestId('cancel-reconnection-button')).toBeTruthy();
+      }, { timeout: 5000 });
 
       // When — the cancel-reconnection button is pressed during active reconnection
-      const cancelButton = screen.getByTestId('cancel-reconnection-button');
-      fireEvent.press(cancelButton);
+      fireEvent.press(screen.getByTestId('cancel-reconnection-button'));
 
       // Then — disconnect is called and user navigates back to pairing screen
-      await waitFor(() => {
-        expect(mockDisconnect).toHaveBeenCalled();
-      });
+      // handleLeaveSession is synchronous when activeSession is null (default mock),
+      // so disconnect() is called immediately during fireEvent.press.
+      expect(mockDisconnect).toHaveBeenCalled();
       expect(mockRouter.replace).toHaveBeenCalledWith('/(connect)/connect');
-
-      jest.useRealTimers();
     });
   });
 

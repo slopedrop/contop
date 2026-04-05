@@ -8,6 +8,7 @@ Covers AC: 1 (screen capture >= 15 FPS, video frame delivery),
 import asyncio
 import base64
 import json
+import sys
 from fractions import Fraction
 from unittest.mock import AsyncMock, MagicMock, patch, PropertyMock
 
@@ -152,6 +153,7 @@ class TestScaleFactors:
 class TestRecv:
     """Test recv() returns valid av.VideoFrame."""
 
+    @pytest.mark.skipif(sys.platform != "win32", reason="mss.grab requires real display — fails on headless CI")
     async def test_recv_returns_video_frame(self):
         """4.2: recv() must return an av.VideoFrame with correct dimensions."""
         import av

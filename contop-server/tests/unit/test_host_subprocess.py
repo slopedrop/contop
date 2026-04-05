@@ -516,6 +516,7 @@ class TestDiscoverBash:
             result = _discover_bash()
             assert result == "C:\\bundled\\bash.exe"
 
+    @pytest.mark.skipif(sys.platform != "win32", reason="Windows Git Bash discovery only")
     def test_finds_git_bash_at_common_path(self):
         self._reset_cache()
         git_bash = "C:\\Program Files\\Git\\bin\\bash.exe"

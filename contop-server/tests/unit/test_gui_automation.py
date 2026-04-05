@@ -6,6 +6,7 @@ Validates coordinate scaling, voice_message generation, error handling, and timi
 """
 import asyncio
 import platform
+import sys
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -142,6 +143,7 @@ class TestTypeAction:
         assert result["status"] == "success"
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="Scroll tests use Windows ctypes.windll.user32.mouse_event")
 class TestScrollAction:
     """AC #6: scroll action with direction and amount."""
 
