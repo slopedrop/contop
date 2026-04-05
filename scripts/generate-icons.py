@@ -45,19 +45,20 @@ APP_ICON_SVG = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
 </svg>'''
 
 # Mobile app icon: square corners (OS applies its own mask) and content scaled to
-# ~88% to add breathing room that compensates for iOS superellipse / Android adaptive
+# ~75% to add breathing room that compensates for iOS superellipse / Android legacy
 # masking.  Without this the icon looks "zoomed in" compared to the README version.
 MOBILE_ICON_SVG = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
   <rect width="512" height="512" fill="{BG_COLOR}"/>
-  <g transform="translate(256,256) scale(0.88) translate(-256,-256)">
+  <g transform="translate(256,256) scale(0.75) translate(-256,-256)">
     {ICON_SHAPES}
   </g>
 </svg>'''
 
-# Android adaptive foreground: scaled to 70% and centered within the 66.7% safe zone.
-# Launchers mask the 108dp canvas to ~72dp; keep content well inside.
+# Android adaptive foreground: scaled to 58% so content fills ~57% of the visible
+# area after the launcher mask crops to the inner 66.7% of the 108dp canvas.
+# Previous 70% scale made content fill ~69% of visible area — too tight.
 ADAPTIVE_FG_SVG = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
-  <g transform="translate(256,256) scale(0.7) translate(-256,-256)">
+  <g transform="translate(256,256) scale(0.58) translate(-256,-256)">
     {ICON_SHAPES}
   </g>
 </svg>'''
