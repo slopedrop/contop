@@ -21,7 +21,7 @@ jobs:
         uses: astral-sh/setup-uv@v4
 
       - name: Run tests
-        run: uv run pytest tests/ --tb=short -q
+        run: xvfb-run uv run pytest tests/ --tb=short -q
 
   mobile-tests:
     name: Mobile Tests (Jest)
