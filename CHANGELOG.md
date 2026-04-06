@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- Replaced Mermaid diagrams in README with clean SVG graphics using brand colors
+
 ## Desktop [0.1.0-alpha.2] - 2026-04-06
 
 ### Fixed
