@@ -44,6 +44,9 @@ No port forwarding. No VPN. No SSH. Scan a QR code and start working.
 **macOS (Homebrew — recommended):**
 ```bash
 brew install slopedrop/contop/contop
+
+# Update to latest version
+brew update && brew upgrade contop
 ```
 No security warnings. Python dependencies install automatically on first launch.
 
@@ -55,6 +58,9 @@ Download the `.dmg` from [Releases](https://github.com/slopedrop/contop/releases
 ```powershell
 scoop bucket add contop https://github.com/slopedrop/scoop-contop
 scoop install contop
+
+# Update to latest version
+scoop update && scoop update contop
 ```
 No SmartScreen warnings. Python dependencies install automatically on first launch. NVIDIA GPU with CUDA is auto-detected.
 
@@ -93,8 +99,8 @@ iOS is not yet available for public alpha.
 - **30+ execution tools** — CLI, GUI automation, file operations, browser control, window management, document processing, app lifecycle, and more
 - **Smart vision routing** — 9 backends: OmniParser V2, Gemini Computer Use, Accessibility Tree, and 6 OpenRouter vision models (UI-TARS, Kimi, Qwen, Phi, Molmo, Holotron)
 - **Multi-step planning** — plan-generation tool with research sub-agent, tool chaining, and up to 50 iterations per task
-- **Multi-provider LLM** — Gemini, OpenAI, Anthropic, Groq, Mistral, and more via LiteLLM
-- **Subscription mode** — use your existing Claude Pro/Max, Gemini Pro, or ChatGPT Plus/Pro subscription instead of API keys via the built-in CLI proxy (text-only — no LLM vision fallback)
+- **Multi-provider LLM** — Gemini, OpenAI, Anthropic, and OpenRouter (100+ models including Groq, Mistral, DeepSeek, and more) via LiteLLM
+- **Subscription mode** — use your existing Claude Pro/Max, Gemini Pro, or ChatGPT Plus/Pro subscription instead of API keys via the built-in CLI proxy (Claude Code, Gemini CLI, Codex CLI — text-only, no LLM vision fallback)
 - **Skills system** — extensible via SKILL.md standard with YAML workflows and Python tool loading
 - **Real-time feedback** — step-by-step progress, screenshots, and model/backend transparency streamed to your phone
 
@@ -146,13 +152,13 @@ iOS is not yet available for public alpha.
 | **Networking** | WebRTC (aiortc), Cloudflare Tunnels, DTLS encryption |
 | **Security** | Dual-Tool Evaluator, Docker sandbox |
 
-## Quick Start
+## Development Setup
 
 ### Prerequisites
 
 - Python 3.12+ with [uv](https://docs.astral.sh/uv/)
 - Node.js 18+
-- A Gemini API key ([get one free](https://aistudio.google.com/apikey)) — or an existing Claude Pro/Max / Gemini Pro / ChatGPT Pro subscription
+- At least one LLM API key: [Gemini](https://aistudio.google.com/apikey), [OpenAI](https://platform.openai.com/api-keys), [Anthropic](https://console.anthropic.com/), or [OpenRouter](https://openrouter.ai/keys) — or an existing Claude Pro/Max, Gemini Pro, or ChatGPT Plus/Pro subscription via the built-in CLI proxy
 - Android / iOS device with Expo dev build
 
 ### 1. Start the Server

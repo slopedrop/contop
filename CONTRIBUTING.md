@@ -22,7 +22,8 @@ Open a [Feature Request](https://github.com/slopedrop/contop/issues/new?template
 
 - Python 3.12+ with [uv](https://docs.astral.sh/uv/)
 - Node.js 18+
-- Rust (for desktop app)
+- [Tauri v2](https://v2.tauri.app/start/prerequisites/) (for desktop app)
+- At least one LLM API key (Gemini, OpenAI, Anthropic, or OpenRouter) — or a CLI subscription
 
 ### Running Locally
 
