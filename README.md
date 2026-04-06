@@ -31,12 +31,6 @@
 
 ---
 
-Contop turns your phone into an AI remote control for any desktop. Speak or type a command on your mobile, and an autonomous agent on your computer observes your screen, runs CLI commands, clicks buttons, fills forms, automates browsers, and streams progress back — all in real time over a peer-to-peer WebRTC tunnel.
-
-No port forwarding. No VPN. No SSH. Scan a QR code and start working.
-
----
-
 ## Install
 
 ### Desktop App
@@ -81,11 +75,35 @@ iOS is not yet available for public alpha.
 
 ---
 
+Contop turns your phone into an AI remote control for any desktop. Speak or type a command on your mobile, and an autonomous agent on your computer observes your screen, runs CLI commands, clicks buttons, fills forms, automates browsers, and streams progress back — all in real time over a peer-to-peer WebRTC tunnel.
+
+No port forwarding. No VPN. No SSH. Scan a QR code and start working.
+
 ## How It Works
 
-<p align="center">
-  <img src="how-it-works.svg" alt="How It Works — Phone to Agent to Screen" />
-</p>
+```mermaid
+graph LR
+    subgraph Phone["Your Phone"]
+        Input["Voice / Text Input"]
+        Feed["Live Feed"]
+    end
+
+    subgraph Desktop["Your Desktop"]
+        Agent["ADK Agent — 30+ Tools — Security Gate"]
+        Proxy["CLI Proxy — Subscription Mode"]
+    end
+
+    subgraph Screen["Your Screen"]
+        Targets["Screenshots + UI Elements + CLI / GUI Actions"]
+    end
+
+    Input <-->|WebRTC P2P Data Channel| Agent
+    Agent -->|progress / results / video| Feed
+    Agent -->|observe| Targets
+    Agent -->|execute| Targets
+    Agent -.->|subscription| Proxy
+    Proxy -.->|CLI tool| Targets
+```
 
 ## Features
 
@@ -128,9 +146,71 @@ iOS is not yet available for public alpha.
 
 ## Architecture
 
-<p align="center">
-  <img src="architecture.svg" alt="Architecture — Mobile, Desktop Host, External Services" />
-</p>
+```mermaid
+graph TB
+    subgraph Phone["Mobile Client — Expo / React Native"]
+        STT["Multi-Provider STT — Voice Input"]
+        LLM["Multi-Provider LLM — Conversation Agent"]
+        UI["Session UI — Execution Thread + Remote Screen"]
+    end
+
+    subgraph Desktop["Desktop Host"]
+        subgraph Tauri["Tauri v2 — Rust + Vite"]
+            GUI["Settings GUI — QR Pairing / Config"]
+            Sidecar["Python Sidecar — Process Manager"]
+            Away["Away Mode — PIN Overlay"]
+            CLIProxy["CLI Proxy — Claude / Gemini / Codex"]
+        end
+
+        subgraph Server["FastAPI Server — Python 3.12"]
+            Signal["WebRTC Signaling"]
+            ADK["ADK Execution Agent — Multi-Provider"]
+            DTE["Dual-Tool Evaluator — Security Gate"]
+            Audit["JSONL Audit Logger"]
+            Skills["Skills Engine"]
+        end
+
+        subgraph Tools["30+ Execution Tools"]
+            CLI["execute_cli — Host / Git Bash"]
+            GUIAuto["execute_gui — PyAutoGUI"]
+            Sandbox["execute_cli_sandboxed — Docker"]
+            Screen["observe_screen — Smart Vision Routing"]
+            CU["execute_computer_use — Gemini CU"]
+            Browser["execute_browser — PinchTab CDP"]
+            FileOps["File / Document / Window Tools"]
+        end
+    end
+
+    subgraph Cloud["External Services"]
+        GeminiAPI["Gemini / OpenAI / Anthropic / OpenRouter"]
+        CF["Cloudflare Tunnel"]
+    end
+
+    STT --> LLM
+    LLM --> UI
+    UI <-->|WebRTC Data Channel| Signal
+    Screen -->|WebRTC Video Track| UI
+
+    Signal --> ADK
+    ADK --> DTE
+    DTE -->|host| CLI
+    DTE -->|host| GUIAuto
+    DTE -->|host| Screen
+    DTE -->|host| CU
+    DTE -->|host| Browser
+    DTE -->|host| FileOps
+    DTE -->|sandbox| Sandbox
+    ADK --> Audit
+    ADK --> Skills
+
+    ADK -.->|API| GeminiAPI
+    ADK -.->|subscription| CLIProxy
+    LLM -.->|API| GeminiAPI
+    Signal -.-> CF
+
+    Sidecar --> Server
+    Sidecar --> CLIProxy
+```
 
 ## Tech Stack
 
