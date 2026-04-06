@@ -152,18 +152,32 @@ struct ServerPaths {
 ///
 /// **Dev mode:** falls back to compile-time CARGO_MANIFEST_DIR layout.
 fn resolve_server_paths(app: &tauri::AppHandle) -> Result<ServerPaths, String> {
-    // Tauri bundles resources preserving the relative path from tauri.conf.json,
-    // so "resources/**/*" ends up under <resource_dir>/resources/.
-    let resource_base = app.path().resource_dir()
-        .map_err(|e| format!("Cannot get resource dir: {e}"))?
-        .join("resources");
-    let resource_server = resource_base.join("contop-server");
+    // Find the directory containing contop-server, uv, etc.
+    // Tauri's resource_dir() behaviour varies by platform and installer:
+    //   - Windows NSIS: <install_dir> (resources/ is a child)
+    //   - macOS DMG:    <app_bundle>/Contents/Resources (resources/ is a child)
+    //   - Linux:        /usr/lib/<app> (resources/ is a child)
+    //   - Portable zip: <exe_dir> (resources/ is a child)
+    // So we look for contop-server under <candidate>/resources/.
+    let candidates: Vec<PathBuf> = [
+        app.path().resource_dir().ok(),
+        std::env::current_exe()
+            .ok()
+            .and_then(|p| p.parent().map(|d| d.to_path_buf())),
+    ]
+    .into_iter()
+    .flatten()
+    .collect();
 
-    if resource_server.exists() {
+    let resource_base = candidates.iter()
+        .map(|d| d.join("resources"))
+        .find(|d| d.join("contop-server").exists());
+
+    if let Some(resource_base) = resource_base {
         // Release mode
         let uv_bin = if cfg!(windows) { "uv.exe" } else { "uv" };
         let uv_path = resource_base.join(uv_bin);
-        let server_dir = resource_server;
+        let server_dir = resource_base.join("contop-server");
         let venv_dir = dirs::home_dir()
             .ok_or("Cannot determine home directory")?
             .join(".contop")
@@ -211,11 +225,17 @@ fn start_server(app: tauri::AppHandle, state: State<'_, ServerState>) -> Result<
     // In dev mode, falls back to system Git Bash.
     #[cfg(target_os = "windows")]
     let bash_path: Option<PathBuf> = {
-        let resource_bash = app.path().resource_dir()
+        let bash_subpath = std::path::Path::new("resources").join("git-bash").join("bin").join("bash.exe");
+        app.path().resource_dir()
             .ok()
-            .map(|d| d.join("resources").join("git-bash").join("bin").join("bash.exe"))
-            .filter(|p| p.exists());
-        resource_bash
+            .map(|d| d.join(&bash_subpath))
+            .filter(|p| p.exists())
+            .or_else(|| {
+                std::env::current_exe()
+                    .ok()
+                    .and_then(|p| p.parent().map(|d| d.join(&bash_subpath)))
+                    .filter(|p| p.exists())
+            })
     };
 
     let mut cmd = StdCommand::new(&paths.uv_path);

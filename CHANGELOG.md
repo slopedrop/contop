@@ -10,10 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 - Replaced Mermaid diagrams in README with clean SVG graphics using brand colors
 
+## Desktop [0.1.0-alpha.3] - 2026-04-06
+
+### Fixed
+- App failed to find contop-server on launch (NSIS installer) — resource path resolution now searches all candidate directories across all install methods
+- Updated model descriptions in Settings: Gemini 3.1 Pro, GPT-5.4
+
 ## Desktop [0.1.0-alpha.2] - 2026-04-06
 
 ### Fixed
-- App failed to find contop-server on launch (both NSIS installer and Scoop portable) — resource path resolution now matches Tauri's bundled layout
 - Portable zip now includes all bundled resources (contop-server, uv, PinchTab, MinGit) — previously only contained the bare exe
 - Scoop manifest: removed `extract_dir` that caused `_tmp` cleanup error on install
 
