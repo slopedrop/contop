@@ -283,11 +283,14 @@ pub fn start_proxy(
             dist_script.display()
         ));
     }
+    // Strip \\?\ prefix — Node.js on Windows cannot resolve extended-length paths
+    let dist_script_str = dist_script.to_string_lossy().to_string();
+    let dist_script_clean = dist_script_str.strip_prefix(r"\\?\").unwrap_or(&dist_script_str).to_string();
 
     let port_str = port.to_string();
     let (cmd, args): (&str, Vec<&str>) = (
         "node",
-        vec![dist_script.to_str().unwrap_or_default(), "--provider", &provider, "--port", &port_str],
+        vec![&dist_script_clean, "--provider", &provider, "--port", &port_str],
     );
 
     // Log proxy output to ~/.contop/proxy-{provider}.log
