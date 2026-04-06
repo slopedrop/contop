@@ -265,6 +265,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+				CODE_SIGN_ENTITLEMENTS = contopmobile/contopmobile.entitlements;
 			};
 			name = Debug;
 		};
@@ -291,6 +292,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "contopmobile/contopmobile-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+				CODE_SIGN_ENTITLEMENTS = contopmobile/contopmobile.entitlements;
 			};
 			name = Release;
 		};

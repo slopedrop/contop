@@ -16,8 +16,6 @@ const BACKUP_RULES_XML = `<?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
     <include domain="database" path="RKStorage" />
     <include domain="sharedpref" path="." />
-    <exclude domain="root" path="cache" />
-    <exclude domain="external" path="cache" />
 </full-backup-content>
 `;
 
@@ -26,14 +24,10 @@ const DATA_EXTRACTION_RULES_XML = `<?xml version="1.0" encoding="utf-8"?>
     <cloud-backup>
         <include domain="database" path="RKStorage" />
         <include domain="sharedpref" path="." />
-        <exclude domain="root" path="cache" />
-        <exclude domain="external" path="cache" />
     </cloud-backup>
     <device-transfer>
         <include domain="database" path="." />
         <include domain="sharedpref" path="." />
-        <exclude domain="root" path="cache" />
-        <exclude domain="external" path="cache" />
     </device-transfer>
 </data-extraction-rules>
 `;

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- Away Mode cross-platform compilation: adapted to core-graphics 0.24 API changes on macOS (CGEventTap, idle detection), fixed x11rb borrow lifetime on Linux, added IOKit framework linkage
+- Release workflows: added `contents: write` permission for GitHub Release creation
+
 ## Desktop [0.1.0-alpha.1] - 2026-04-04
 
 ### Added

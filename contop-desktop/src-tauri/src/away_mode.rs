@@ -610,7 +610,15 @@ mod macos_input {
     use core_graphics::event::{
         CGEventTap, CGEventTapLocation, CGEventTapOptions, CGEventTapPlacement, CGEventType,
     };
+    use core_foundation::base::TCFType;
     use std::sync::atomic::Ordering;
+
+    extern "C" {
+        /// Check Input Monitoring permission (not exposed by core-graphics 0.24).
+        fn CGPreflightListenEventAccess() -> bool;
+        /// Enable/disable a CGEventTap (private in core-graphics 0.24).
+        fn CGEventTapEnable(tap: *mut std::ffi::c_void, enable: bool);
+    }
 
     /// Install macOS keyboard blocking:
     /// 1. Set NSApplication presentationOptions for kiosk mode (blocks Cmd+Tab etc.)
@@ -620,9 +628,7 @@ mod macos_input {
         set_kiosk_presentation_options(true);
 
         // Step 2: Check Input Monitoring permission
-        let has_permission = unsafe {
-            core_graphics::event::CGPreflightListenEventAccess()
-        };
+        let has_permission = unsafe { CGPreflightListenEventAccess() };
 
         if !has_permission {
             eprintln!(
@@ -633,16 +639,18 @@ mod macos_input {
             return Ok(0);
         }
 
-        // Step 3: Create CGEventTap
-        let event_mask = (1u64 << CGEventType::KeyDown as u64)
-            | (1u64 << CGEventType::KeyUp as u64)
-            | (1u64 << CGEventType::FlagsChanged as u64);
+        // Step 3: Create CGEventTap (core-graphics 0.24 takes Vec<CGEventType>)
+        let events_of_interest = vec![
+            CGEventType::KeyDown,
+            CGEventType::KeyUp,
+            CGEventType::FlagsChanged,
+        ];
 
         let tap = CGEventTap::new(
             CGEventTapLocation::HID,
             CGEventTapPlacement::HeadInsertEventTap,
             CGEventTapOptions::Default,
-            event_mask,
+            events_of_interest,
             |_proxy, event_type, event| {
                 if !super::AWAY_MODE_ACTIVE.load(Ordering::SeqCst) {
                     return Some(event.clone());
@@ -671,9 +679,8 @@ mod macos_input {
         match tap {
             Ok(tap) => {
                 tap.enable();
-                // The tap keeps running on the current run loop.
-                // Store the port as our handle.
-                let port = tap.mach_port as isize;
+                // Extract raw CFMachPortRef as our handle for later cleanup
+                let port = tap.mach_port.as_concrete_TypeRef() as isize;
                 // Leak the tap to keep it alive — we'll disable it on disengage
                 std::mem::forget(tap);
                 Ok(port)
@@ -697,7 +704,7 @@ mod macos_input {
                     fn CFRelease(cf: *const std::ffi::c_void);
                 }
                 // Disable the event tap, invalidate the mach port, release the CF object
-                core_graphics::event::CGEventTapEnable(handle as *mut _, false);
+                CGEventTapEnable(handle as *mut std::ffi::c_void, false);
                 CFMachPortInvalidate(handle as *mut std::ffi::c_void);
                 CFRelease(handle as *const std::ffi::c_void);
             }
@@ -739,6 +746,7 @@ pub fn get_idle_time_ms() -> u32 {
     use core_foundation::string::CFString;
     use std::os::raw::c_uint;
 
+    #[link(name = "IOKit", kind = "framework")]
     extern "C" {
         fn IOServiceGetMatchingService(
             master_port: c_uint,
@@ -774,12 +782,13 @@ pub fn get_idle_time_ms() -> u32 {
             return 0;
         }
 
-        let props = core_foundation::dictionary::CFDictionary::wrap_under_create_rule(properties);
+        let props: core_foundation::dictionary::CFDictionary<core_foundation::string::CFString, core_foundation::base::CFType> = core_foundation::dictionary::CFDictionary::wrap_under_create_rule(properties);
         let key = CFString::new("HIDIdleTime");
 
-        if let Some(value) = props.find(key.as_CFType().as_CFTypeRef()) {
-            let cf_number: CFNumber =
-                CFNumber::wrap_under_get_rule(*value as core_foundation::number::CFNumberRef);
+        if let Some(value) = props.find(&key) {
+            let cf_number: CFNumber = unsafe {
+                CFNumber::wrap_under_get_rule(value.as_concrete_TypeRef() as core_foundation::number::CFNumberRef)
+            };
             if let Some(nanos) = cf_number.to_i64() {
                 // HIDIdleTime is in nanoseconds — convert to milliseconds
                 let ms = nanos / 1_000_000;
@@ -853,8 +862,7 @@ mod linux_input {
         let (conn, screen_num) =
             x11rb::connect(None).map_err(|e| format!("X11 connect error: {e}"))?;
 
-        let screen = &conn.setup().roots[screen_num];
-        let root = screen.root;
+        let root = conn.setup().roots[screen_num].root;
 
         conn.grab_keyboard(
             true,  // owner_events — report events to our window too
@@ -921,16 +929,18 @@ fn get_idle_time_ms_x11() -> u32 {
         Err(_) => return 0,
     };
 
-    let screen = &conn.setup().roots[screen_num];
-    let root = screen.root;
+    let root = conn.setup().roots[screen_num].root;
 
-    match conn.screensaver_query_info(root) {
+    // Bind to a local so the Cookie temporary (which borrows conn) is dropped
+    // before conn itself is dropped at function end.
+    let idle = match conn.screensaver_query_info(root) {
         Ok(cookie) => match cookie.reply() {
             Ok(info) => info.ms_since_user_input,
             Err(_) => 0,
         },
         Err(_) => 0,
-    }
+    };
+    idle
 }
 
 // ── Win32 Helpers (Windows only) ──

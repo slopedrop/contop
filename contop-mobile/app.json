@@ -46,14 +46,14 @@
       "backgroundColor": "#000000"
     },
     "updates": {
-      "url": "https://u.expo.dev/contop-mobile",
-      "enabled": true,
-      "fallbackToCacheTimeout": 0
+      "url": "https://u.expo.dev/5af67171-d956-494f-b8c1-6a79e2f2c899",
+      "enabled": true
     },
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "plugins": [
+      "expo-updates",
       "expo-font",
       "expo-audio",
       [
@@ -63,7 +63,9 @@
         }
       ],
       "./plugins/withDataPersistence",
-      "./plugins/withSplashIconPadding"
+      "./plugins/withSplashIconPadding",
+      "expo-router",
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {

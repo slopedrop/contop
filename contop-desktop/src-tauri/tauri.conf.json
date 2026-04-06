@@ -36,12 +36,9 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "resources": {
-      "resources/uv.exe": "resources/uv.exe",
-      "resources/pinchtab.exe": "resources/pinchtab.exe",
-      "resources/contop-server": "resources/contop-server",
-      "resources/git-bash": "resources/git-bash"
-    },
+    "resources": [
+      "resources/**/*"
+    ],
     "windows": {
       "nsis": {
         "installerIcon": "icons/icon.ico",

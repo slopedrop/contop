@@ -47,16 +47,16 @@ esac
 
 if [ ! -f "$RESOURCES_DIR/$UV_BIN" ]; then
   echo "[stage] Downloading uv..."
+  UV_TMPDIR=$(mktemp -d)
   if [[ "$UV_URL" == *.zip ]]; then
-    curl -L --fail -o /tmp/uv.zip "$UV_URL"
-    unzip -o -j /tmp/uv.zip "$UV_BIN" -d "$RESOURCES_DIR/"
-    rm /tmp/uv.zip
+    curl -L --fail -o "$UV_TMPDIR/uv.zip" "$UV_URL"
+    unzip -o -j "$UV_TMPDIR/uv.zip" "$UV_BIN" -d "$RESOURCES_DIR/"
   else
-    curl -L --fail -o /tmp/uv.tar.gz "$UV_URL"
-    tar -xzf /tmp/uv.tar.gz -C /tmp/
-    find /tmp -name "$UV_BIN" -type f -exec cp {} "$RESOURCES_DIR/$UV_BIN" \;
-    rm /tmp/uv.tar.gz
+    curl -L --fail -o "$UV_TMPDIR/uv.tar.gz" "$UV_URL"
+    tar -xzf "$UV_TMPDIR/uv.tar.gz" -C "$UV_TMPDIR/"
+    find "$UV_TMPDIR" -name "$UV_BIN" -type f -exec cp {} "$RESOURCES_DIR/$UV_BIN" \;
   fi
+  rm -rf "$UV_TMPDIR"
   chmod +x "$RESOURCES_DIR/$UV_BIN" 2>/dev/null || true
   echo "[stage] $UV_BIN staged."
 else
@@ -71,10 +71,11 @@ if [[ "$PLATFORM" == "windows" ]]; then
 
   mkdir -p "$RESOURCES_DIR/git-bash"
   if [ ! -f "$RESOURCES_DIR/git-bash/cmd/git.exe" ]; then
+    MINGIT_TMPDIR=$(mktemp -d)
     echo "[stage] Downloading MinGit ${MINGIT_VERSION}..."
-    curl -L --fail -o /tmp/mingit.zip "$MINGIT_URL"
-    unzip -o -q /tmp/mingit.zip -d "$RESOURCES_DIR/git-bash/"
-    rm /tmp/mingit.zip
+    curl -L --fail -o "$MINGIT_TMPDIR/mingit.zip" "$MINGIT_URL"
+    unzip -o -q "$MINGIT_TMPDIR/mingit.zip" -d "$RESOURCES_DIR/git-bash/"
+    rm -rf "$MINGIT_TMPDIR"
     echo "[stage] MinGit staged."
   else
     echo "[stage] MinGit already exists, skipping."

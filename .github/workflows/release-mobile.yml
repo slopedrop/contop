@@ -9,6 +9,8 @@ jobs:
   build-apk:
     name: Build APK & GitHub Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     outputs:
       tag: ${{ steps.release_info.outputs.tag }}
