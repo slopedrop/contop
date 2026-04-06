@@ -100,7 +100,11 @@ jobs:
 
           mkdir -p portable-staging dist
           cp "$RELEASE_DIR/contop-desktop.exe" portable-staging/
-          cp -r "$RELEASE_DIR/resources" portable-staging/ 2>/dev/null || true
+          # Tauri bundles resources into the NSIS installer but does NOT
+          # place them alongside the exe in target/release/.  Copy from
+          # the staged source directory instead so the portable zip is
+          # self-contained (contop-server, uv, pinchtab, git-bash).
+          cp -r contop-desktop/src-tauri/resources portable-staging/
 
           cd portable-staging
           7z a -tzip "../dist/$ZIP_NAME" ./*
@@ -265,7 +269,6 @@ jobs:
             "license": "MIT",
             "url": "https://github.com/slopedrop/contop/releases/download/desktop-v$VERSION/Contop-Desktop_${VERSION}_x64-portable.zip",
             "hash": "$SHA",
-            "extract_dir": ".",
             "bin": "contop-desktop.exe",
             "shortcuts": [
               ["contop-desktop.exe", "Contop Desktop"]

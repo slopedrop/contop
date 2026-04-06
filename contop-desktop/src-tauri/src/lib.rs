@@ -146,22 +146,23 @@ struct ServerPaths {
 
 /// Resolve paths for uv, server directory, and venv location.
 ///
-/// **Release mode:** detected by checking if `resource_dir/contop-server` exists.
+/// **Release mode:** detected by checking if `resource_dir/resources/contop-server` exists.
 ///   - uv, server source, and git-bash come from Tauri's bundled resources.
 ///   - venv lives at `~/.contop/server-venv/` (survives auto-updates).
 ///
 /// **Dev mode:** falls back to compile-time CARGO_MANIFEST_DIR layout.
 fn resolve_server_paths(app: &tauri::AppHandle) -> Result<ServerPaths, String> {
-    let resource_server = app.path().resource_dir()
+    // Tauri bundles resources preserving the relative path from tauri.conf.json,
+    // so "resources/**/*" ends up under <resource_dir>/resources/.
+    let resource_base = app.path().resource_dir()
         .map_err(|e| format!("Cannot get resource dir: {e}"))?
-        .join("contop-server");
+        .join("resources");
+    let resource_server = resource_base.join("contop-server");
 
     if resource_server.exists() {
         // Release mode
-        let resource_dir = app.path().resource_dir()
-            .map_err(|e| format!("Cannot get resource dir: {e}"))?;
         let uv_bin = if cfg!(windows) { "uv.exe" } else { "uv" };
-        let uv_path = resource_dir.join(uv_bin);
+        let uv_path = resource_base.join(uv_bin);
         let server_dir = resource_server;
         let venv_dir = dirs::home_dir()
             .ok_or("Cannot determine home directory")?
@@ -212,17 +213,9 @@ fn start_server(app: tauri::AppHandle, state: State<'_, ServerState>) -> Result<
     let bash_path: Option<PathBuf> = {
         let resource_bash = app.path().resource_dir()
             .ok()
-            .map(|d| d.join("git-bash").join("bin").join("bash.exe"))
+            .map(|d| d.join("resources").join("git-bash").join("bin").join("bash.exe"))
             .filter(|p| p.exists());
-        if resource_bash.is_some() {
-            resource_bash
-        } else {
-            std::env::current_exe()
-                .ok()
-                .and_then(|p| p.parent().map(|d| d.to_path_buf()))
-                .map(|d| d.join("resources").join("git-bash").join("bin").join("bash.exe"))
-                .filter(|p| p.exists())
-        }
+        resource_bash
     };
 
     let mut cmd = StdCommand::new(&paths.uv_path);

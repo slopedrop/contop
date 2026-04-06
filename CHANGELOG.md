@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## Desktop [0.1.0-alpha.2] - 2026-04-06
+
+### Fixed
+- App failed to find contop-server on launch (both NSIS installer and Scoop portable) — resource path resolution now matches Tauri's bundled layout
+- Portable zip now includes all bundled resources (contop-server, uv, PinchTab, MinGit) — previously only contained the bare exe
+- Scoop manifest: removed `extract_dir` that caused `_tmp` cleanup error on install
+
 ## Desktop [0.1.0-alpha.1] - 2026-04-06
 
 ### Added
