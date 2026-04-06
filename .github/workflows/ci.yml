@@ -3,12 +3,52 @@ name: CI
 on:
   push:
     branches: [main]
+    paths:
+      - 'contop-server/**'
+      - 'contop-mobile/**'
+      - 'contop-desktop/**'
+      - 'contop-cli-proxy/**'
+      - 'website/**'
+      - '.github/workflows/ci.yml'
   pull_request:
     branches: [main]
+    paths:
+      - 'contop-server/**'
+      - 'contop-mobile/**'
+      - 'contop-desktop/**'
+      - 'contop-cli-proxy/**'
+      - 'website/**'
+      - '.github/workflows/ci.yml'
 
 jobs:
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+      mobile: ${{ steps.filter.outputs.mobile }}
+      desktop: ${{ steps.filter.outputs.desktop }}
+      website: ${{ steps.filter.outputs.website }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            server:
+              - 'contop-server/**'
+              - 'contop-cli-proxy/**'
+            mobile:
+              - 'contop-mobile/**'
+            desktop:
+              - 'contop-desktop/**'
+            website:
+              - 'website/**'
+
   server-tests:
     name: Server Tests (Python)
+    needs: changes
+    if: needs.changes.outputs.server == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -28,6 +68,8 @@ jobs:
 
   mobile-tests:
     name: Mobile Tests (Jest)
+    needs: changes
+    if: needs.changes.outputs.mobile == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -48,6 +90,8 @@ jobs:
 
   desktop-typecheck:
     name: Desktop Typecheck
+    needs: changes
+    if: needs.changes.outputs.desktop == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -68,6 +112,8 @@ jobs:
 
   website-build:
     name: Website Build
+    needs: changes
+    if: needs.changes.outputs.website == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
