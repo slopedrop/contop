@@ -2,7 +2,7 @@
   "expo": {
     "name": "Contop Mobile",
     "slug": "contop-mobile",
-    "version": "0.1.0-alpha.1",
+    "version": "0.1.0-alpha.2",
     "scheme": "contop",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

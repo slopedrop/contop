@@ -52,6 +52,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - First-launch setup runs in the background so the app window loads immediately
 - First-launch dependency install emits structured progress events (stage, message, detail)
 
+## Mobile [0.1.0-alpha.2] - 2026-04-06
+
+### Fixed
+- Release APK failed to connect to server over LAN — Android blocked cleartext `ws://` traffic in release builds
+- iOS local networking allowed via `NSAllowsLocalNetworking` for LAN connections
+- EAS Build failed due to invalid backup XML exclude rules (FullBackupContent lint error)
+
 ## Mobile [0.1.0-alpha.1] - 2026-04-06
 
 ### Added
