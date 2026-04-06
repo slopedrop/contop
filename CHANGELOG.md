@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 - App failed to find contop-server on launch (NSIS installer) — resource path resolution now searches all candidate directories across all install methods
+- CLI proxy ("Start" button in Settings) failed on installed builds — proxy is now bundled into resources
 - Updated model descriptions in Settings: Gemini 3.1 Pro, GPT-5.4
 
 ## Desktop [0.1.0-alpha.2] - 2026-04-06

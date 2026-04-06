@@ -150,9 +150,11 @@ fn kill_proxy(child: &mut Child) {
 }
 
 /// Start a contop-cli-proxy process for the given provider.
-/// Uses `npx contop-cli-proxy` — requires Node.js + contop-cli-proxy on PATH or in node_modules.
+/// In release mode, runs the bundled dist/index.js from resources.
+/// In dev mode, auto-builds from the source tree.
 #[tauri::command]
 pub fn start_proxy(
+    app: tauri::AppHandle,
     provider: String,
     port: Option<u16>,
     registry: tauri::State<'_, ProxyRegistry>,
@@ -199,72 +201,86 @@ pub fn start_proxy(
         ));
     }
 
-    // Resolve contop-cli-proxy directory relative to Cargo manifest (same pattern as lib.rs server).
-    // canonicalize() on Windows returns \\?\ extended paths which Node.js cannot parse,
-    // so we strip that prefix to get a plain absolute path.
-    let proxy_dir_raw = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("..")
-        .join("..")
-        .join("contop-cli-proxy")
-        .canonicalize()
-        .map_err(|e| format!("Cannot find contop-cli-proxy directory: {e}"))?;
-    let proxy_dir_str = proxy_dir_raw.to_string_lossy();
-    let proxy_dir = std::path::PathBuf::from(
-        proxy_dir_str.strip_prefix(r"\\?\").unwrap_or(&proxy_dir_str)
-    );
+    // Find contop-cli-proxy: check bundled resources first, then source tree (dev).
+    use tauri::Manager;
+    let proxy_dir = {
+        // Release: <resource_dir>/resources/contop-cli-proxy or <exe_dir>/resources/contop-cli-proxy
+        let candidates: Vec<std::path::PathBuf> = [
+            app.path().resource_dir().ok(),
+            std::env::current_exe()
+                .ok()
+                .and_then(|p| p.parent().map(|d| d.to_path_buf())),
+        ]
+        .into_iter()
+        .flatten()
+        .collect();
 
-    // Auto-build: rebuild dist/ if any src/ file is newer than dist/index.js
-    let dist_script = proxy_dir.join("dist").join("index.js");
-    let src_dir = proxy_dir.join("src");
-    let needs_build = if dist_script.exists() {
-        // Check if any .ts file in src/ is newer than dist/index.js
-        let dist_mtime = std::fs::metadata(&dist_script)
-            .and_then(|m| m.modified())
-            .unwrap_or(std::time::SystemTime::UNIX_EPOCH);
-        std::fs::read_dir(&src_dir)
-            .map(|entries| {
-                entries.filter_map(|e| e.ok()).any(|e| {
-                    e.path().extension().map_or(false, |ext| ext == "ts")
-                        && e.metadata()
-                            .and_then(|m| m.modified())
-                            .map_or(false, |t| t > dist_mtime)
-                })
-            })
-            .unwrap_or(true)
-    } else {
-        true // no dist — must build
+        let release_dir = candidates.iter()
+            .map(|d| d.join("resources").join("contop-cli-proxy"))
+            .find(|d| d.join("dist").join("index.js").exists());
+
+        if let Some(dir) = release_dir {
+            dir
+        } else {
+            // Dev mode: resolve from source tree and auto-build
+            let raw = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .join("..").join("..").join("contop-cli-proxy")
+                .canonicalize()
+                .map_err(|e| format!("Cannot find contop-cli-proxy directory: {e}"))?;
+            let s = raw.to_string_lossy();
+            let proxy_dir = std::path::PathBuf::from(
+                s.strip_prefix(r"\\?\").unwrap_or(&s)
+            );
+
+            // Auto-build if src/ is newer than dist/
+            let dist_script = proxy_dir.join("dist").join("index.js");
+            let src_dir = proxy_dir.join("src");
+            let needs_build = if dist_script.exists() {
+                let dist_mtime = std::fs::metadata(&dist_script)
+                    .and_then(|m| m.modified())
+                    .unwrap_or(std::time::SystemTime::UNIX_EPOCH);
+                std::fs::read_dir(&src_dir)
+                    .map(|entries| {
+                        entries.filter_map(|e| e.ok()).any(|e| {
+                            e.path().extension().map_or(false, |ext| ext == "ts")
+                                && e.metadata()
+                                    .and_then(|m| m.modified())
+                                    .map_or(false, |t| t > dist_mtime)
+                        })
+                    })
+                    .unwrap_or(true)
+            } else {
+                true
+            };
+
+            if needs_build && src_dir.exists() {
+                let npm_cmd = if cfg!(target_os = "windows") { "npm.cmd" } else { "npm" };
+                let mut build_cmd = StdCommand::new(npm_cmd);
+                build_cmd
+                    .args(["run", "build"])
+                    .current_dir(&proxy_dir)
+                    .stdout(Stdio::null())
+                    .stderr(Stdio::piped());
+                #[cfg(target_os = "windows")]
+                build_cmd.creation_flags(CREATE_NO_WINDOW);
+                match build_cmd.status() {
+                    Ok(s) if s.success() => {}
+                    Ok(s) => return Err(format!(
+                        "contop-cli-proxy build failed (exit {})",
+                        s.code().unwrap_or(-1)
+                    )),
+                    Err(e) => return Err(format!("Failed to run npm build for contop-cli-proxy: {e}")),
+                }
+            }
+            proxy_dir
+        }
     };
 
-    if needs_build && src_dir.exists() {
-        let npm_cmd = if cfg!(target_os = "windows") { "npm.cmd" } else { "npm" };
-        let mut build_cmd = StdCommand::new(npm_cmd);
-        build_cmd
-            .args(["run", "build"])
-            .current_dir(&proxy_dir)
-            .stdout(Stdio::null())
-            .stderr(Stdio::piped());
-        #[cfg(target_os = "windows")]
-        build_cmd.creation_flags(CREATE_NO_WINDOW);
-        let build_status = build_cmd.status();
-        match build_status {
-            Ok(s) if s.success() => { /* built successfully */ }
-            Ok(s) => {
-                return Err(format!(
-                    "contop-cli-proxy build failed (exit {}). Run 'npm run build' manually in {}",
-                    s.code().unwrap_or(-1),
-                    proxy_dir.display()
-                ));
-            }
-            Err(e) => {
-                return Err(format!("Failed to run npm build for contop-cli-proxy: {e}"));
-            }
-        }
-    }
-
+    let dist_script = proxy_dir.join("dist").join("index.js");
     if !dist_script.exists() {
         return Err(format!(
-            "contop-cli-proxy not found at {}. Run 'npm run build' inside contop-cli-proxy/.",
-            proxy_dir.display()
+            "contop-cli-proxy not found at {}",
+            dist_script.display()
         ));
     }
 

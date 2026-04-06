@@ -130,6 +130,24 @@ else
   find "$RESOURCES_DIR/contop-server" -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
 fi
 
+# ── contop-cli-proxy (pre-built dist + production deps) ──────────
+echo "[stage] Staging contop-cli-proxy..."
+PROXY_SRC="contop-cli-proxy"
+PROXY_DEST="$RESOURCES_DIR/contop-cli-proxy"
+mkdir -p "$PROXY_DEST"
+
+# Build if dist doesn't exist
+if [ ! -f "$PROXY_SRC/dist/index.js" ]; then
+  echo "[stage] Building contop-cli-proxy..."
+  (cd "$PROXY_SRC" && npm ci && npm run build)
+fi
+
+# Copy dist and production node_modules
+cp -r "$PROXY_SRC/dist" "$PROXY_DEST/"
+cp "$PROXY_SRC/package.json" "$PROXY_DEST/"
+(cd "$PROXY_DEST" && npm install --omit=dev --no-package-lock 2>/dev/null) || \
+  cp -r "$PROXY_SRC/node_modules" "$PROXY_DEST/"
+
 echo "[stage] All resources staged."
 echo "[stage] Contents:"
 ls -la "$RESOURCES_DIR/"
