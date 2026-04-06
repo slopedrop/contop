@@ -40,6 +40,7 @@ function withDataPersistence(config) {
 
     const attrs = application.$;
     attrs['android:hasFragileUserData'] = 'true';
+    attrs['android:usesCleartextTraffic'] = 'true';
     attrs['android:fullBackupContent'] = '@xml/backup_rules';
     attrs['android:dataExtractionRules'] = '@xml/data_extraction_rules';
 

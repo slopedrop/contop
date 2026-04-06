@@ -20,7 +20,10 @@
         "NSMicrophoneUsageDescription": "Contop needs microphone access to capture voice commands for your AI assistant",
         "UIBackgroundModes": [
           "audio"
-        ]
+        ],
+        "NSAppTransportSecurity": {
+          "NSAllowsLocalNetworking": true
+        }
       }
     },
     "android": {
