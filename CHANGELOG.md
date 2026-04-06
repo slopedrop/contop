@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### Changed
-- Replaced Mermaid diagrams in README with clean SVG graphics using brand colors
 
 ## Desktop [0.1.0-alpha.3] - 2026-04-06
 
@@ -68,11 +66,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - App icon too close to edges after OS masking — adjusted adaptive foreground scale
 - Expo packages updated and invalid EAS Build config fixed
 - Release workflow: added `contents: write` permission for GitHub Release creation
-
-## Website [0.1.0-alpha.1] - 2026-04-04
-
-### Added
-- Live download links that auto-detect visitor OS and pull version/size from GitHub Releases
-
-### Changed
-- iOS download card shows "Coming Soon" instead of a broken App Store link

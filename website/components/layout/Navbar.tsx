@@ -90,14 +90,16 @@ export function Navbar() {
   const handleNavClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
       setMobileOpen(false);
-      // F9: If hash link and not on homepage, navigate to homepage + hash
       if (href.startsWith("#")) {
-        const target = document.querySelector(href);
+        const target = document.getElementById(href.slice(1));
         if (target) {
           e.preventDefault();
           target.scrollIntoView({ behavior: "smooth" });
+        } else if (window.location.pathname !== "/") {
+          // On a sub-page — navigate to homepage + hash
+          e.preventDefault();
+          window.location.href = `/${href}`;
         }
-        // If target not found (e.g. on /how-it-works), let default <a> navigate to /#section
       }
     },
     []
@@ -168,8 +170,10 @@ export function Navbar() {
             </a>
 
             {/* Download CTA */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a
-              href="#download"
+              href="/#download"
+              onClick={(e) => handleNavClick(e, "#download")}
               className="rounded-full bg-accent px-5 py-1.5 text-xs font-medium tracking-[0.06em] uppercase text-text-primary transition-all duration-200 hover:bg-accent-light hover:shadow-[0_0_20px_rgba(9,91,185,0.3)]"
             >
               Download
