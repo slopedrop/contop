@@ -249,6 +249,7 @@ function AgentTextCard({ entry }: { entry: ExecutionEntry }) {
 }
 
 function InterventionCard({ entry }: { entry: ExecutionEntry }) {
+  const [isCommandExpanded, setIsCommandExpanded] = useState(false);
   const status = (entry.metadata?.status as string) ?? 'pending';
   const command = (entry.metadata?.command as string) ?? '';
   const reason = (entry.metadata?.reason as string) ?? '';
@@ -258,6 +259,12 @@ function InterventionCard({ entry }: { entry: ExecutionEntry }) {
   const isAborted = status === 'aborted';
   const isExpired = status === 'expired';
   const isDestructive = reason === 'destructive_command';
+
+  const formattedCommand = command ? formatCommand(command) : '';
+  const isCommandTruncated = formattedCommand.length > 200;
+  const displayCommand = isCommandTruncated && !isCommandExpanded
+    ? formattedCommand.slice(0, 200) + '...'
+    : formattedCommand;
 
   // Haptic feedback on mount for pending cards
   // Destructive = Warning (lighter), Sandbox = Error (heavier)
@@ -352,8 +359,27 @@ function InterventionCard({ entry }: { entry: ExecutionEntry }) {
             <CopyButton content={command} size={12} />
           </View>
           <View style={s.interventionCodeBlock}>
-            <Text style={s.interventionCodeText}>{formatCommand(command)}</Text>
+            <Text style={s.interventionCodeText}>{displayCommand}</Text>
           </View>
+          {isCommandTruncated && (
+            <Pressable
+              testID="intervention-show-more"
+              onPress={() => setIsCommandExpanded(!isCommandExpanded)}
+              accessibilityRole="button"
+              accessibilityLabel={isCommandExpanded ? 'Show less of command' : 'Show full command'}
+            >
+              <View style={s.showMoreRow}>
+                <Text style={s.showMoreText}>
+                  {isCommandExpanded ? 'Show less' : 'Show more'}
+                </Text>
+                <Ionicons
+                  name={isCommandExpanded ? 'chevron-up' : 'chevron-down'}
+                  size={12}
+                  color="#095BB9"
+                />
+              </View>
+            </Pressable>
+          )}
         </View>
       ) : null}
 

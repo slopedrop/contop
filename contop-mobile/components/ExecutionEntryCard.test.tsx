@@ -305,6 +305,68 @@ describe('ExecutionEntryCard', () => {
       expect(screen.getByText(/ABORTED/)).toBeTruthy();
       expect(screen.queryByTestId('intervention-execute-btn')).toBeNull();
     });
+
+    test('[P1] 3.5-UNIT-010: short command does not render Show more toggle', () => {
+      render(
+        <ExecutionEntryCard
+          entry={interventionEntry({ metadata: {
+            request_id: 'req-123',
+            tool: 'execute_cli',
+            command: 'rm -rf /var/cache/*',
+            reason: 'forbidden_command',
+            status: 'pending',
+          } })}
+          isLastThinking={false}
+        />,
+      );
+      expect(screen.queryByTestId('intervention-show-more')).toBeNull();
+    });
+
+    test('[P1] 3.5-UNIT-011: long command renders truncated with Show more toggle', () => {
+      const longCommand = 'echo ' + 'A'.repeat(300);
+      render(
+        <ExecutionEntryCard
+          entry={interventionEntry({ metadata: {
+            request_id: 'req-123',
+            tool: 'execute_cli',
+            command: longCommand,
+            reason: 'forbidden_command',
+            status: 'pending',
+          } })}
+          isLastThinking={false}
+        />,
+      );
+      expect(screen.getByTestId('intervention-show-more')).toBeTruthy();
+      expect(screen.getByText('Show more')).toBeTruthy();
+      // Truncated body ends with ellipsis; full command is not yet on screen
+      expect(screen.queryByText(longCommand)).toBeNull();
+    });
+
+    test('[P1] 3.5-UNIT-012: pressing Show more expands the command, pressing again collapses', () => {
+      const longCommand = 'echo ' + 'B'.repeat(300);
+      render(
+        <ExecutionEntryCard
+          entry={interventionEntry({ metadata: {
+            request_id: 'req-123',
+            tool: 'execute_cli',
+            command: longCommand,
+            reason: 'forbidden_command',
+            status: 'pending',
+          } })}
+          isLastThinking={false}
+        />,
+      );
+
+      // Expand
+      fireEvent.press(screen.getByTestId('intervention-show-more'));
+      expect(screen.getByText('Show less')).toBeTruthy();
+      expect(screen.getByText(longCommand)).toBeTruthy();
+
+      // Collapse
+      fireEvent.press(screen.getByTestId('intervention-show-more'));
+      expect(screen.getByText('Show more')).toBeTruthy();
+      expect(screen.queryByText(longCommand)).toBeNull();
+    });
   });
 
   describe('agent_progress card', () => {
