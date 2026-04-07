@@ -35,7 +35,7 @@ KNOWN_TOOL_NAMES = {
     # System tools (Layer 2)
     "process_info", "system_info", "download_file",
     # Workflow tools (Layer 2)
-    "save_dialog", "open_dialog", "launch_app", "close_app", "app_menu",
+    "save_dialog", "open_dialog", "launch_app", "open_file", "close_app", "app_menu",
     "install_app", "copy_between_apps", "fill_form", "extract_text",
     "set_env_var", "change_setting", "find_and_replace_in_files",
     # Skill tools
@@ -254,7 +254,8 @@ class DualToolEvaluator:
 
         # 2g. Workflow tools — orchestrate primitives, route to host
         if tool_name in (
-            "save_dialog", "open_dialog", "launch_app", "close_app", "app_menu",
+            "save_dialog", "open_dialog", "launch_app", "open_file",
+            "close_app", "app_menu",
             "install_app", "copy_between_apps", "fill_form", "extract_text",
             "set_env_var", "change_setting", "find_and_replace_in_files",
         ):

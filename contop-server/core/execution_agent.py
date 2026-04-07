@@ -67,7 +67,7 @@ from core.settings import get_enabled_skills, get_skills_dir
 from core.tracing import init_tracing, tool_span, agent_span
 from core.llm_logger import LlmLogger
 from core.window_tools import window_list, window_focus, resize_window, clipboard_read, clipboard_write
-from core.workflow_tools import save_dialog, open_dialog, launch_app, close_app
+from core.workflow_tools import save_dialog, open_dialog, launch_app, open_file, close_app
 
 logger = logging.getLogger(__name__)
 
@@ -329,7 +329,7 @@ class ExecutionAgent:
             model=EXECUTION_AGENT_MODEL,
             instruction=EXECUTION_AGENT_SYSTEM_PROMPT,
             description="Autonomous desktop execution agent with CLI, GUI, and screen observation tools.",
-            tools=[execute_cli, execute_gui, observe_screen, get_ui_context, maximize_active_window, wait, get_action_history, read_file, edit_file, find_files, window_list, window_focus, resize_window, clipboard_read, clipboard_write, read_pdf, read_image, read_excel, write_excel, process_info, system_info, download_file, save_dialog, open_dialog, launch_app, close_app, create_skill, edit_skill],
+            tools=[execute_cli, execute_gui, observe_screen, get_ui_context, maximize_active_window, wait, get_action_history, read_file, edit_file, find_files, window_list, window_focus, resize_window, clipboard_read, clipboard_write, read_pdf, read_image, read_excel, write_excel, process_info, system_info, download_file, save_dialog, open_dialog, launch_app, open_file, close_app, create_skill, edit_skill],
             before_tool_callback=self._before_tool_callback,
             after_tool_callback=self._after_tool_callback,
             before_model_callback=self._before_model_callback,
@@ -696,6 +696,7 @@ class ExecutionAgent:
                 "open_dialog": "no_op",
                 "find_and_replace_in_files": "check_command",
                 "launch_app": "no_op",
+                "open_file": "no_op",
                 "install_app": "no_op",
                 "close_app": "no_op",
                 "app_menu": "ctrl_z",
@@ -1173,7 +1174,7 @@ class ExecutionAgent:
             # set_env_var, change_setting, app_menu, install_app,
             # find_and_replace_in_files) are loaded on-demand via the
             # "advanced-workflows" skill to reduce baseline context.
-            _common_tools = [read_file, edit_file, find_files, window_list, window_focus, resize_window, clipboard_read, clipboard_write, read_pdf, read_image, read_excel, write_excel, process_info, system_info, download_file, save_dialog, open_dialog, launch_app, close_app, create_skill, edit_skill, generate_plan]
+            _common_tools = [read_file, edit_file, find_files, window_list, window_focus, resize_window, clipboard_read, clipboard_write, read_pdf, read_image, read_excel, write_excel, process_info, system_info, download_file, save_dialog, open_dialog, launch_app, open_file, close_app, create_skill, edit_skill, generate_plan]
 
             # Append skill tools if any skills are enabled
             has_enabled_skills = any(s.enabled for s in enabled_skills)
@@ -1641,6 +1642,8 @@ def _summarize_args(tool_name: str, args: dict) -> str:
         return f"Find/replace in files: {args.get('old_text', '')[:30]}"
     if tool_name == "launch_app":
         return f"Launching: {args.get('name', '')}"
+    if tool_name == "open_file":
+        return f"Opening file: {args.get('file_path', '')}"
     if tool_name == "install_app":
         return f"Installing: {args.get('name', '')}"
     if tool_name == "close_app":

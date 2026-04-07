@@ -49,7 +49,7 @@ class TestAC1_AgentInitialization:
             "read_pdf", "read_image", "read_excel", "write_excel",
             "process_info", "system_info", "download_file",
             "save_dialog", "open_dialog",
-            "launch_app", "close_app",
+            "launch_app", "open_file", "close_app",
             "create_skill", "edit_skill",
         ])
         assert tool_names == expected

@@ -141,7 +141,7 @@ CORE_TOOL_NAMES: set[str] = {
     "clipboard_read", "clipboard_write",
     "read_pdf", "read_image", "read_excel", "write_excel",
     "process_info", "system_info", "download_file",
-    "save_dialog", "open_dialog", "launch_app", "close_app",
+    "save_dialog", "open_dialog", "launch_app", "open_file", "close_app",
     "create_skill", "edit_skill", "execute_skill", "load_skill",
 }
 

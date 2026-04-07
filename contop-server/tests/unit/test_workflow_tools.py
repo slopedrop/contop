@@ -20,7 +20,7 @@ from core import workflow_tools
 
 @pytest.mark.unit
 class TestSaveDialog:
-    async def test_save_dialog_finds_dialog_and_saves(self, monkeypatch):
+    async def test_save_dialog_finds_dialog_and_saves(self, monkeypatch, tmp_path):
         """Verify save_dialog calls hotkey, finds dialog, sets path, clicks save."""
         mock_execute_gui = AsyncMock(return_value={"status": "success"})
         mock_wait = AsyncMock(return_value={"status": "success"})
@@ -38,11 +38,62 @@ class TestSaveDialog:
         monkeypatch.setattr("core.agent_tools.get_ui_context", mock_get_ui_context)
         monkeypatch.setattr("core.agent_tools.execute_accessible", mock_execute_accessible)
 
-        result = await workflow_tools.save_dialog("/tmp/test.txt")
+        # Use a real temp path that exists on disk so the post-save verification passes
+        target = tmp_path / "test.txt"
+        target.write_text("")
+        result = await workflow_tools.save_dialog(str(target))
         assert result["status"] == "success"
-        assert result["saved_path"] == "/tmp/test.txt"
+        assert result["saved_path"] == str(target)
         assert mock_execute_gui.call_count >= 1  # At least one hotkey call
         assert mock_execute_accessible.call_count >= 1  # At least set_value + click save
+
+    async def test_save_dialog_reports_error_when_set_value_fails(self, monkeypatch, tmp_path):
+        """If execute_accessible set_value returns error, save_dialog must NOT return success."""
+        mock_execute_gui = AsyncMock(return_value={"status": "success"})
+        mock_wait = AsyncMock(return_value={"status": "success"})
+        mock_get_ui_context = AsyncMock(return_value={
+            "status": "success",
+            "interactive_elements": [{"name": "File name:", "control_type": "Edit"}],
+        })
+        # set_value fails (element not found) — click Save should never run
+        mock_execute_accessible = AsyncMock(return_value={
+            "status": "error", "found": False,
+            "description": "Element not found: File name:",
+        })
+
+        monkeypatch.setattr("core.agent_tools.execute_gui", mock_execute_gui)
+        monkeypatch.setattr("core.agent_tools.wait", mock_wait)
+        monkeypatch.setattr("core.agent_tools.get_ui_context", mock_get_ui_context)
+        monkeypatch.setattr("core.agent_tools.execute_accessible", mock_execute_accessible)
+
+        result = await workflow_tools.save_dialog(str(tmp_path / "never_created.txt"))
+        assert result["status"] == "error"
+        assert "Failed to set file name" in result["description"]
+        # Only the set_value call should have been made — Save click never reached
+        assert mock_execute_accessible.call_count == 1
+
+    async def test_save_dialog_reports_error_when_file_not_created(self, monkeypatch, tmp_path):
+        """If all UIA steps succeed but the file doesn't exist, save_dialog must return error."""
+        mock_execute_gui = AsyncMock(return_value={"status": "success"})
+        mock_wait = AsyncMock(return_value={"status": "success"})
+        mock_get_ui_context = AsyncMock(return_value={
+            "status": "success",
+            "interactive_elements": [
+                {"name": "File name:", "control_type": "Edit"},
+                {"name": "Save", "control_type": "Button"},
+            ],
+        })
+        mock_execute_accessible = AsyncMock(return_value={"status": "success", "found": True})
+
+        monkeypatch.setattr("core.agent_tools.execute_gui", mock_execute_gui)
+        monkeypatch.setattr("core.agent_tools.wait", mock_wait)
+        monkeypatch.setattr("core.agent_tools.get_ui_context", mock_get_ui_context)
+        monkeypatch.setattr("core.agent_tools.execute_accessible", mock_execute_accessible)
+
+        # File path does NOT exist on disk — the fake-success case
+        result = await workflow_tools.save_dialog(str(tmp_path / "never_created.txt"))
+        assert result["status"] == "error"
+        assert "file was not created" in result["description"]
 
     async def test_save_dialog_no_dialog_found(self, monkeypatch):
         """If no Save dialog is found, return error."""
@@ -67,26 +118,16 @@ class TestSaveDialog:
 class TestLaunchApp:
     async def test_launch_app_finds_window(self, monkeypatch):
         """Verify launch_app opens the app and finds its window."""
-        mock_execute_cli = AsyncMock(return_value={"status": "success", "stdout": "", "exit_code": 0})
         mock_maximize = AsyncMock(return_value={"status": "success"})
+        mock_popen = MagicMock()
 
-        # window_list is called multiple times:
-        #   1. Pre-snapshot (before launch) — returns baseline windows
-        #   2-4. _check_new_window polling (up to 3 calls) — app window appears
-        #   5+. wait_ready polling — app window present
-        call_count = 0
         async def mock_window_list():
-            nonlocal call_count
-            call_count += 1
-            if call_count == 1:
-                # Pre-snapshot: only existing windows
-                return {"status": "success", "windows": ["Other"], "count": 1}
-            # After launch: Notepad window appears
             return {"status": "success", "windows": ["Notepad - Untitled", "Other"], "count": 2}
 
         mock_window_focus = AsyncMock(return_value={"status": "success", "focused": True})
 
-        monkeypatch.setattr("core.agent_tools.execute_cli", mock_execute_cli)
+        monkeypatch.setattr("shutil.which", lambda n: r"C:\Windows\system32\notepad.EXE" if "notepad" in n else None)
+        monkeypatch.setattr("subprocess.Popen", mock_popen)
         monkeypatch.setattr("core.agent_tools.maximize_active_window", mock_maximize)
         monkeypatch.setattr("core.window_tools.window_list", mock_window_list)
         monkeypatch.setattr("core.window_tools.window_focus", mock_window_focus)
@@ -94,61 +135,43 @@ class TestLaunchApp:
         result = await workflow_tools.launch_app("notepad")
         assert result["status"] == "success"
         assert "notepad" in result["window_title"].lower()
+        mock_popen.assert_called_once()
 
     async def test_launch_app_no_wait(self, monkeypatch):
         """Verify launch_app returns immediately when wait_ready=False."""
-        mock_execute_cli = AsyncMock(return_value={"status": "success"})
+        mock_popen = MagicMock()
 
-        # Even with wait_ready=False, Windows branch takes a pre-snapshot
-        # and polls briefly to decide between start/URI strategies.
-        call_count = 0
-        async def mock_window_list():
-            nonlocal call_count
-            call_count += 1
-            if call_count == 1:
-                return {"status": "success", "windows": ["Other"], "count": 1}
-            return {"status": "success", "windows": ["Notepad - Untitled", "Other"], "count": 2}
-
-        monkeypatch.setattr("core.agent_tools.execute_cli", mock_execute_cli)
-        monkeypatch.setattr("core.window_tools.window_list", mock_window_list)
+        monkeypatch.setattr("shutil.which", lambda n: r"C:\Windows\system32\notepad.EXE" if "notepad" in n else None)
+        monkeypatch.setattr("subprocess.Popen", mock_popen)
 
         result = await workflow_tools.launch_app("notepad", wait_ready=False)
         assert result["status"] == "success"
         assert result["wait_seconds"] == 0
 
-    @pytest.mark.skipif(sys.platform != "win32", reason="Windows-specific app launch fallback (cmd.exe /c start)")
-    async def test_launch_app_falls_back_to_uri(self, monkeypatch):
-        """If start command doesn't produce a window, fall back to URI scheme."""
+    @pytest.mark.skipif(sys.platform != "win32", reason="Windows-specific app launch fallback (PowerShell Start-Process)")
+    async def test_launch_app_no_uri_scheme_fallback(self, monkeypatch):
+        """URI scheme fallback is removed — only Start-Process by name is tried."""
         cli_calls = []
         async def mock_execute_cli(command):
             cli_calls.append(command)
             return {"status": "success", "stdout": "", "exit_code": 0}
 
-        # Pre-snapshot: one existing window.  After start: no new window.
-        # After URI: new window appears.
-        call_count = 0
+        # No new window ever appears (simulates Start-Process not finding the app)
         async def mock_window_list():
-            nonlocal call_count
-            call_count += 1
-            # Calls 1-4: pre-snapshot + 3 polls after start — no new window
-            if call_count <= 4:
-                return {"status": "success", "windows": ["Other"], "count": 1}
-            # Calls 5+: after URI scheme — WhatsApp window appears
-            return {"status": "success", "windows": ["WhatsApp", "Other"], "count": 2}
+            return {"status": "success", "windows": ["Other"], "count": 1}
 
-        mock_maximize = AsyncMock(return_value={"status": "success"})
-        mock_window_focus = AsyncMock(return_value={"status": "success", "focused": True})
+        mock_process_info = AsyncMock(return_value={"status": "success", "processes": [], "count": 0})
 
         monkeypatch.setattr("core.agent_tools.execute_cli", mock_execute_cli)
-        monkeypatch.setattr("core.agent_tools.maximize_active_window", mock_maximize)
+        monkeypatch.setattr("core.agent_tools.process_info", mock_process_info)
         monkeypatch.setattr("core.window_tools.window_list", mock_window_list)
-        monkeypatch.setattr("core.window_tools.window_focus", mock_window_focus)
+        monkeypatch.setattr("core.window_tools.window_focus", AsyncMock())
 
         result = await workflow_tools.launch_app("WhatsApp")
-        assert result["status"] == "success"
-        # Should have tried start first, then URI
-        assert any("cmd.exe /c start" in c for c in cli_calls)
+        # Should have tried Start-Process but NOT URI scheme
         assert any("Start-Process" in c for c in cli_calls)
+        assert not any(":" in c.split("Start-Process")[1] for c in cli_calls if "Start-Process" in c)
+        assert result["status"] == "error"  # no window or process found
 
 
 # --- fill_form tests ---

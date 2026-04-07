@@ -14,6 +14,7 @@ import os
 import platform
 import re
 import shlex
+import subprocess
 import time as _time
 
 logger = logging.getLogger(__name__)
@@ -30,7 +31,9 @@ async def save_dialog(file_path: str, file_type: str = "") -> dict:
     """Automate a Save As dialog — open dialog, enter path, click Save.
 
     Orchestrates execute_gui, wait, get_ui_context, and execute_accessible
-    to complete a Save As workflow without LLM involvement.
+    to complete a Save As workflow without LLM involvement. Verifies each
+    step's result and checks that the file exists on disk before reporting
+    success — a "success" return means the file is really there.
 
     Args:
         file_path: Full path to save the file to.
@@ -41,11 +44,21 @@ async def save_dialog(file_path: str, file_type: str = "") -> dict:
     logger.info("save_dialog called: file_path=%s, file_type=%s", file_path, file_type)
     start = _time.monotonic()
     steps = 0
+
+    def _fail(msg: str, voice: str = "The save dialog workflow failed.") -> dict:
+        return {
+            "status": "error",
+            "description": msg,
+            "steps_taken": steps,
+            "duration_ms": int((_time.monotonic() - start) * 1000),
+            "voice_message": voice,
+        }
+
     try:
         from core.agent_tools import execute_gui, wait, get_ui_context, execute_accessible
 
-        # Step 1: Send Ctrl+Shift+S (Save As) then fallback to Ctrl+S
-        await execute_gui(action="hotkey", coordinates=json.dumps({"keys": [_MODIFIER, "shift", "s"]}))
+        # Step 1: Send Ctrl+S — the app decides whether to open Save or Save As
+        await execute_gui(action="hotkey", target="save", coordinates={"keys": [_MODIFIER, "s"]})
         steps += 1
         await wait(2)
         steps += 1
@@ -60,56 +73,69 @@ async def save_dialog(file_path: str, file_type: str = "") -> dict:
                 break
 
         if not dialog_title:
-            # Fallback: try Ctrl+S which might open Save As for unsaved files
-            await execute_gui(action="hotkey", coordinates=json.dumps({"keys": [_MODIFIER, "s"]}))
-            steps += 1
-            await wait(2)
-            steps += 1
-            for title in ["Save As", "Save", "Browse"]:
-                ctx = await get_ui_context(window_title=title)
-                steps += 1
-                if isinstance(ctx, dict) and ctx.get("interactive_elements"):
-                    dialog_title = title
-                    break
+            return _fail(
+                "Could not find a Save dialog. The app may not support Ctrl+S or standard save dialogs.",
+                "I couldn't open the save dialog in this app.",
+            )
 
-        if not dialog_title:
-            return {
-                "status": "error",
-                "description": "Could not find a Save dialog. The app may not support Ctrl+S/Ctrl+Shift+S.",
-                "steps_taken": steps,
-                "duration_ms": int((_time.monotonic() - start) * 1000),
-                "voice_message": "I couldn't open the save dialog.",
-            }
-
-        # Step 3: Set the file path in the filename field
-        result = await execute_accessible(
-            action="set_value", element_name="File name:", value=file_path,
+        # Step 3: Set the file path in the filename field. Require control_type=Edit
+        # to avoid fuzzy-matching the "File name:" label instead of the edit control.
+        set_result = await execute_accessible(
+            action="set_value",
+            target="save dialog filename field",
+            element_name="File name:",
+            control_type="Edit",
+            value=file_path,
             window_title=dialog_title,
         )
         steps += 1
+        if not isinstance(set_result, dict) or set_result.get("status") != "success":
+            desc = set_result.get("description", "unknown error") if isinstance(set_result, dict) else str(set_result)
+            return _fail(f"Failed to set file name in save dialog: {desc}")
 
-        # Step 4: If file_type given, handle the type dropdown
+        # Step 4: Optional file type dropdown
         if file_type:
             await execute_accessible(
-                action="click", element_name="Save as type:",
+                action="click",
+                target="save as type dropdown",
+                element_name="Save as type:",
                 window_title=dialog_title,
             )
             steps += 1
             await wait(0.5)
             await execute_accessible(
-                action="click", element_name=file_type,
+                action="click",
+                target=f"file type {file_type}",
+                element_name=file_type,
                 window_title=dialog_title,
             )
             steps += 1
 
-        # Step 5: Click Save
-        await execute_accessible(
-            action="click", element_name="Save",
+        # Step 5: Click Save. Require control_type=Button so we don't fuzzy-match
+        # "Save as type:" (ComboBox) which comes before the Save button in the UIA tree.
+        click_result = await execute_accessible(
+            action="click",
+            target="save button",
+            element_name="Save",
+            control_type="Button",
             window_title=dialog_title,
         )
         steps += 1
-        await wait(1)
+        if not isinstance(click_result, dict) or click_result.get("status") != "success":
+            desc = click_result.get("description", "unknown error") if isinstance(click_result, dict) else str(click_result)
+            return _fail(f"Failed to click Save button: {desc}")
+        await wait(1.5)
         steps += 1
+
+        # Step 6: Verify the file actually exists. A "success" click can mean
+        # the button was pressed but the save failed silently (path issues,
+        # permissions, a secondary confirmation dialog, etc.).
+        if not os.path.exists(file_path):
+            return _fail(
+                f"Save dialog completed but file was not created at {file_path}. "
+                "The save may have been redirected, blocked by a confirmation prompt, or targeted at a different path.",
+                "The save dialog finished but the file wasn't created.",
+            )
 
         return {
             "status": "success",
@@ -119,17 +145,13 @@ async def save_dialog(file_path: str, file_type: str = "") -> dict:
         }
     except Exception as exc:
         logger.exception("save_dialog failed")
-        return {
-            "status": "error",
-            "description": str(exc),
-            "steps_taken": steps,
-            "duration_ms": int((_time.monotonic() - start) * 1000),
-            "voice_message": "The save dialog workflow failed.",
-        }
+        return _fail(str(exc))
 
 
 async def open_dialog(file_path: str) -> dict:
     """Automate an Open dialog — open dialog, enter path, click Open.
+
+    Verifies each step's result before reporting success.
 
     Args:
         file_path: Full path of the file to open.
@@ -139,11 +161,21 @@ async def open_dialog(file_path: str) -> dict:
     logger.info("open_dialog called: file_path=%s", file_path)
     start = _time.monotonic()
     steps = 0
+
+    def _fail(msg: str, voice: str = "The open dialog workflow failed.") -> dict:
+        return {
+            "status": "error",
+            "description": msg,
+            "steps_taken": steps,
+            "duration_ms": int((_time.monotonic() - start) * 1000),
+            "voice_message": voice,
+        }
+
     try:
         from core.agent_tools import execute_gui, wait, get_ui_context, execute_accessible
 
         # Step 1: Ctrl+O
-        await execute_gui(action="hotkey", coordinates=json.dumps({"keys": [_MODIFIER, "o"]}))
+        await execute_gui(action="hotkey", target="open", coordinates={"keys": [_MODIFIER, "o"]})
         steps += 1
         await wait(2)
         steps += 1
@@ -158,27 +190,36 @@ async def open_dialog(file_path: str) -> dict:
                 break
 
         if not dialog_title:
-            return {
-                "status": "error",
-                "description": "Could not find an Open dialog.",
-                "steps_taken": steps,
-                "duration_ms": int((_time.monotonic() - start) * 1000),
-                "voice_message": "I couldn't open the file dialog.",
-            }
+            return _fail("Could not find an Open dialog.", "I couldn't open the file dialog.")
 
-        # Step 3: Set file path
-        await execute_accessible(
-            action="set_value", element_name="File name:", value=file_path,
+        # Step 3: Set file path. Require control_type=Edit so we match the
+        # edit control, not the "File name:" label.
+        set_result = await execute_accessible(
+            action="set_value",
+            target="open dialog filename field",
+            element_name="File name:",
+            control_type="Edit",
+            value=file_path,
             window_title=dialog_title,
         )
         steps += 1
+        if not isinstance(set_result, dict) or set_result.get("status") != "success":
+            desc = set_result.get("description", "unknown error") if isinstance(set_result, dict) else str(set_result)
+            return _fail(f"Failed to set file name in open dialog: {desc}")
 
-        # Step 4: Click Open
-        await execute_accessible(
-            action="click", element_name="Open",
+        # Step 4: Click Open button. Require control_type=Button to avoid
+        # fuzzy-matching other "Open"-containing elements (e.g. "Open as").
+        click_result = await execute_accessible(
+            action="click",
+            target="open button",
+            element_name="Open",
+            control_type="Button",
             window_title=dialog_title,
         )
         steps += 1
+        if not isinstance(click_result, dict) or click_result.get("status") != "success":
+            desc = click_result.get("description", "unknown error") if isinstance(click_result, dict) else str(click_result)
+            return _fail(f"Failed to click Open button: {desc}")
         await wait(1)
         steps += 1
 
@@ -190,13 +231,7 @@ async def open_dialog(file_path: str) -> dict:
         }
     except Exception as exc:
         logger.exception("open_dialog failed")
-        return {
-            "status": "error",
-            "description": str(exc),
-            "steps_taken": steps,
-            "duration_ms": int((_time.monotonic() - start) * 1000),
-            "voice_message": "The open dialog workflow failed.",
-        }
+        return _fail(str(exc))
 
 
 async def find_and_replace_in_files(
@@ -297,48 +332,27 @@ async def launch_app(name: str, wait_ready: bool = True) -> dict:
 
         # Build platform-specific launch command (name validated above)
         if _PLATFORM == "Windows":
-            # Commands run through Git Bash, so cmd.exe built-ins like
-            # `start` must be invoked via `cmd.exe /c`.  Neither `start`
-            # nor PowerShell `Start-Process` return meaningful exit codes
-            # (both return 0 even on failure), so we use a window-list
-            # snapshot to detect whether a new window actually appeared.
             launched = False
             name_lower = name.lower()
 
-            # Snapshot window titles before launch attempt
-            pre_windows = set()
-            pre_wl = await _wl()
-            if pre_wl.get("status") == "success":
-                pre_windows = set(pre_wl.get("windows", []))
-
-            async def _check_new_window() -> bool:
-                """Quick poll (up to 3s) to see if a new window appeared."""
-                for _ in range(3):
-                    await asyncio.sleep(1)
-                    post_wl = await _wl()
-                    if post_wl.get("status") == "success":
-                        for title in post_wl.get("windows", []):
-                            if title not in pre_windows and name_lower in title.lower():
-                                return True
-                return False
-
-            # 1. Try cmd.exe start (works for .exe apps on PATH:
-            #    notepad, chrome, calc, etc.)
-            await execute_cli(
-                command=f'cmd.exe /c start "" "{name}"'
-            )
-            if await _check_new_window():
-                launched = True
-
-            if not launched:
-                # 2. Try URI scheme via PowerShell (works for UWP/Store apps:
-                #    whatsapp:, spotify:, slack:, etc.)
-                uri_name = name_lower.replace(" ", "")
-                await execute_cli(
-                    command=f"powershell -Command 'Start-Process \"{uri_name}:\"'"
+            # Launch directly via subprocess.Popen — avoids the
+            # execute_cli → Git Bash → PowerShell chain which can
+            # trigger Windows "Select an app" dialogs.
+            import shutil as _shutil
+            exe_path = _shutil.which(name) or _shutil.which(f"{name}.exe")
+            if exe_path:
+                await asyncio.to_thread(
+                    subprocess.Popen,
+                    [exe_path],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
                 )
-                if await _check_new_window():
-                    launched = True
+                launched = True
+            else:
+                # Fallback for apps not on PATH: use PowerShell Start-Process
+                await execute_cli(
+                    command=f"powershell -NoProfile -WindowStyle Hidden -Command \"Start-Process '{name}'\""
+                )
         elif _PLATFORM == "Darwin":
             cmd = f'open -a {shlex.quote(name)}'
             await execute_cli(command=cmd)
@@ -365,9 +379,8 @@ async def launch_app(name: str, wait_ready: bool = True) -> dict:
                 snap_result = await execute_cli(command=f'snap run {shlex.quote(name.lower())}')
                 if snap_result.get("status") == "success":
                     launched = True
-            if not launched:
-                # 5. Final fallback — xdg-open (for URI-scheme apps)
-                await execute_cli(command=f'xdg-open {name.lower()}:')
+            # NOTE: No URI-scheme fallback (xdg-open name:) — same issue
+            # as Windows: triggers error dialogs for regular apps.
 
         if not wait_ready:
             return {
@@ -429,11 +442,44 @@ async def launch_app(name: str, wait_ready: bool = True) -> dict:
                     from core.agent_tools import maximize_active_window
                     await maximize_active_window()
 
+        if matched_title:
+            return {
+                "status": "success",
+                "window_title": matched_title,
+                "wait_seconds": round(_time.monotonic() - poll_start, 1),
+                "duration_ms": int((_time.monotonic() - start) * 1000),
+            }
+
+        # No window found — check if process is at least running
+        from core.agent_tools import process_info as _pi
+        pi_check = await _pi(name=name)
+        has_process = (
+            pi_check.get("status") == "success"
+            and pi_check.get("processes")
+        )
+        if has_process:
+            return {
+                "status": "warning",
+                "description": (
+                    f"Process '{name}' is running but no matching window was found. "
+                    "The app may still be loading, or a system dialog (e.g. 'app not found') may have appeared instead."
+                ),
+                "window_title": "",
+                "wait_seconds": round(_time.monotonic() - poll_start, 1),
+                "duration_ms": int((_time.monotonic() - start) * 1000),
+                "voice_message": f"{name} process is running but the window wasn't detected.",
+            }
+
         return {
-            "status": "success",
-            "window_title": matched_title,
+            "status": "error",
+            "description": (
+                f"Could not launch '{name}'. No matching window or process was found after 10 seconds. "
+                "The app may not be installed, or a system dialog like 'app not found' may have appeared."
+            ),
+            "window_title": "",
             "wait_seconds": round(_time.monotonic() - poll_start, 1),
             "duration_ms": int((_time.monotonic() - start) * 1000),
+            "voice_message": f"I couldn't find {name} after launching. It may not be installed.",
         }
     except Exception as exc:
         logger.exception("launch_app failed")
@@ -442,6 +488,103 @@ async def launch_app(name: str, wait_ready: bool = True) -> dict:
             "description": str(exc),
             "duration_ms": int((_time.monotonic() - start) * 1000),
             "voice_message": f"I couldn't launch {name}.",
+        }
+
+
+async def open_file(file_path: str, wait_ready: bool = True) -> dict:
+    """Open a file in its default application.
+
+    Platform-agnostic: uses os.startfile (Windows), open (macOS),
+    xdg-open (Linux).
+
+    Args:
+        file_path: Absolute path to the file to open.
+        wait_ready: If True, poll until a new window appears (up to 10s).
+
+    Returns dict with status, window_title, wait_seconds.
+    """
+    logger.info("open_file called: file_path=%s, wait_ready=%s", file_path, wait_ready)
+    start = _time.monotonic()
+    try:
+        import pathlib
+
+        from core.window_tools import window_list as _wl, window_focus as _wf
+
+        p = pathlib.Path(file_path)
+
+        # Snapshot windows before opening
+        pre_windows: set[str] = set()
+        pre_wl = await _wl()
+        if pre_wl.get("status") == "success":
+            pre_windows = set(pre_wl.get("windows", []))
+
+        # Platform-agnostic file open
+        if _PLATFORM == "Windows":
+            await asyncio.to_thread(os.startfile, str(p))
+        elif _PLATFORM == "Darwin":
+            proc = await asyncio.create_subprocess_exec(
+                "open", str(p),
+                stdout=asyncio.subprocess.DEVNULL,
+                stderr=asyncio.subprocess.DEVNULL,
+            )
+            await proc.wait()
+        else:
+            proc = await asyncio.create_subprocess_exec(
+                "xdg-open", str(p),
+                stdout=asyncio.subprocess.DEVNULL,
+                stderr=asyncio.subprocess.DEVNULL,
+            )
+            await proc.wait()
+
+        if not wait_ready:
+            return {
+                "status": "success",
+                "window_title": "",
+                "wait_seconds": 0,
+                "duration_ms": int((_time.monotonic() - start) * 1000),
+            }
+
+        # Poll for a new window to appear (prioritize new windows, fall back to filename match)
+        file_stem = p.stem.lower()
+        matched_title = ""
+        poll_start = _time.monotonic()
+        while _time.monotonic() - poll_start < 10:
+            await asyncio.sleep(1)
+            wl_result = await _wl()
+            if wl_result.get("status") == "success":
+                # First, look for a new window (not in pre_windows)
+                for title in wl_result.get("windows", []):
+                    if title not in pre_windows:
+                        matched_title = title
+                        break
+                # If no new window, try matching by filename in window title
+                if not matched_title:
+                    for title in wl_result.get("windows", []):
+                        if file_stem in title.lower():
+                            matched_title = title
+                            break
+            if matched_title:
+                break
+
+        if matched_title:
+            await _wf(matched_title)
+            from core.agent_tools import maximize_active_window
+            await maximize_active_window()
+
+        return {
+            "status": "success",
+            "window_title": matched_title,
+            "file_path": file_path,
+            "wait_seconds": round(_time.monotonic() - poll_start, 1),
+            "duration_ms": int((_time.monotonic() - start) * 1000),
+        }
+    except Exception as exc:
+        logger.exception("open_file failed")
+        return {
+            "status": "error",
+            "description": str(exc),
+            "duration_ms": int((_time.monotonic() - start) * 1000),
+            "voice_message": f"I couldn't open {file_path}.",
         }
 
 
@@ -548,11 +691,11 @@ async def close_app(name: str, save: bool = False) -> dict:
 
         # Save if requested
         if save:
-            await execute_gui(action="hotkey", coordinates=json.dumps({"keys": [_MODIFIER, "s"]}))
+            await execute_gui(action="hotkey", target="save", coordinates={"keys": [_MODIFIER, "s"]})
             await wait(1)
 
         # Close with Alt+F4
-        await execute_gui(action="hotkey", coordinates=json.dumps({"keys": ["alt", "F4"]}))
+        await execute_gui(action="hotkey", target="close", coordinates={"keys": ["alt", "F4"]})
         await wait(1)
 
         # Check for "save changes?" dialog
@@ -656,16 +799,16 @@ async def copy_between_apps(
         await wait(0.5)
 
         if select_all:
-            await execute_gui(action="hotkey", coordinates=json.dumps({"keys": [_MODIFIER, "a"]}))
+            await execute_gui(action="hotkey", target="select_all", coordinates={"keys": [_MODIFIER, "a"]})
             await wait(0.3)
 
-        await execute_gui(action="hotkey", coordinates=json.dumps({"keys": [_MODIFIER, "c"]}))
+        await execute_gui(action="hotkey", target="copy", coordinates={"keys": [_MODIFIER, "c"]})
         await wait(0.5)
 
         await _wf(target_app)
         await wait(0.5)
 
-        await execute_gui(action="hotkey", coordinates=json.dumps({"keys": [_MODIFIER, "v"]}))
+        await execute_gui(action="hotkey", target="paste", coordinates={"keys": [_MODIFIER, "v"]})
 
         return {
             "status": "success",

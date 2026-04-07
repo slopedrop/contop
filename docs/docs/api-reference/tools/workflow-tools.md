@@ -47,6 +47,23 @@ Launch an application by name.
 - On macOS, searches `/Applications` and uses `open -a`
 - On Linux, uses `which` and XDG application directories
 
+## `open_file`
+
+Open a file in its default application.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `file_path` | `string` | Absolute path to the file to open |
+| `wait_ready` | `boolean` | Wait for the app window to appear (default: `true`) |
+
+**Classification:** Host (display-dependent)
+
+**Notes:**
+- Uses `os.startfile()` on Windows, `open` on macOS, `xdg-open` on Linux
+- Polls for the application window to appear and returns the matched window title
+- Use this instead of `launch_app` when opening a specific file (`.xlsx`, `.pdf`, `.docx`, `.png`, etc.)
+- Do NOT pass file paths to `launch_app` — use `open_file` instead
+
 ## `close_app`
 
 Close an application.

@@ -285,8 +285,7 @@ _TOOL_INSTRUCTIONS: dict[str, dict[str, str]] = {
         "Windows": (
             "Use the executable name or common name: `notepad`, `chrome`, "
             "`calc`, `explorer`, `code`, `excel`, `word`, `powershell`. "
-            "UWP/Store apps work via URI scheme (`whatsapp`, `spotify`). "
-            "The tool tries `cmd.exe start`, then PowerShell URI launch."
+            "The tool uses PowerShell `Start-Process` to launch the app."
         ),
         "Darwin": (
             "Use the macOS app name: `TextEdit`, `Safari`, `Finder`, "
@@ -298,6 +297,22 @@ _TOOL_INSTRUCTIONS: dict[str, dict[str, str]] = {
             "`firefox`, `gnome-terminal`, `libreoffice`. "
             "The tool tries: direct binary, gtk-launch, flatpak, snap, "
             "then xdg-open as fallback."
+        ),
+    },
+    "open_file": {
+        "Windows": (
+            "Opens a file in its default application using os.startfile(). "
+            "Pass the absolute file path. The tool polls for the app window to appear. "
+            "Use this instead of launch_app when you want to open a specific file "
+            "(e.g. an .xlsx, .pdf, .docx, .png). Do NOT pass file paths to launch_app."
+        ),
+        "Darwin": (
+            "Opens a file in its default application using `open`. "
+            "Pass the absolute file path. Use this instead of launch_app for files."
+        ),
+        "Linux": (
+            "Opens a file in its default application using `xdg-open`. "
+            "Pass the absolute file path. Use this instead of launch_app for files."
         ),
     },
     "close_app": {
@@ -352,9 +367,13 @@ _TOOL_INSTRUCTIONS: dict[str, dict[str, str]] = {
         "Windows": (
             "Uses pywinauto. Control types: `Button`, `Edit`, `ComboBox`, "
             "`CheckBox`, `RadioButton`, `Hyperlink`, `MenuItem`, `ListItem`, "
-            "`TabItem`. Element names come from UIA — always call "
-            "`get_ui_context` first to get exact names. "
-            "For file dialogs: `File name:` (Edit), `Save` (Button), "
+            "`TabItem`, `Document`, `Text`, `Pane`, `Window`. Element names "
+            "come from UIA — always call `get_ui_context` first to get exact "
+            "names. The main editing area of text editors (Notepad, WordPad, "
+            "Word, VS Code) is a `Document`, NOT an `Edit` — `Edit` is only for "
+            "single-line fields like file-name boxes and search bars. If you "
+            "are unsure of the control_type, omit it and rely on `element_name` "
+            "alone. For file dialogs: `File name:` (Edit), `Save` (Button), "
             "`Save as type:` (ComboBox), `Cancel` (Button)."
         ),
         "Darwin": (
