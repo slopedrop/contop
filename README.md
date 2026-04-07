@@ -93,6 +93,45 @@ iOS is not yet available for public alpha.
   <img src="media/images/how-it-works.svg" alt="How It Works — Phone to Agent to Screen" />
 </p>
 
+## Demo
+
+https://github.com/user-attachments/assets/98705f2a-72f3-4e26-ae48-bbb889ec9c97
+
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="media/images/manual_control.jpg" alt="Manual control — direct touch control of the remote desktop" width="100%" /><br/>
+      <sub><b>Manual Control</b> — direct touch control of the remote screen</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="media/images/landscape_split_view.jpg" alt="Landscape split view — live video beside the execution thread" width="100%" /><br/>
+      <sub><b>Landscape Split View</b> — live video beside the execution thread</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="media/images/session_history_1.jpg" alt="Session history — persisted conversation list" width="100%" /><br/>
+      <sub><b>Session History</b> — persisted conversation list</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="media/images/session_history_2.jpg" alt="Session history — restored conversation with full execution thread" width="100%" /><br/>
+      <sub><b>Session History</b> — restore any past conversation</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="media/images/settings_1.jpg" alt="Settings — models and API keys" width="100%" /><br/>
+      <sub><b>Settings</b> — models and API keys</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="media/images/settings_2.jpg" alt="Settings — security rules and system prompts" width="100%" /><br/>
+      <sub><b>Settings</b> — security rules and system prompts</sub>
+    </td>
+  </tr>
+</table>
+
 ## Features
 
 ### Autonomous AI Agent
@@ -228,10 +267,12 @@ cd contop-mobile && npx jest                     # all mobile tests
 
 ## Links
 
-- **Website** — [contop.app](https://contop.app)
-- **Documentation** — [docs.contop.app](https://docs.contop.app)
-- **Releases** — [GitHub Releases](https://github.com/slopedrop/contop/releases)
-- **Issues** — [GitHub Issues](https://github.com/slopedrop/contop/issues)
+| Resource | URL |
+|----------|-----|
+| Website | [contop.app](https://contop.app) |
+| Documentation | [docs.contop.app](https://docs.contop.app) |
+| Releases | [GitHub Releases](https://github.com/slopedrop/contop/releases) |
+| Issues | [GitHub Issues](https://github.com/slopedrop/contop/issues) |
 
 ## License
 

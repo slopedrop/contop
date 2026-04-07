@@ -69,6 +69,15 @@ pending.txt
 sync-public.sh
 scripts/setup-public-repo.sh
 
+# Local-only video build scripts (for the demo GIF/video)
+scripts/compose-demo.py
+scripts/build-final-demo.py
+scripts/mobile-01-trim.py
+scripts/mobile-02-compose.py
+scripts/mobile-03-speedup.py
+scripts/title-sample.py
+scripts/make-demo-gif.py
+
 # skills
 skills.json
 skills-lock.json
