@@ -323,16 +323,20 @@ async def write_excel(file_path: str, operations: str) -> dict:
                     applied += 1
                 elif action == "merge_cells":
                     cell_range = op.get("range", "")
-                    ws.merge_cells(cell_range)
+                    sheet_name = op.get("sheet")
+                    target = wb[sheet_name] if sheet_name and sheet_name in wb.sheetnames else ws
+                    target.merge_cells(cell_range)
                     applied += 1
                 elif action == "set_column_width":
                     column = op.get("column", "A")
                     width = op.get("width", 15)
-                    ws.column_dimensions[column].width = width
+                    sheet_name = op.get("sheet")
+                    target = wb[sheet_name] if sheet_name and sheet_name in wb.sheetnames else ws
+                    target.column_dimensions[column].width = width
                     applied += 1
                 elif action == "add_sheet":
                     name = op.get("name", "Sheet")
-                    wb.create_sheet(title=name)
+                    ws = wb.create_sheet(title=name)
                     applied += 1
 
             # Atomic write: temp file then rename

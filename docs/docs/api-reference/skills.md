@@ -64,13 +64,14 @@ Instructions for the agent on how to use this skill...
 
 ## Built-in Skills
 
-Contop ships with 5 built-in skills (installed to `~/.contop/skills/` on first run):
+Contop ships with 6 built-in skills (installed to `~/.contop/skills/` on first run):
 
 | Skill | Type | Description |
 |-------|------|-------------|
 | `advanced-workflows` | prompt | Multi-step workflow execution patterns |
 | `cli-command-patterns` | prompt | Common CLI recipes across platforms |
 | `ide-chat` | mixed | IDE interaction via keyboard shortcuts |
+| `office-documents` | mixed | Document conversion and Office automation (PDF, CSV, PNG, HTML) |
 | `skill-authoring` | prompt | How to create and debug custom skills |
 | `web-research` | mixed | Web search and page extraction |
 

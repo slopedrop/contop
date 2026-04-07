@@ -96,6 +96,45 @@ Write data to an Excel spreadsheet.
 }
 ```
 
+## `convert_document`
+
+Convert a document to another format. Provided by the `office-documents` built-in skill.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `input_path` | `string` | Absolute path to the source document |
+| `output_format` | `string` | Target format: `"pdf"`, `"csv"`, `"png"`, `"jpg"`, `"html"` (default: `"pdf"`) |
+| `output_path` | `string` | Where to save the result (optional — defaults to input file with new extension) |
+| `sheet_name` | `string` | For spreadsheets, which sheet to convert (optional — defaults to active/first sheet) |
+
+**Classification:** Host (skill tool)
+
+**Conversion methods (auto-detected by priority):**
+
+| Priority | Method | Platforms | Formats | Notes |
+|----------|--------|-----------|---------|-------|
+| 1 | Microsoft Office COM | Windows | PDF | Best quality for Office files |
+| 2 | LibreOffice headless | All | PDF, CSV, PNG, JPG, HTML | Install LibreOffice for broadest support |
+| 3 | Python (openpyxl + fpdf2) | All | PDF, CSV | Fallback, basic formatting |
+
+**Return shape:**
+```json
+{
+  "status": "success",
+  "output_path": "/path/to/output.pdf",
+  "method": "office_com",
+  "input_format": "xlsx",
+  "output_format": "pdf",
+  "duration_ms": 3500,
+  "voice_message": "Converted to pdf successfully."
+}
+```
+
+**Notes:**
+- Automatically detects the best conversion method available on the system
+- Returns `install_hint` when a required Python package is missing (e.g., `pip install fpdf2`)
+- Requires `load_skill(skill_name="office-documents")` before first use
+
 ---
 
 **Related:** [Core Tools](/api-reference/tools/core-tools) · [File Tools](/api-reference/tools/file-tools)
