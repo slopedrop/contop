@@ -152,49 +152,63 @@ struct ServerPaths {
 ///
 /// **Dev mode:** falls back to compile-time CARGO_MANIFEST_DIR layout.
 fn resolve_server_paths(app: &tauri::AppHandle) -> Result<ServerPaths, String> {
-    // Find the directory containing contop-server, uv, etc.
+    // Debug builds (npm run tauri dev): always use the source tree directly so
+    // Python code changes take effect immediately without a resource sync.
+    // The target/debug/resources/ copy is stale and must be bypassed.
+    #[cfg(debug_assertions)]
+    return source_tree_paths();
+
+    // Release builds: find bundled resources next to the installed binary.
     // Tauri's resource_dir() behaviour varies by platform and installer:
     //   - Windows NSIS: <install_dir> (resources/ is a child)
     //   - macOS DMG:    <app_bundle>/Contents/Resources (resources/ is a child)
     //   - Linux:        /usr/lib/<app> (resources/ is a child)
     //   - Portable zip: <exe_dir> (resources/ is a child)
     // So we look for contop-server under <candidate>/resources/.
-    let candidates: Vec<PathBuf> = [
-        app.path().resource_dir().ok(),
-        std::env::current_exe()
-            .ok()
-            .and_then(|p| p.parent().map(|d| d.to_path_buf())),
-    ]
-    .into_iter()
-    .flatten()
-    .collect();
+    #[cfg(not(debug_assertions))]
+    {
+        let candidates: Vec<PathBuf> = [
+            app.path().resource_dir().ok(),
+            std::env::current_exe()
+                .ok()
+                .and_then(|p| p.parent().map(|d| d.to_path_buf())),
+        ]
+        .into_iter()
+        .flatten()
+        .collect();
 
-    let resource_base = candidates.iter()
-        .map(|d| d.join("resources"))
-        .find(|d| d.join("contop-server").exists());
+        let resource_base = candidates.iter()
+            .map(|d| d.join("resources"))
+            .find(|d| d.join("contop-server").exists());
 
-    if let Some(resource_base) = resource_base {
-        // Release mode
-        let uv_bin = if cfg!(windows) { "uv.exe" } else { "uv" };
-        let uv_path = resource_base.join(uv_bin);
-        let server_dir = resource_base.join("contop-server");
-        let venv_dir = dirs::home_dir()
-            .ok_or("Cannot determine home directory")?
-            .join(".contop")
-            .join("server-venv");
-        Ok(ServerPaths { uv_path, server_dir, venv_dir })
-    } else {
-        // Dev mode — use CARGO_MANIFEST_DIR layout
-        let uv_path = find_uv()?;
-        let server_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("..")
-            .join("..")
-            .join("contop-server")
-            .canonicalize()
-            .map_err(|e| format!("Cannot find contop-server directory: {e}"))?;
-        let venv_dir = server_dir.join(".venv");
-        Ok(ServerPaths { uv_path, server_dir, venv_dir })
+        if let Some(resource_base) = resource_base {
+            let uv_bin = if cfg!(windows) { "uv.exe" } else { "uv" };
+            let uv_path = resource_base.join(uv_bin);
+            let server_dir = resource_base.join("contop-server");
+            let venv_dir = dirs::home_dir()
+                .ok_or("Cannot determine home directory")?
+                .join(".contop")
+                .join("server-venv");
+            Ok(ServerPaths { uv_path, server_dir, venv_dir })
+        } else {
+            // Fallback: use source tree layout for both debug and release
+            source_tree_paths()
+        }
     }
+}
+
+/// Resolve contop-server from the source tree (CARGO_MANIFEST_DIR layout).
+/// Used in debug builds and as a release fallback when resources aren't bundled.
+fn source_tree_paths() -> Result<ServerPaths, String> {
+    let uv_path = find_uv()?;
+    let server_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("..")
+        .join("..")
+        .join("contop-server")
+        .canonicalize()
+        .map_err(|e| format!("Cannot find contop-server directory: {e}"))?;
+    let venv_dir = server_dir.join(".venv");
+    Ok(ServerPaths { uv_path, server_dir, venv_dir })
 }
 
 #[tauri::command]
