@@ -19,13 +19,18 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" />
+  <a href="https://github.com/slopedrop/contop/releases?q=mobile"><img src="https://img.shields.io/github/v/release/slopedrop/contop?filter=mobile-*&include_prereleases&display_name=tag&label=mobile&color=61DAFB&logo=react&logoColor=black" alt="Latest mobile release" /></a>
+  <a href="https://github.com/slopedrop/contop/releases?q=desktop"><img src="https://img.shields.io/github/v/release/slopedrop/contop?filter=desktop-*&include_prereleases&display_name=tag&label=desktop&color=24C8D8&logo=tauri&logoColor=white" alt="Latest desktop release" /></a>
+  <img src="https://img.shields.io/github/license/slopedrop/contop?color=blue" alt="License" />
   <img src="https://img.shields.io/badge/python-%3E%3D3.12-3776AB.svg?logo=python&logoColor=white" alt="Python" />
-  <img src="https://img.shields.io/badge/TS%20%28mobile%29-5.9-3178C6.svg?logo=typescript&logoColor=white" alt="TypeScript (mobile)" />
-  <img src="https://img.shields.io/badge/TS%20%28desktop%29-5.6-3178C6.svg?logo=typescript&logoColor=white" alt="TypeScript (desktop)" />
-  <img src="https://img.shields.io/badge/React%20Native-0.83-61DAFB.svg?logo=react&logoColor=black" alt="React Native" />
-  <img src="https://img.shields.io/badge/Tauri-v2-24C8D8.svg?logo=tauri&logoColor=white" alt="Tauri" />
+  <img src="https://img.shields.io/github/package-json/dependency-version/slopedrop/contop/dev/typescript?filename=contop-mobile/package.json&label=TS%20%28mobile%29&color=3178C6&logo=typescript&logoColor=white" alt="TypeScript (mobile)" />
+  <img src="https://img.shields.io/github/package-json/dependency-version/slopedrop/contop/dev/typescript?filename=contop-desktop/package.json&label=TS%20%28desktop%29&color=3178C6&logo=typescript&logoColor=white" alt="TypeScript (desktop)" />
+  <img src="https://img.shields.io/github/package-json/dependency-version/slopedrop/contop/react-native?filename=contop-mobile/package.json&label=React%20Native&color=61DAFB&logo=react&logoColor=black" alt="React Native" />
+  <img src="https://img.shields.io/github/package-json/dependency-version/slopedrop/contop/expo?filename=contop-mobile/package.json&label=Expo&color=000020&logo=expo&logoColor=white" alt="Expo" />
+  <img src="https://img.shields.io/github/package-json/dependency-version/slopedrop/contop/dev/@tauri-apps%2Fcli?filename=contop-desktop/package.json&label=Tauri&color=24C8D8&logo=tauri&logoColor=white" alt="Tauri" />
+  <img src="https://img.shields.io/badge/FastAPI-%E2%89%A50.135-009688.svg?logo=fastapi&logoColor=white" alt="FastAPI" />
   <img src="https://img.shields.io/badge/Gemini-ADK-886FBF.svg?logo=google&logoColor=white" alt="Google ADK" />
+  <a href="https://github.com/pinchtab/pinchtab"><img src="https://img.shields.io/badge/PinchTab-v0.8.2-A4DE02.svg" alt="PinchTab v0.8.2" /></a>
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg" alt="Platform" />
 </p>
 
@@ -110,24 +115,25 @@ https://github.com/user-attachments/assets/98705f2a-72f3-4e26-ae48-bbb889ec9c97
       <sub><b>Landscape Split View</b> — live video beside the execution thread</sub>
     </td>
   </tr>
+</table>
+
+<table>
   <tr>
-    <td align="center" width="50%">
-      <img src="media/images/session_history_1.jpg" alt="Session history — persisted conversation list" width="100%" /><br/>
-      <sub><b>Session History</b> — persisted conversation list</sub>
+    <td align="center" width="25%">
+      <img src="media/images/session_history_1.jpg" alt="Session history — persisted conversation list" width="220" /><br/>
+      <sub><b>Session History</b></sub>
     </td>
-    <td align="center" width="50%">
-      <img src="media/images/session_history_2.jpg" alt="Session history — restored conversation with full execution thread" width="100%" /><br/>
-      <sub><b>Session History</b> — restore any past conversation</sub>
+    <td align="center" width="25%">
+      <img src="media/images/session_history_2.jpg" alt="Session history — restored conversation with full execution thread" width="220" /><br/>
+      <sub><b>Restored Session</b></sub>
     </td>
-  </tr>
-  <tr>
-    <td align="center" width="50%">
-      <img src="media/images/settings_1.jpg" alt="Settings — models and API keys" width="100%" /><br/>
-      <sub><b>Settings</b> — models and API keys</sub>
+    <td align="center" width="25%">
+      <img src="media/images/settings_1.jpg" alt="Settings — models and API keys" width="220" /><br/>
+      <sub><b>Settings — Models</b></sub>
     </td>
-    <td align="center" width="50%">
-      <img src="media/images/settings_2.jpg" alt="Settings — security rules and system prompts" width="100%" /><br/>
-      <sub><b>Settings</b> — security rules and system prompts</sub>
+    <td align="center" width="25%">
+      <img src="media/images/settings_2.jpg" alt="Settings — security rules and system prompts" width="220" /><br/>
+      <sub><b>Settings — Security</b></sub>
     </td>
   </tr>
 </table>
