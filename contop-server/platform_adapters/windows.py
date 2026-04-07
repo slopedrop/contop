@@ -26,11 +26,19 @@ _INTERACTIVE_TYPES = {
     "Button", "Edit", "ComboBox", "CheckBox",
     "RadioButton", "Hyperlink", "MenuItem",
     "ListItem", "TabItem",
+    # `Document` is the control type used by text editors (Notepad, WordPad,
+    # Word, VS Code) for their main editing area. Without it, the tree walk
+    # and the "available elements" hint on errors silently omit the one
+    # element the model actually needs to set_value on.
+    "Document",
 }
 
 # Top-level windows that belong to the Windows shell / system tray.
 # These should never be selected as a fallback when looking for an app window.
 _SYSTEM_WINDOW_TITLES = frozenset({"", "Taskbar", "Status"})
+
+# ctypes callback type for EnumWindows — pre-allocated at module load to avoid recreation overhead
+_WNDENUMPROC = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.wintypes.HWND, ctypes.wintypes.LPARAM)
 
 MAX_ELEMENTS = 200
 
@@ -173,14 +181,43 @@ class WindowsAdapter(PlatformAdapter):
         return False
 
     def list_windows(self) -> list[str]:
-        if not _HAS_PYWINAUTO:
-            return []
-        try:
-            desktop = Desktop(backend="uia")
-            return [w.window_text() for w in desktop.windows() if w.window_text()]
-        except Exception:
-            logger.warning("Failed to list windows via pywinauto")
-            return []
+        # Primary: pywinauto UIA
+        titles: list[str] = []
+        if _HAS_PYWINAUTO:
+            try:
+                desktop = Desktop(backend="uia")
+                titles = [w.window_text() for w in desktop.windows() if w.window_text()]
+            except Exception:
+                logger.warning("Failed to list windows via pywinauto")
+
+        # Fallback: ctypes EnumWindows — catches windows that UIA misses
+        # (e.g. Office Click-to-Run, some UWP apps during launch)
+        if not titles:
+            titles = self._list_windows_ctypes()
+
+        return titles
+
+    @staticmethod
+    def _list_windows_ctypes() -> list[str]:
+        """Enumerate visible top-level windows via Win32 EnumWindows."""
+        user32 = ctypes.windll.user32
+        results: list[str] = []
+
+        def _enum_cb(hwnd, _lp):
+            if not user32.IsWindowVisible(hwnd):
+                return True
+            length = user32.GetWindowTextLengthW(hwnd)
+            if length == 0:
+                return True
+            buf = ctypes.create_unicode_buffer(length + 1)
+            user32.GetWindowTextW(hwnd, buf, length + 1)
+            title = buf.value
+            if title and title not in _SYSTEM_WINDOW_TITLES:
+                results.append(title)
+            return True
+
+        user32.EnumWindows(_WNDENUMPROC(_enum_cb), 0)
+        return results
 
     # -- Accessibility API (pywinauto UIA backend) --
 
@@ -448,23 +485,55 @@ class WindowsAdapter(PlatformAdapter):
             except Exception:
                 element.click_input()
         elif action == "set_value":
-            # Use focus → select-all → type_keys for set_value.
-            # type_keys() sends real keyboard events, which Windows file dialogs
-            # (Save As, Open) require to update their internal path state.
-            # set_edit_text() only updates the Edit control's text buffer via
-            # UIA ValuePattern.SetValue — file dialogs silently ignore this.
+            # Strategy: clipboard paste is preferred — it's fast (constant-time
+            # regardless of text length), preserves newlines/tabs/unicode, and
+            # works in file dialogs (Ctrl+V is a standard shortcut). Fall back
+            # to type_keys() with with_newlines/with_tabs enabled so multi-line
+            # text is still typed correctly if the clipboard path fails.
+            # set_edit_text() is last-resort — file dialogs silently ignore it.
             try:
                 element.set_focus()
             except Exception:
                 pass
-            safe_value = (value or "").replace("{", "{{").replace("}", "}}")
-            safe_value = safe_value.replace("+", "{+}").replace("^", "{^}").replace("%", "{%}")
+
+            val = value or ""
+            pasted = False
             try:
-                element.type_keys("^a", pause=0.05)  # Select all existing text
-                element.type_keys(safe_value, with_spaces=True, pause=0.05)
+                import pyperclip
+                prev_clip = ""
+                try:
+                    prev_clip = pyperclip.paste()
+                except Exception:
+                    pass
+                pyperclip.copy(val)
+                element.type_keys("^a", pause=0.05)  # Select any existing text
+                element.type_keys("^v", pause=0.05)  # Paste
+                pasted = True
+                # Restore the previous clipboard so we don't leak the pasted
+                # value. Small delay to let WM_PASTE finish before we overwrite.
+                try:
+                    import time as _t
+                    _t.sleep(0.15)
+                    pyperclip.copy(prev_clip)
+                except Exception:
+                    pass
             except Exception:
-                # Fallback: programmatic set (works for simple Edit controls)
-                element.set_edit_text(value or "")
+                logger.info("set_value: clipboard paste unavailable, falling back to type_keys")
+
+            if not pasted:
+                safe_value = val.replace("{", "{{").replace("}", "}}")
+                safe_value = safe_value.replace("+", "{+}").replace("^", "{^}").replace("%", "{%}")
+                try:
+                    element.type_keys("^a", pause=0.05)
+                    element.type_keys(
+                        safe_value,
+                        with_spaces=True,
+                        with_tabs=True,
+                        with_newlines=True,
+                        pause=0.01,
+                    )
+                except Exception:
+                    element.set_edit_text(val)
         elif action == "toggle":
             element.toggle()
         elif action == "select":

@@ -440,24 +440,80 @@ class TestWindowsAdapterInteraction:
 
     @patch("platform_adapters.windows._HAS_PYWINAUTO", True)
     @patch("platform_adapters.windows._get_top_window")
-    def test_set_value(self, mock_top_win):
-        """set_value action uses focus + select-all + type_keys for real keyboard events."""
+    def test_set_value_clipboard_paste(self, mock_top_win):
+        """set_value uses clipboard paste (Ctrl+A + Ctrl+V) — fast and preserves newlines."""
         mock_element = self._make_element("Search", "Edit")
         mock_win = MagicMock()
         mock_win.children.return_value = [mock_element]
         mock_top_win.return_value = mock_win
 
-        from platform_adapters.windows import WindowsAdapter
-        adapter = WindowsAdapter()
-        result = adapter.interact_element(name="Search", action="set_value", value="hello")
+        # Stub pyperclip so the clipboard path is taken
+        import sys as _sys
+        fake_pyperclip = MagicMock()
+        fake_pyperclip.paste.return_value = ""
+        _sys.modules["pyperclip"] = fake_pyperclip
+
+        try:
+            from platform_adapters.windows import WindowsAdapter
+            adapter = WindowsAdapter()
+            result = adapter.interact_element(
+                name="Search", action="set_value", value="line one\nline two",
+            )
+        finally:
+            _sys.modules.pop("pyperclip", None)
 
         assert result["found"] is True
         assert result["action_performed"] == "set_value"
         mock_element.set_focus.assert_called_once()
-        # First type_keys call: Ctrl+A (select all), second: the value
+        # The raw value (with real \n) should be copied to clipboard — not
+        # stripped or escaped, so newlines survive.
+        fake_pyperclip.copy.assert_any_call("line one\nline two")
+        # type_keys should only be used for the Ctrl+A / Ctrl+V hotkeys,
+        # NOT to type the value character-by-character.
         assert mock_element.type_keys.call_count == 2
         mock_element.type_keys.assert_any_call("^a", pause=0.05)
-        mock_element.type_keys.assert_any_call("hello", with_spaces=True, pause=0.05)
+        mock_element.type_keys.assert_any_call("^v", pause=0.05)
+
+    @patch("platform_adapters.windows._HAS_PYWINAUTO", True)
+    @patch("platform_adapters.windows._get_top_window")
+    def test_set_value_typing_fallback_preserves_newlines(self, mock_top_win):
+        """If clipboard is unavailable, type_keys fallback must pass with_newlines=True."""
+        mock_element = self._make_element("Search", "Edit")
+        mock_win = MagicMock()
+        mock_win.children.return_value = [mock_element]
+        mock_top_win.return_value = mock_win
+
+        # Force the clipboard path to fail by making `import pyperclip` raise
+        import sys as _sys, builtins as _builtins
+        real_import = _builtins.__import__
+
+        def fake_import(name, *args, **kwargs):
+            if name == "pyperclip":
+                raise ImportError("pyperclip unavailable")
+            return real_import(name, *args, **kwargs)
+
+        _sys.modules.pop("pyperclip", None)
+        _builtins.__import__ = fake_import
+        try:
+            from platform_adapters.windows import WindowsAdapter
+            adapter = WindowsAdapter()
+            result = adapter.interact_element(
+                name="Search", action="set_value", value="line one\nline two",
+            )
+        finally:
+            _builtins.__import__ = real_import
+
+        assert result["found"] is True
+        # Ctrl+A + typed value
+        assert mock_element.type_keys.call_count == 2
+        mock_element.type_keys.assert_any_call("^a", pause=0.05)
+        mock_element.type_keys.assert_any_call(
+            "line one\nline two",
+            with_spaces=True,
+            with_tabs=True,
+            with_newlines=True,
+            pause=0.01,
+        )
 
     @patch("platform_adapters.windows._HAS_PYWINAUTO", True)
     @patch("platform_adapters.windows._get_top_window")
