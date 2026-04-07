@@ -3,7 +3,7 @@ import { TouchableOpacity, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 
-import { Text } from './Text';
+import Text from './Text';
 import type { ManualControlPayload, SuggestedAction } from '../types';
 
 interface QuickActionBarProps {
