@@ -7,7 +7,7 @@ const config: Config = {
   tagline: 'Your Desktop, From Anywhere',
   favicon: 'img/favicon.svg',
 
-  url: 'https://docs.contop.dev',
+  url: 'https://docs.contop.app',
   baseUrl: '/',
 
   organizationName: 'contop',
