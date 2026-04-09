@@ -4,7 +4,7 @@ import type { NdjsonEvent, NormalizedEventType } from '../types.js';
 
 /**
  * ProviderConfig defines the CLI-specific behavior for each LLM provider.
- * 90% of the proxy code is shared — only this config differs.
+ * 90% of the proxy code is shared - only this config differs.
  */
 export interface ProviderConfig {
   /** CLI binary name (e.g. 'claude', 'gemini', 'codex') */

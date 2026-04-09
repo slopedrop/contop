@@ -254,7 +254,7 @@ export default function SessionList({ sessions, onSelectSession, onDeleteSession
         }
       />
 
-      {/* Delete confirmation modal — matches app aesthetic */}
+      {/* Delete confirmation modal - matches app aesthetic */}
       <Modal
         testID="delete-confirm-modal"
         visible={!!pendingDelete}

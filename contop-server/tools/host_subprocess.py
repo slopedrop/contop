@@ -1,5 +1,5 @@
 """
-Host subprocess execution — the "safe route" for CLI commands.
+Host subprocess execution - the "safe route" for CLI commands.
 
 Executes shell commands classified as "host" by the DualToolEvaluator.
 Provides async execution with timeout enforcement, output truncation,
@@ -7,8 +7,8 @@ cancellation support, environment sanitization, and interactive prompt
 handling (auto-responds to common confirmation prompts, detects stalls
 from unexpected input requests).
 
-[Source: architecture.md — Execution Routing Decision, tools/host_subprocess.py is FR12]
-[Source: project-context.md — Mandatory Dual-Tool Gate, Error Handling]
+[Source: architecture.md - Execution Routing Decision, tools/host_subprocess.py is FR12]
+[Source: project-context.md - Mandatory Dual-Tool Gate, Error Handling]
 """
 import asyncio
 import logging
@@ -74,7 +74,7 @@ def _discover_bash() -> str | None:
         else:
             logger.info("Skipping WSL bash at %s", found)
 
-    logger.warning("Git Bash not found — falling back to cmd.exe")
+    logger.warning("Git Bash not found - falling back to cmd.exe")
     return None
 
 
@@ -135,7 +135,7 @@ _PROMPT_PATTERNS: list[tuple[re.Pattern, bytes]] = [
     (re.compile(r"already exists.*overwrite\??\s*$", re.IGNORECASE), b"y\n"),
 ]
 
-# Patterns that indicate an interactive editor or pager — these cannot be
+# Patterns that indicate an interactive editor or pager - these cannot be
 # auto-handled; close stdin immediately so the process falls back or exits.
 _EDITOR_PATTERNS: list[re.Pattern] = [
     re.compile(r"~\s*$"),  # vim empty-line markers
@@ -178,7 +178,7 @@ def _fix_windows_command(command: str, cwd: str) -> tuple[str, list[str]]:
 
     cmd.exe has two fundamental limitations that break LLM-generated commands:
     1. Newlines inside quoted arguments are treated as command separators.
-    2. ``\\"`` is NOT a valid escape — ``"`` always toggles quoting, so
+    2. ``\\"`` is NOT a valid escape - ``"`` always toggles quoting, so
        ``python -c "print(\\"hello\\")"`` gets mangled before Python sees it.
 
     To avoid both issues, ``python -c`` commands are ALWAYS rewritten to a
@@ -298,20 +298,20 @@ class HostSubprocess:
 
         Uses real-time output streaming to detect and auto-respond to
         interactive prompts. Falls back to closing stdin (EOF) when a stall
-        is detected — this unblocks most programs that read from stdin.
+        is detected - this unblocks most programs that read from stdin.
 
         Args:
             command: The shell command string to execute.
             timeout_s: Maximum execution time in seconds (default 30).
             max_output_bytes: Maximum output size in bytes (default 50KB).
-            cancel_event: Optional asyncio.Event — if set, the subprocess is terminated.
+            cancel_event: Optional asyncio.Event - if set, the subprocess is terminated.
             cwd: Working directory for the subprocess.  When provided the
                  directory is assumed to be managed externally (e.g. session-
                  scoped) and will NOT be cleaned up.  When *None*, a fresh
                  temp directory is created per-command and removed afterwards.
             auto_confirm: When True (default), auto-respond to interactive
                  prompts with "yes". When False, close stdin (EOF) on any
-                 prompt detection instead of answering — use this for
+                 prompt detection instead of answering - use this for
                  untrusted/sandboxed execution.
 
         Returns:
@@ -319,7 +319,7 @@ class HostSubprocess:
         """
         start = time.monotonic()
 
-        # Discover bash on Windows — if found, execute through bash -c
+        # Discover bash on Windows - if found, execute through bash -c
         # instead of cmd.exe /c for better LLM command compatibility.
         bash_path = _discover_bash()
         using_bash = bash_path is not None
@@ -335,7 +335,7 @@ class HostSubprocess:
 
         # On Windows without bash, rewrite commands that contain embedded
         # newlines so they survive cmd.exe parsing (writes temp .py / .cmd
-        # files).  Bash handles these natively — skip when bash is available.
+        # files).  Bash handles these natively - skip when bash is available.
         temp_files: list[str] = []
         if not using_bash:
             command, temp_files = _fix_windows_command(command, cwd)
@@ -386,7 +386,7 @@ class HostSubprocess:
 
             # Stall-killed means the process produced no output and was
             # terminated after the grace period.  For GUI app launchers
-            # (e.g. `start notepad.exe`) this is expected — the app is
+            # (e.g. `start notepad.exe`) this is expected - the app is
             # running independently.  Treat as success.
             if stall_killed:
                 return _build_result(
@@ -397,7 +397,7 @@ class HostSubprocess:
             exit_code = proc.returncode if proc.returncode is not None else -1
 
             # On Windows, search commands (dir, where, findstr) return exit
-            # code 1 when no results are found — this is a normal "empty result",
+            # code 1 when no results are found - this is a normal "empty result",
             # not an error. Treating it as "error" confuses the LLM agent.
             if exit_code == 1 and _is_search_command(command):
                 status = "success"
@@ -479,9 +479,9 @@ async def _stream_and_interact(
             accumulated = b"".join(stdout_chunks)
             tail_text = accumulated[-500:].decode("utf-8", errors="replace")
 
-            # Check for interactive editor/pager — close stdin to exit
+            # Check for interactive editor/pager - close stdin to exit
             if _match_editor(tail_text):
-                logger.info("Editor/pager detected — closing stdin to exit")
+                logger.info("Editor/pager detected - closing stdin to exit")
                 await _close_stdin(proc)
                 stdin_closed = True
                 continue
@@ -503,9 +503,9 @@ async def _stream_and_interact(
                     except (BrokenPipeError, ConnectionResetError, OSError):
                         stdin_closed = True
                 else:
-                    # Not allowed to auto-confirm — close stdin (EOF)
+                    # Not allowed to auto-confirm - close stdin (EOF)
                     logger.info(
-                        "Prompt detected but auto_confirm=False — closing stdin (EOF)"
+                        "Prompt detected but auto_confirm=False - closing stdin (EOF)"
                     )
                     await _close_stdin(proc)
                     stdin_closed = True
@@ -535,7 +535,7 @@ async def _stream_and_interact(
             elapsed_since_output = time.monotonic() - last_output_time
             if elapsed_since_output >= STALL_TIMEOUT_S and not stdin_closed:
                 logger.info(
-                    "Stall detected (%.1fs no output) — closing stdin (EOF)",
+                    "Stall detected (%.1fs no output) - closing stdin (EOF)",
                     elapsed_since_output,
                 )
                 await _close_stdin(proc)
@@ -543,12 +543,12 @@ async def _stream_and_interact(
 
                 # Give the process a short grace period to exit after stdin
                 # closure (e.g. `start notepad.exe` should return once notepad
-                # is detached).  If it doesn't exit, kill it — the GUI app is
+                # is detached).  If it doesn't exit, kill it - the GUI app is
                 # already running independently.
                 await asyncio.sleep(3.0)
                 if proc.returncode is None:
                     logger.info(
-                        "Process still running after stall+stdin close — terminating"
+                        "Process still running after stall+stdin close - terminating"
                     )
                     await _terminate_process(proc)
                     stall_killed = True
@@ -586,11 +586,11 @@ async def _stream_and_interact(
                 break
             if was_cancelled:
                 break
-            # Stall monitor already killed the process — on Windows, IOCP
+            # Stall monitor already killed the process - on Windows, IOCP
             # pipe transports may never close, so don't wait for io_tasks.
             if stall_killed:
                 break
-            # Process exited but pipe readers still blocked — happens on
+            # Process exited but pipe readers still blocked - happens on
             # Windows when grandchild processes (e.g. notepad launched via
             # ``start``) inherit our pipe handles via IOCP.  Give readers
             # a short grace period to drain, then stop waiting.
@@ -599,7 +599,7 @@ async def _stream_and_interact(
                     proc_exited_at = time.monotonic()
                 elif time.monotonic() - proc_exited_at > 2.0:
                     logger.info(
-                        "Process exited (rc=%d) but readers still pending — "
+                        "Process exited (rc=%d) but readers still pending - "
                         "breaking (likely grandchild pipe inheritance)",
                         proc.returncode,
                     )
@@ -610,7 +610,7 @@ async def _stream_and_interact(
             )
 
         if pending and not was_cancelled and not stall_killed:
-            # If process already exited normally, this isn't a timeout — it's
+            # If process already exited normally, this isn't a timeout - it's
             # the pipe inheritance case.  Don't mark as timed_out.
             if proc.returncode is None:
                 timed_out = True
@@ -720,13 +720,13 @@ def _build_result(
         "voice_message": voice,
     }
 
-    # Help the model understand silent successes — without this hint, the
+    # Help the model understand silent successes - without this hint, the
     # model sees status=success + empty stdout and retries endlessly.
     if status == "success" and not stdout.strip() and not stderr.strip() and exit_code == 0:
         result["note"] = (
             "Command completed successfully but produced no output. "
             "This is normal for commands that write to files, launch apps, "
-            "or perform actions without printing. Do NOT retry — the command worked."
+            "or perform actions without printing. Do NOT retry - the command worked."
         )
 
     return result

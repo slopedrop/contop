@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <>
       <main className="min-h-screen pt-16">
-        {/* Atmosphere — wavy canvas background */}
+        {/* Atmosphere - wavy canvas background */}
         <WavyBackground
           containerClassName="!fixed !inset-0 !h-auto !w-full !-z-10 !pointer-events-none !items-start !justify-start"
           backgroundFill="#000000"
@@ -53,7 +53,7 @@ export default function Home() {
               {/* Subtitle */}
               <p className="hero-animate hero-animate-delay-3 mx-auto mt-6 max-w-md text-[15px] leading-relaxed text-text-secondary">
                 A remote compute agent that gives you full AI desktop
-                control from your phone — real-time screen streaming,
+                control from your phone - real-time screen streaming,
                 text or voice input, and autonomous task execution.
               </p>
 

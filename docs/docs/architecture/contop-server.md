@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Contop Server
 
-The Contop server is a Python FastAPI application that serves as the brain of the system — handling WebRTC signaling, AI agent execution, and all tool operations.
+The Contop server is a Python FastAPI application that serves as the brain of the system - handling WebRTC signaling, AI agent execution, and all tool operations.
 
 ## Application Structure
 
@@ -93,7 +93,7 @@ Tauri → uv run uvicorn main:app → Python FastAPI server
 ```
 
 Key lifecycle details:
-- **Process group management**: `uv` spawns `uvicorn` as a grandchild process — the entire process tree must be killed
+- **Process group management**: `uv` spawns `uvicorn` as a grandchild process - the entire process tree must be killed
 - **Windows**: `CREATE_NEW_PROCESS_GROUP` flag, killed via `taskkill /F /T /PID`
 - **Unix**: `setpgid` for group management, SIGTERM → 2s grace → SIGKILL
 - **Clean shutdown**: `RunEvent::Exit` handler in Tauri kills the process tree

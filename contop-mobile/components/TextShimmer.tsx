@@ -22,7 +22,7 @@ type Props = {
 const HIGHLIGHT_RATIO = 0.4;
 
 /**
- * Text with a sweeping shimmer highlight — a bright "window" slides left-to-right
+ * Text with a sweeping shimmer highlight - a bright "window" slides left-to-right
  * across the text, matching the motion-primitives TextShimmer pattern.
  *
  * Uses only react-native-reanimated (no LinearGradient / MaskedView).
@@ -63,7 +63,7 @@ export default function TextShimmer({
   }));
 
   // Extract flex for the outer container so it lays out identically to a plain <Text>.
-  // Strip flex from the text style — flex on <Text> inside the fixed-width sweep
+  // Strip flex from the text style - flex on <Text> inside the fixed-width sweep
   // overlay causes it to collapse to zero width, hiding the shimmer.
   const { flex, textStyle } = useMemo(() => {
     const flat = StyleSheet.flatten(style) ?? {};
@@ -80,12 +80,12 @@ export default function TextShimmer({
       onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
       style={[s.container, flex != null && { flex }]}
     >
-      {/* Base text — renders at the style's own color */}
+      {/* Base text - renders at the style's own color */}
       <Text style={textStyle} numberOfLines={numberOfLines}>
         {children}
       </Text>
 
-      {/* Sweep highlight — a sliding clip window revealing bright text */}
+      {/* Sweep highlight - a sliding clip window revealing bright text */}
       {containerWidth > 0 && (
         <Animated.View
           style={[s.sweep, { width: highlightWidth }, windowStyle]}

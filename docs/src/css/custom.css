@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ============================
-   Contop Docs — Tailwind + Infima
+   Contop Docs - Tailwind + Infima
    Premium dark-first design.
    Pure black surfaces, blue accents,
    refined typography, polished interactions.
@@ -93,7 +93,7 @@
 }
 
 /* ============================================
-   BOXED LAYOUT — fixed 1400px outer shell
+   BOXED LAYOUT - fixed 1400px outer shell
    ============================================ */
 .main-wrapper {
   @apply mx-auto w-full;
@@ -111,7 +111,7 @@
 }
 
 /* ============================================
-   NAVBAR — solid, two-row on desktop
+   NAVBAR - solid, two-row on desktop
    ============================================ */
 .navbar {
   @apply shadow-none p-0 h-auto;
@@ -281,10 +281,10 @@ a[target="_blank"]::after {
 }
 
 /* ============================================
-   MOBILE NAVBAR — search popup, visible icons
+   MOBILE NAVBAR - search popup, visible icons
    ============================================ */
 @media (max-width: 996px) {
-  /* Fix 3: Vertical alignment — all items centered on cross-axis */
+  /* Fix 3: Vertical alignment - all items centered on cross-axis */
   .navbar__inner {
     @apply flex items-center;
     padding: 0.5rem 0.75rem;
@@ -325,7 +325,7 @@ a[target="_blank"]::after {
     line-height: 1;
   }
 
-  /* Custom hamburger icon — rounded 3-line SVG */
+  /* Custom hamburger icon - rounded 3-line SVG */
   .navbar__toggle {
     @apply flex items-center justify-center;
     width: 32px;
@@ -435,7 +435,7 @@ a[target="_blank"]::after {
 }
 
 /* ============================================
-   MOBILE SEARCH PORTAL — styles for JS-portaled search
+   MOBILE SEARCH PORTAL - styles for JS-portaled search
    When search is focused on mobile, JS moves searchBarContainer
    to document.body so position:fixed works correctly.
    ============================================ */
@@ -462,7 +462,7 @@ a[target="_blank"]::after {
   -webkit-backdrop-filter: blur(16px);
 }
 
-/* Portaled search container — direct child of body, centered */
+/* Portaled search container - direct child of body, centered */
 body.search-portal-active > [class*='searchBarContainer'] {
   position: fixed !important;
   top: 4rem !important;
@@ -504,7 +504,7 @@ body.search-portal-active > [class*='searchBarContainer'] .navbar__search-input 
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-/* Search dropdown in portal — override plugin's right:0/560px */
+/* Search dropdown in portal - override plugin's right:0/560px */
 body.search-portal-active > [class*='searchBarContainer'] [class*='dropdownMenu'] {
   left: 0 !important;
   right: 0 !important;
@@ -605,7 +605,7 @@ body.search-portal-active > [class*='searchBarContainer'] [class*='dropdownMenu'
 [data-theme='light'] .menu__link--sublist { color: #6B7280; }
 
 /* ============================================
-   MAIN CONTENT — typography + spacing
+   MAIN CONTENT - typography + spacing
    ============================================ */
 .markdown h1:first-child {
   font-size: 2.25rem;
@@ -763,7 +763,7 @@ button[class*='copyButton'] {
 }
 
 /* ============================================
-   TABLES — visible borders, rounded
+   TABLES - visible borders, rounded
    ============================================ */
 table {
   border-collapse: separate;
@@ -819,7 +819,7 @@ table tr:nth-child(2n) { background-color: transparent; }
 }
 
 /* ============================================
-   ADMONITIONS — tinted backgrounds per type
+   ADMONITIONS - tinted backgrounds per type
    ============================================ */
 .alert {
   border: 1px solid var(--glass-border);
@@ -916,7 +916,7 @@ table tr:nth-child(2n) { background-color: transparent; }
 }
 
 /* ============================================
-   CARDS — equal height, hover glow
+   CARDS - equal height, hover glow
    ============================================ */
 article.card,
 .card {
@@ -952,7 +952,7 @@ article.card:hover,
 .row .col:has(> article.card) { @apply h-full; }
 
 /* ============================================
-   MERMAID DIAGRAMS — zoomable
+   MERMAID DIAGRAMS - zoomable
    ============================================ */
 .docusaurus-mermaid-container {
   border: 1px solid var(--glass-border);
@@ -1043,7 +1043,7 @@ article.card:hover,
 [data-theme='light'] ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.2); }
 
 /* ============================================
-   HOMEPAGE — Hero + Cards
+   HOMEPAGE - Hero + Cards
    ============================================ */
 .hero-intro {
   padding: 3rem 0 1.5rem;

@@ -1,5 +1,5 @@
 """
-Skill loader — discovers, parses, and validates SKILL.md files.
+Skill loader - discovers, parses, and validates SKILL.md files.
 
 Skills follow the Agent Skills standard (agentskills.io): SKILL.md with YAML
 frontmatter + markdown instructions. Skills are stored in ~/.contop/skills/.
@@ -120,7 +120,7 @@ def discover_skills(skills_dir: Path, enabled_list: list[str]) -> list[SkillMeta
             continue
         if meta.name in seen_names:
             logger.warning(
-                "Duplicate skill name '%s' in %s (already loaded from %s) — skipping",
+                "Duplicate skill name '%s' in %s (already loaded from %s) - skipping",
                 meta.name, entry, seen_names[meta.name],
             )
             continue
@@ -131,7 +131,7 @@ def discover_skills(skills_dir: Path, enabled_list: list[str]) -> list[SkillMeta
     return skills
 
 
-# Core tool names that are always registered — skill tools must not shadow these.
+# Core tool names that are always registered - skill tools must not shadow these.
 CORE_TOOL_NAMES: set[str] = {
     "execute_cli", "execute_gui", "execute_browser", "execute_accessible",
     "execute_computer_use", "observe_screen", "get_ui_context",
@@ -328,12 +328,12 @@ def ensure_builtin_skills(skills_dir: Path) -> None:
             except OSError as e:
                 logger.warning("Failed to install built-in skill %s: %s", entry.name, e)
         else:
-            # Skill exists — check if user modified it
+            # Skill exists - check if user modified it
             stored_hash = hashes.get(entry.name, "")
             current_hash = _hash_skill_dir(target)
 
             if current_hash == stored_hash:
-                # Unmodified by user — safe to update if bundled version changed
+                # Unmodified by user - safe to update if bundled version changed
                 if bundled_hash != stored_hash:
                     try:
                         shutil.rmtree(target)
@@ -344,7 +344,7 @@ def ensure_builtin_skills(skills_dir: Path) -> None:
                     except OSError as e:
                         logger.warning("Failed to update built-in skill %s: %s", entry.name, e)
             else:
-                # User modified — don't overwrite
+                # User modified - don't overwrite
                 logger.debug("Skipping built-in skill %s: user has modified it", entry.name)
 
     if changed:

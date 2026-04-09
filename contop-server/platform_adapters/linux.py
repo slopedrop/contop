@@ -1,9 +1,9 @@
 """
-Linux platform adapter — window management via pyatspi.
+Linux platform adapter - window management via pyatspi.
 
 Falls back gracefully if pyatspi is not installed.
 
-[Source: architecture.md — Cross-Platform OS Abstraction Layer, pyatspi]
+[Source: architecture.md - Cross-Platform OS Abstraction Layer, pyatspi]
 """
 import logging
 import subprocess
@@ -17,7 +17,7 @@ try:
     _HAS_PYATSPI = True
 except ImportError:
     _HAS_PYATSPI = False
-    logger.info("pyatspi not installed — LinuxAdapter will use fallback")
+    logger.info("pyatspi not installed - LinuxAdapter will use fallback")
 
 
 class LinuxAdapter(PlatformAdapter):
@@ -36,7 +36,7 @@ class LinuxAdapter(PlatformAdapter):
             pass
 
         # pyatspi can confirm a window exists but cannot bring it to the
-        # foreground — return False to indicate the focus was not performed.
+        # foreground - return False to indicate the focus was not performed.
         return False
 
     def list_windows(self) -> list[str]:
@@ -173,7 +173,7 @@ class LinuxAdapter(PlatformAdapter):
 
     def maximize_window(self) -> bool:
         if self.is_window_maximized():
-            return True  # Already maximized — idempotent
+            return True  # Already maximized - idempotent
 
         # wmctrl adds both maximized atoms in one call
         try:
@@ -312,7 +312,7 @@ class LinuxAdapter(PlatformAdapter):
                 continue
             except Exception:
                 continue
-        logger.warning("Failed to read clipboard — no clipboard tool found")
+        logger.warning("Failed to read clipboard - no clipboard tool found")
         return ""
 
     def clipboard_write(self, text: str) -> bool:
@@ -332,7 +332,7 @@ class LinuxAdapter(PlatformAdapter):
                 continue
             except Exception:
                 continue
-        logger.warning("Failed to write clipboard — no clipboard tool found")
+        logger.warning("Failed to write clipboard - no clipboard tool found")
         return False
 
     # -- Element interaction (execute_accessible tool) --
@@ -399,7 +399,7 @@ class LinuxAdapter(PlatformAdapter):
                 "element_name": elem_name, "element_type": elem_type,
                 "action_performed": action,
                 "description": f"Successfully performed '{action}' on '{elem_name}' ({elem_type}).",
-                "voice_message": f"Done — {action} on {elem_name}.",
+                "voice_message": f"Done - {action} on {elem_name}.",
             }
 
         except Exception as exc:

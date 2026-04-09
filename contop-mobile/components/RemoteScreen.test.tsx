@@ -50,7 +50,7 @@ describe('RemoteScreen', () => {
     const mockStream = new MediaStream();
     render(<RemoteScreen stream={mockStream} fillViewport />);
 
-    // Still uses contain objectFit — fill is achieved via scale transform
+    // Still uses contain objectFit - fill is achieved via scale transform
     const rtcView = screen.getByTestId('rtc-view');
     expect(rtcView.props.objectFit).toBe('contain');
   });

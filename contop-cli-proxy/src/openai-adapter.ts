@@ -31,7 +31,7 @@ export function toCliMessage(messages: OpenAIMessage[], tools?: OpenAITool[]): s
   const parts: string[] = [];
 
   if (tools && tools.length > 0) {
-    // Skip <available_functions> for execution agent (28+ tools) — its system
+    // Skip <available_functions> for execution agent (28+ tools) - its system
     // prompt already describes every tool in detail. Listing them again wastes
     // ~500 tokens per iteration (4-8 iterations per turn = 2-4K wasted tokens).
     // Conversation agent (4 classification tools) still gets the listing since
@@ -122,8 +122,8 @@ export function toOpenAIResponse(
 ): OpenAIChatCompletion {
   // Parse injected-format tool_call JSON anywhere in the response text.
   // The model responds in one of two formats:
-  //   {"tool_call":{"name":"...","arguments":{...}}}  — action needed
-  //   {"tool_call":null,"response":"..."}              — plain text reply
+  //   {"tool_call":{"name":"...","arguments":{...}}}  - action needed
+  //   {"tool_call":null,"response":"..."}              - plain text reply
   // Claude may wrap it in explanation text, so scan all lines.
   if (response.toolCalls.length === 0) {
     // DEBUG: log raw response so we can diagnose parse failures
@@ -132,7 +132,7 @@ export function toOpenAIResponse(
     for (let i = 0; i < lines.length; i++) {
       // Strip markdown code fences the model may wrap around the JSON
       const trimmed = lines[i].trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim();
-      // Find {"tool_call": anywhere in the line — the model may prepend
+      // Find {"tool_call": anywhere in the line - the model may prepend
       // reasoning text before the JSON (e.g. "I'll check... {"tool_call":...}")
       const jsonIdx = trimmed.indexOf('{"tool_call":');
       if (jsonIdx === -1) continue;
@@ -183,7 +183,7 @@ export function toOpenAIResponse(
 
       for (const candidate of candidates) {
         // Two-pass parse: try raw first, then apply repair for doubled-quote issues.
-        // Repair MUST NOT run first — it corrupts valid JSON that contains escaped
+        // Repair MUST NOT run first - it corrupts valid JSON that contains escaped
         // quotes before terminators, e.g. -name \".env\""}}  (Issue #cli-proxy-parser)
         const attempts = [
           candidate,
@@ -203,7 +203,7 @@ export function toOpenAIResponse(
               response?: string;
             };
             if (parsed.tool_call === null) {
-              // No tool needed — extract the natural language response
+              // No tool needed - extract the natural language response
               response.text = parsed.response || lines.slice(0, i).join('\n').trim() || '';
               return buildCompletion(response, model);
             }
@@ -212,7 +212,7 @@ export function toOpenAIResponse(
               name: parsed.tool_call.name,
               arguments: parsed.tool_call.arguments,
             });
-            // Keep only text BEFORE the tool call JSON — discard everything after
+            // Keep only text BEFORE the tool call JSON - discard everything after
             // (fabricated results, subsequent fake tool calls) so they don't
             // corrupt the ADK conversation history on the next turn.
             response.text = lines.slice(0, i).join('\n').trim();
@@ -220,11 +220,11 @@ export function toOpenAIResponse(
           } catch { /* try next attempt/candidate */ }
         }
       }
-      // All parse candidates failed — log for debugging
+      // All parse candidates failed - log for debugging
       console.warn(`[adapter] Found {"tool_call":... on line ${i} but all ${candidates.length} parse candidates failed. Line: ${lines[i].slice(0, 200)}`);
     }
-    // No tool_call JSON found at all (or parse failed) — passing raw text through
-    console.log(`[adapter] No tool_call JSON parsed — returning raw text as content`);
+    // No tool_call JSON found at all (or parse failed) - passing raw text through
+    console.log(`[adapter] No tool_call JSON parsed - returning raw text as content`);
   }
 
   return buildCompletion(response, model);

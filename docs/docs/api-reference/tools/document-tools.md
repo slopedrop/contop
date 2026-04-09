@@ -104,8 +104,8 @@ Convert a document to another format. Provided by the `office-documents` built-i
 |-----------|------|-------------|
 | `input_path` | `string` | Absolute path to the source document |
 | `output_format` | `string` | Target format: `"pdf"`, `"csv"`, `"png"`, `"jpg"`, `"html"` (default: `"pdf"`) |
-| `output_path` | `string` | Where to save the result (optional — defaults to input file with new extension) |
-| `sheet_name` | `string` | For spreadsheets, which sheet to convert (optional — defaults to active/first sheet) |
+| `output_path` | `string` | Where to save the result (optional - defaults to input file with new extension) |
+| `sheet_name` | `string` | For spreadsheets, which sheet to convert (optional - defaults to active/first sheet) |
 
 **Classification:** Host (skill tool)
 

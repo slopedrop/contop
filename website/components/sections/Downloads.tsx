@@ -51,7 +51,7 @@ function formatCount(count: number): string {
 }
 
 /* ================================================
-   SVG Icons (inline — no external library)
+   SVG Icons (inline - no external library)
    ================================================ */
 
 function WindowsIcon() {
@@ -186,7 +186,7 @@ function ArrowRightIcon() {
 const RELEASES_URL = "https://github.com/slopedrop/contop/releases/latest";
 const PLAY_STORE_URL =
   "https://play.google.com/store/apps/details?id=com.contop.mobile";
-const APP_STORE_URL = ""; // iOS coming soon — no store listing yet
+const APP_STORE_URL = ""; // iOS coming soon - no store listing yet
 const DOCS_URL = "https://docs.contop.app";
 
 interface DesktopCard {
@@ -338,7 +338,7 @@ export default function Downloads() {
         role="img"
         aria-label="Download cards for Windows, macOS, Linux, Android, and iOS platforms with platform detection highlighting the recommended download for your device."
       >
-        {/* Desktop Download Cards — 3-column grid */}
+        {/* Desktop Download Cards - 3-column grid */}
         <FadeUp visible={visible} delay={100} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
@@ -346,8 +346,8 @@ export default function Downloads() {
                 const detected = isDetected(card.platform);
                 const liveAsset =
                   card.platform === "windows" ? release?.assets.windows :
-                  card.platform === "macos" ? release?.assets.macos :
-                  card.platform === "linux" ? release?.assets.linux : null;
+                    card.platform === "macos" ? release?.assets.macos :
+                      card.platform === "linux" ? release?.assets.linux : null;
                 const href = liveAsset?.url || card.href;
                 return (
                   <div key={card.platform} className="relative p-5 sm:p-6">
@@ -413,7 +413,7 @@ export default function Downloads() {
             <div className="px-5 py-3 sm:px-6 sm:py-4 flex flex-col gap-3">
               <p className="text-[12px] text-text-secondary leading-relaxed">
                 <span className="font-semibold text-text-primary">Or install via package manager</span>
-                <span className="text-text-muted mx-1.5">—</span>
+                <span className="text-text-muted mx-1.5">-</span>
                 no security warnings
               </p>
               <div className="flex flex-col gap-2 font-mono text-[11px]">
@@ -440,7 +440,7 @@ export default function Downloads() {
           </div>
         </FadeUp>
 
-        {/* Mobile Download Cards — 2-column grid */}
+        {/* Mobile Download Cards - 2-column grid */}
         <FadeUp visible={visible} delay={250} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
@@ -457,7 +457,7 @@ export default function Downloads() {
                     )}
 
                     <div className="flex flex-col sm:flex-row gap-5">
-                      {/* QR Code placeholder — desktop only */}
+                      {/* QR Code placeholder - desktop only */}
                       <div className="hidden md:flex flex-col items-center gap-2 shrink-0">
                         <div className="flex items-center justify-center w-[120px] h-[120px] rounded-lg border border-white/[0.06] bg-white/[0.02]">
                           <div className="flex flex-col items-center gap-1.5 text-text-muted">
@@ -495,17 +495,16 @@ export default function Downloads() {
                           {card.subtitle}
                         </p>
 
-                        {/* Store link — mobile/tablet only */}
+                        {/* Store link - mobile/tablet only */}
                         {card.href ? (
                           <a
                             href={card.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`md:hidden ${
-                              detected
+                            className={`md:hidden ${detected
                                 ? "inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-1.5 text-xs font-medium tracking-[0.06em] uppercase text-text-primary transition-all duration-200 hover:bg-accent-light hover:shadow-[0_0_20px_rgba(9,91,185,0.3)] w-fit"
                                 : "inline-flex items-center gap-1.5 rounded-full border border-white/[0.1] bg-white/[0.04] px-5 py-1.5 text-xs font-medium tracking-[0.06em] uppercase text-text-secondary transition-all duration-200 hover:bg-white/[0.08] hover:text-text-primary w-fit"
-                            }`}
+                              }`}
                           >
                             <DownloadIcon />
                             {card.platform === "android"

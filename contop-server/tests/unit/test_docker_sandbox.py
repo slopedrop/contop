@@ -1,5 +1,5 @@
 """
-Unit tests for tools/docker_sandbox.py — Docker sandbox execution (dangerous route).
+Unit tests for tools/docker_sandbox.py - Docker sandbox execution (dangerous route).
 
 Tests 5.1-5.10 from Story 3.4: successful execution, timeout enforcement,
 output truncation, Docker-unavailable fallback, container cleanup,

@@ -1,5 +1,5 @@
 """
-Unit tests for core/document_tools.py — Document I/O tools.
+Unit tests for core/document_tools.py - Document I/O tools.
 
 Tests read_pdf, read_image, read_excel, write_excel with mocked libraries
 and fixture files.

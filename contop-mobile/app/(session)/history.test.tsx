@@ -28,7 +28,7 @@ jest.mock('expo-router', () => ({
 
 jest.mock('@expo/vector-icons', () => ({ Ionicons: () => null }));
 
-// Mock component files — avoid require('react-native') inside factory
+// Mock component files - avoid require('react-native') inside factory
 // to prevent NativeWind babel transform from injecting _ReactNativeCSSInterop.
 // Components are rendered lazily via require('react') + mockRN* variables.
 const mockRNView = View;
@@ -90,7 +90,7 @@ describe('HistoryScreen', () => {
   });
 
   test('[P0] 5.6-UNIT-033: renders history-loading spinner while loading', () => {
-    sessionStorage.loadSessionIndex.mockReturnValue(new Promise(() => {}));
+    sessionStorage.loadSessionIndex.mockReturnValue(new Promise(() => { }));
     render(<HistoryScreen />);
     expect(screen.getByTestId('history-loading')).toBeTruthy();
   });
@@ -248,12 +248,12 @@ describe('HistoryScreen', () => {
     expect(screen.getByTestId('thread-entry-e2')).toBeTruthy();
     expect(screen.getByTestId('thread-entry-e3')).toBeTruthy();
 
-    // Press execute_cli filter — should hide observe_screen, keep execute_cli and non-agent_progress
+    // Press execute_cli filter - should hide observe_screen, keep execute_cli and non-agent_progress
     await act(async () => { fireEvent.press(screen.getByTestId('filter-tool-execute_cli')); });
 
-    expect(screen.getByTestId('thread-entry-e1')).toBeTruthy();   // execute_cli — shown
-    expect(screen.queryByTestId('thread-entry-e2')).toBeNull();   // observe_screen — filtered out
-    expect(screen.getByTestId('thread-entry-e3')).toBeTruthy();   // user_message — always shown
+    expect(screen.getByTestId('thread-entry-e1')).toBeTruthy();   // execute_cli - shown
+    expect(screen.queryByTestId('thread-entry-e2')).toBeNull();   // observe_screen - filtered out
+    expect(screen.getByTestId('thread-entry-e3')).toBeTruthy();   // user_message - always shown
   });
 
   test('[P0] 5.6-UNIT-038: header title in detail view shows formatted date', async () => {

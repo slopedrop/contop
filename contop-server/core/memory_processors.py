@@ -1,5 +1,5 @@
 """
-Memory processors — context management for the execution agent.
+Memory processors - context management for the execution agent.
 
 TokenLimiter: Caps total context tokens by summarizing old tool results.
 ToolCallFilter: Strips verbose fields from non-recent tool results.
@@ -78,7 +78,7 @@ class ToolCallFilter:
 class TokenLimiter:
     """Cap total context tokens by summarizing old tool results.
 
-    Uses character-based estimation (chars/4) — not precise but avoids
+    Uses character-based estimation (chars/4) - not precise but avoids
     importing a tokenizer dependency. When total tokens exceed the threshold,
     old tool results (beyond the N most recent) are replaced with 1-line summaries.
     """
@@ -112,7 +112,7 @@ class TokenLimiter:
             return contents
 
         logger.info(
-            "TokenLimiter: estimated %d tokens exceeds limit %d — truncating old results",
+            "TokenLimiter: estimated %d tokens exceeds limit %d - truncating old results",
             estimated, self.max_tokens,
         )
 
@@ -143,7 +143,7 @@ class TokenLimiter:
             # Replace with summary
             part.function_response.response = {
                 "status": status,
-                "summary": f"[Tool result truncated — {tool_name} returned {status} in {duration}ms]",
+                "summary": f"[Tool result truncated - {tool_name} returned {status} in {duration}ms]",
             }
             truncated += 1
 

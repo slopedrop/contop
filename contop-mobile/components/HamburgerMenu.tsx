@@ -42,7 +42,7 @@ export default function HamburgerMenu({
 
   return (
     <View testID="hamburger-menu-container">
-      {/* Trigger button — 36x36 glassmorphic circle */}
+      {/* Trigger button - 36x36 glassmorphic circle */}
       <Pressable
         testID="hamburger-menu-button"
         onPress={() => setOpen(true)}
@@ -79,7 +79,7 @@ export default function HamburgerMenu({
           <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
             {/* Layout section */}
             <Text style={styles.sectionLabel} accessibilityRole="header">
-              {orientation === 'portrait' ? 'LAYOUT — PORTRAIT' : 'LAYOUT — LANDSCAPE'}
+              {orientation === 'portrait' ? 'LAYOUT - PORTRAIT' : 'LAYOUT - LANDSCAPE'}
             </Text>
             {visibleOptions.map((opt) => (
               <Pressable

@@ -1,11 +1,11 @@
 """
-Local JSONL audit logger — append-only, fire-and-forget audit trail.
+Local JSONL audit logger - append-only, fire-and-forget audit trail.
 
 Logs every AI tool execution to ~/.contop/logs/session-{YYYY-MM-DD}.jsonl
 as a single JSON object per line. Write failures are caught and logged
-via Python's logging module — they never raise or block the execution pipeline.
+via Python's logging module - they never raise or block the execution pipeline.
 
-[Source: architecture.md#Data-Architecture—Audit-Log]
+[Source: architecture.md#Data-Architecture-Audit-Log]
 [Source: project-context.md#JSONL-Auditing]
 """
 
@@ -22,7 +22,7 @@ class AuditLogger:
     """Append-only JSONL audit logger for tool executions.
 
     One file per calendar day: session-{YYYY-MM-DD}.jsonl
-    All writes are fire-and-forget — errors logged, never raised.
+    All writes are fire-and-forget - errors logged, never raised.
     """
 
     def __init__(self, *, _lazy: bool = False) -> None:
@@ -87,7 +87,7 @@ class AuditLogger:
 
     @staticmethod
     def _write_line(path: Path, line: str) -> None:
-        """Synchronous file append — run via asyncio.to_thread."""
+        """Synchronous file append - run via asyncio.to_thread."""
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "a", encoding="utf-8") as f:
             f.write(line)
@@ -118,6 +118,6 @@ class AuditLogger:
         )
 
 
-# Module-level singleton (Task 1.1) — lazy init to avoid
+# Module-level singleton (Task 1.1) - lazy init to avoid
 # creating directories at import time (test isolation).
 audit_logger = AuditLogger(_lazy=True)

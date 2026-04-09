@@ -55,14 +55,14 @@ function CardHeader({ label, sub }: { label: string; sub: string }) {
    Row 1: Away Mode
    ================================================ */
 
-/* Card 1 — Away Mode Overview (split view) */
+/* Card 1 - Away Mode Overview (split view) */
 function AwayModeOverviewCard() {
   return (
     <div className="flex flex-col gap-3 p-5 sm:p-6">
       <CardHeader label="Away Mode" sub="away_mode.rs · Physical Security" />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {/* LEFT — Bystander view: locked laptop */}
+        {/* LEFT - Bystander view: locked laptop */}
         <div className="rounded-lg bg-black/40 border border-white/[0.04] p-3">
           <div className="font-mono text-[9px] text-text-muted mb-2 uppercase tracking-wider">
             Bystander sees
@@ -91,7 +91,7 @@ function AwayModeOverviewCard() {
           </div>
         </div>
 
-        {/* RIGHT — Owner view: phone with live feed */}
+        {/* RIGHT - Owner view: phone with live feed */}
         <div className="rounded-lg bg-black/40 border border-white/[0.04] p-3">
           <div className="font-mono text-[9px] text-text-muted mb-2 uppercase tracking-wider">
             Owner sees
@@ -118,7 +118,7 @@ function AwayModeOverviewCard() {
   );
 }
 
-/* Card 2 — Away Mode Features */
+/* Card 2 - Away Mode Features */
 function AwayModeFeaturesCard() {
   const features = [
     {
@@ -155,7 +155,7 @@ function AwayModeFeaturesCard() {
    Row 2: Classification & Sandbox
    ================================================ */
 
-/* Card 1 — Command Classifier */
+/* Card 1 - Command Classifier */
 function DualToolEvaluatorCard() {
   const steps = [
     { n: "1", rule: "User forced host execution", result: "run on host", color: "text-green-400" },
@@ -164,7 +164,7 @@ function DualToolEvaluatorCard() {
     { n: "4", rule: "Forbidden command (rm -rf /, format C:, mkfs…)", result: "block entirely", color: "text-red-400" },
     { n: "5", rule: "Touches protected path (/root, C:\\Windows…)", result: "sandbox it", color: "text-amber-400" },
     { n: "6", rule: "Destructive (rm, kill, DROP TABLE, taskkill…)", result: "ask user first", color: "text-yellow-300" },
-    { n: "7", rule: "Everything else — safe by default", result: "run on host", color: "text-green-400" },
+    { n: "7", rule: "Everything else - safe by default", result: "run on host", color: "text-green-400" },
   ];
 
   return (
@@ -172,7 +172,7 @@ function DualToolEvaluatorCard() {
       <CardHeader label="Command Classifier" sub="dual_tool_evaluator.py" />
 
       <div className="font-mono text-[10px] text-text-secondary leading-relaxed mb-1">
-        Every command the agent wants to run goes through this 7-step check — top to bottom, first match wins:
+        Every command the agent wants to run goes through this 7-step check - top to bottom, first match wins:
       </div>
 
       {/* Cascade */}
@@ -198,7 +198,7 @@ function DualToolEvaluatorCard() {
   );
 }
 
-/* Card 2 — Docker Sandbox */
+/* Card 2 - Docker Sandbox */
 function DockerSandboxCard() {
   const restrictions = [
     { what: "No network access", detail: "Container can't reach the internet" },
@@ -218,7 +218,7 @@ function DockerSandboxCard() {
         Risky commands run inside a locked-down Docker container:
       </div>
 
-      {/* Hardening — human-readable */}
+      {/* Hardening - human-readable */}
       <div className="flex flex-col gap-0.5">
         {restrictions.map((r) => (
           <div key={r.what} className="flex items-start gap-2 rounded-md bg-white/[0.02] border border-white/[0.04] px-2 py-1.5">
@@ -237,7 +237,7 @@ function DockerSandboxCard() {
   );
 }
 
-/* Card 3 — Mobile Confirmation */
+/* Card 3 - Mobile Confirmation */
 function ConfirmationFlowCard() {
   return (
     <div className="flex flex-col gap-3 p-5 sm:p-6">
@@ -250,7 +250,7 @@ function ConfirmationFlowCard() {
       {/* Flow sequence */}
       <div className="flex flex-col gap-1">
         {[
-          { step: "1", label: "Desktop agent pauses", detail: "\"I want to delete 3 files — approve?\"" },
+          { step: "1", label: "Desktop agent pauses", detail: "\"I want to delete 3 files - approve?\"" },
           { step: "2", label: "Your phone shows a prompt", detail: "Approve or Deny with one tap" },
           { step: "3", label: "Agent gets your answer", detail: "Proceeds only if you approved" },
         ].map((s) => (
@@ -295,7 +295,7 @@ function ConfirmationFlowCard() {
    Row 3: Logging, Auth, Config
    ================================================ */
 
-/* Card 1 — Audit Logging */
+/* Card 1 - Audit Logging */
 function AuditLoggingCard() {
   return (
     <div className="flex flex-col gap-3 p-5 sm:p-6">
@@ -345,7 +345,7 @@ function AuditLoggingCard() {
   );
 }
 
-/* Card 2 — Auth & Encryption */
+/* Card 2 - Auth & Encryption */
 function AuthEncryptionCard() {
   const tokenFields = [
     "token",
@@ -408,7 +408,7 @@ function AuthEncryptionCard() {
    Row 4: Device Management
    ================================================ */
 
-/* Card 1 — Device Dashboard */
+/* Card 1 - Device Dashboard */
 function DeviceDashboardCard() {
   const devices = [
     {
@@ -436,7 +436,7 @@ function DeviceDashboardCard() {
       <CardHeader label="Paired Devices" sub="pairing.py · Desktop UI" />
 
       <div className="font-mono text-[10px] text-text-secondary leading-relaxed mb-1">
-        See every device that can access your computer — live status, location, and connection path:
+        See every device that can access your computer - live status, location, and connection path:
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -475,13 +475,13 @@ function DeviceDashboardCard() {
           <line x1="15" y1="9" x2="9" y2="15" />
           <line x1="9" y1="9" x2="15" y2="15" />
         </svg>
-        <span className="font-mono text-[9px] text-red-400">One-click revoke — instantly disconnects and blocks the device</span>
+        <span className="font-mono text-[9px] text-red-400">One-click revoke - instantly disconnects and blocks the device</span>
       </div>
     </div>
   );
 }
 
-/* Card 2 — Alerts & Compact QR */
+/* Card 2 - Alerts & Compact QR */
 function DeviceAlertsCard() {
   return (
     <div className="flex flex-col gap-3 p-5 sm:p-6">
@@ -489,7 +489,7 @@ function DeviceAlertsCard() {
 
       {/* OS notification mockup */}
       <div className="font-mono text-[10px] text-text-secondary leading-relaxed mb-1">
-        Native OS notifications fire in real time — even when the app is minimized:
+        Native OS notifications fire in real time - even when the app is minimized:
       </div>
 
       <div className="flex flex-col gap-1">
@@ -517,7 +517,7 @@ function DeviceAlertsCard() {
           {[
             { path: "Private IP (192.168.x, 10.x)", result: "Local Network", color: "text-green-400" },
             { path: "Tailscale IP (100.64.0.0/10)", result: "Tailscale VPN", color: "text-cyan" },
-            { path: "Public IP", result: "Tunnel — geo-located", color: "text-amber-400" },
+            { path: "Public IP", result: "Tunnel - geo-located", color: "text-amber-400" },
           ].map((p) => (
             <div key={p.path} className="font-mono text-[9px] leading-relaxed">
               <span className="text-text-muted">{p.path}</span>
@@ -532,7 +532,7 @@ function DeviceAlertsCard() {
   );
 }
 
-/* Card 3 — Configurable Rules */
+/* Card 3 - Configurable Rules */
 function ConfigurableRulesCard() {
   return (
     <div className="flex flex-col gap-3 p-5 sm:p-6">
@@ -702,7 +702,7 @@ export default function Security() {
 
       <FadeUp visible={visible} delay={50} className="mb-14 text-center">
         <p className="mx-auto max-w-lg text-[15px] leading-relaxed text-text-secondary">
-          Every layer verified against the real codebase — from physical machine protection to encrypted peer-to-peer connections.
+          Every layer verified against the real codebase - from physical machine protection to encrypted peer-to-peer connections.
         </p>
       </FadeUp>
 
@@ -710,7 +710,7 @@ export default function Security() {
         role="img"
         aria-label="Security architecture: Row 1 shows Away Mode with PIN overlay and live WebRTC feed. Row 2 shows the DualToolEvaluator classification cascade, Docker sandbox hardening, and mobile confirmation flow. Row 3 shows audit logging, auth and encryption, and configurable security rules. Row 4 shows paired device management with live status dashboard, geo-location, OS alerts, and one-click revocation."
       >
-        {/* Row 1: Away Mode — 2 cards (hero) */}
+        {/* Row 1: Away Mode - 2 cards (hero) */}
         <FadeUp visible={visible} delay={100} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
@@ -720,7 +720,7 @@ export default function Security() {
           </div>
         </FadeUp>
 
-        {/* Row 2: Classification & Sandbox — 3 cards */}
+        {/* Row 2: Classification & Sandbox - 3 cards */}
         <FadeUp visible={visible} delay={250} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
@@ -731,7 +731,7 @@ export default function Security() {
           </div>
         </FadeUp>
 
-        {/* Row 3: Logging, Auth, Config — 3 cards */}
+        {/* Row 3: Logging, Auth, Config - 3 cards */}
         <FadeUp visible={visible} delay={400} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
@@ -742,7 +742,7 @@ export default function Security() {
           </div>
         </FadeUp>
 
-        {/* Row 4: Device Management — 2 cards (hero) */}
+        {/* Row 4: Device Management - 2 cards (hero) */}
         <FadeUp visible={visible} delay={550} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">

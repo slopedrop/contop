@@ -78,7 +78,7 @@ describe('QRScanner', () => {
         server_host: faker.internet.ipv4(),
         server_port: 8000,
         expires_at: faker.date.future().toISOString(),
-        // No API keys — QRScanner validates structural fields only
+        // No API keys - QRScanner validates structural fields only
       };
       const onScanSuccess = jest.fn();
       const onScanError = jest.fn();

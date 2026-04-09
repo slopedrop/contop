@@ -52,7 +52,7 @@ function CardHeader({ label, sub }: { label: string; sub: string }) {
 }
 
 /* ------------------------------------------------
-   Row 1, Card 1 — Advanced Workflows (Python)
+   Row 1, Card 1 - Advanced Workflows (Python)
    ------------------------------------------------ */
 function AdvancedWorkflowsCard() {
   const tools = [
@@ -96,7 +96,7 @@ function AdvancedWorkflowsCard() {
 }
 
 /* ------------------------------------------------
-   Row 1, Card 2 — IDE Chat (Workflow)
+   Row 1, Card 2 - IDE Chat (Workflow)
    ------------------------------------------------ */
 function IdeChatCard() {
   return (
@@ -162,7 +162,7 @@ function IdeChatCard() {
 }
 
 /* ------------------------------------------------
-   Row 1, Card 3 — Prompt Skills
+   Row 1, Card 3 - Prompt Skills
    ------------------------------------------------ */
 function PromptSkillsCard() {
   const skills = [
@@ -224,7 +224,7 @@ function PromptSkillsCard() {
 }
 
 /* ------------------------------------------------
-   Row 2, Card 1 — Skill Types
+   Row 2, Card 1 - Skill Types
    ------------------------------------------------ */
 function SkillTypesCard() {
   const types = [
@@ -278,7 +278,7 @@ function SkillTypesCard() {
 }
 
 /* ------------------------------------------------
-   Row 2, Card 2 — Skill Lifecycle
+   Row 2, Card 2 - Skill Lifecycle
    ------------------------------------------------ */
 function SkillLifecycleCard() {
   const stages = [
@@ -381,19 +381,19 @@ const descriptions = [
     icon: <PuzzleIcon />,
     category: "EXTENSIBILITY",
     title: "Extensible Agent",
-    desc: "Add new capabilities by dropping a SKILL.md file into the skills directory. The agent discovers and loads it automatically — no code changes needed.",
+    desc: "Add new capabilities by dropping a SKILL.md file into the skills directory. The agent discovers and loads it automatically - no code changes needed.",
   },
   {
     icon: <RepeatIcon />,
     category: "AUTOMATION",
     title: "Deterministic Workflows",
-    desc: "Define YAML step sequences for repetitive tasks — keyboard shortcuts, menu navigation, form filling. Runs the same way every time, no AI guesswork.",
+    desc: "Define YAML step sequences for repetitive tasks - keyboard shortcuts, menu navigation, form filling. Runs the same way every time, no AI guesswork.",
   },
   {
     icon: <WrenchIcon />,
     category: "CUSTOMIZATION",
     title: "Create Your Own",
-    desc: "Build custom skills as prompt instructions, YAML workflows, Python tools, or any combination. Manage them from the desktop GUI — discover, enable, edit.",
+    desc: "Build custom skills as prompt instructions, YAML workflows, Python tools, or any combination. Manage them from the desktop GUI - discover, enable, edit.",
   },
 ];
 
@@ -442,15 +442,15 @@ export default function Skills() {
 
       <FadeUp visible={visible} delay={50} className="mb-14 text-center">
         <p className="mx-auto max-w-lg text-[15px] leading-relaxed text-text-secondary">
-          Extensible agent capabilities via the SKILL.md standard — built-in skills included, custom skills easy to create.
+          Extensible agent capabilities via the SKILL.md standard - built-in skills included, custom skills easy to create.
         </p>
       </FadeUp>
 
       <div
         role="img"
-        aria-label="Skills system architecture: Row 1 shows built-in skills — Advanced Workflows with Python tools, IDE Chat with YAML workflows, and Prompt Skills with SKILL.md format. Row 2 shows skill types and the 5-stage lifecycle pipeline."
+        aria-label="Skills system architecture: Row 1 shows built-in skills - Advanced Workflows with Python tools, IDE Chat with YAML workflows, and Prompt Skills with SKILL.md format. Row 2 shows skill types and the 5-stage lifecycle pipeline."
       >
-        {/* Row 1: Built-in Skills — 3 cards */}
+        {/* Row 1: Built-in Skills - 3 cards */}
         <FadeUp visible={visible} delay={100} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
@@ -461,7 +461,7 @@ export default function Skills() {
           </div>
         </FadeUp>
 
-        {/* Row 2: Types + Lifecycle — 2 cards */}
+        {/* Row 2: Types + Lifecycle - 2 cards */}
         <FadeUp visible={visible} delay={250} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">

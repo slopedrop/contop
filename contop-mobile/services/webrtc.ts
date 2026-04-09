@@ -100,10 +100,10 @@ function tryWebSocket(url: string, timeoutMs: number): Promise<WebSocket> {
 /**
  * LAN-first connection with multi-fallback.
  *
- * Always tries all available paths in order — no settings gate:
- * 1. LAN (ws://server_host:server_port) — 1.5s timeout
- * 2. Tailscale (ws://tailscale_host:server_port) — 3s timeout (if tailscale_host in payload)
- * 3. Cloudflare tunnel (wss://signaling_url) — 5s timeout (if signaling_url in payload)
+ * Always tries all available paths in order - no settings gate:
+ * 1. LAN (ws://server_host:server_port) - 1.5s timeout
+ * 2. Tailscale (ws://tailscale_host:server_port) - 3s timeout (if tailscale_host in payload)
+ * 3. Cloudflare tunnel (wss://signaling_url) - 5s timeout (if signaling_url in payload)
  * 4. If all fail: throw with details
  */
 export async function connectSignalingWithFallback(

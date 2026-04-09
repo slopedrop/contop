@@ -4,7 +4,7 @@ Abstract base class for platform-specific window management adapters.
 Each adapter augments PyAutoGUI with OS-native window management capabilities
 (focus_window, list_windows) that pyautogui cannot provide alone.
 
-[Source: architecture.md — Cross-Platform OS Abstraction Layer]
+[Source: architecture.md - Cross-Platform OS Abstraction Layer]
 """
 import abc
 
@@ -45,7 +45,7 @@ class PlatformAdapter(abc.ABC):
 
         Args:
             max_depth: Maximum tree depth to walk.
-            window_title: Optional — scan this window instead of the foreground window.
+            window_title: Optional - scan this window instead of the foreground window.
                           Useful for dialogs that may not yet be the foreground window.
 
         Returns:
@@ -75,7 +75,7 @@ class PlatformAdapter(abc.ABC):
             control_type: Element's control type (e.g. 'ButtonControl', 'EditControl').
             action: 'click', 'set_value', 'toggle', 'select', 'expand', 'collapse', 'focus'.
             value: Text value for 'set_value' action (typing into text fields).
-            window_title: Optional — focus this window first before finding the element.
+            window_title: Optional - focus this window first before finding the element.
 
         Returns:
             dict with keys: found, status, element_name, element_type,

@@ -1,10 +1,10 @@
 """
-Unit tests for tools/vision_client.py — VisionClient class.
+Unit tests for tools/vision_client.py - VisionClient class.
 
 Tests ground() with mocked OpenAI client to avoid real API calls.
 Validates response parsing, error handling, and fallback behavior.
 
-[Source: tech-spec-gui-agent-optimization.md — Task 21]
+[Source: tech-spec-gui-agent-optimization.md - Task 21]
 """
 import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch

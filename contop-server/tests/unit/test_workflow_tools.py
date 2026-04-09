@@ -1,5 +1,5 @@
 """
-Unit tests for core/workflow_tools.py — Workflow-as-tools.
+Unit tests for core/workflow_tools.py - Workflow-as-tools.
 
 Tests save_dialog, launch_app, fill_form with mocked primitive tools.
 Primitives are imported lazily inside each workflow function from
@@ -55,7 +55,7 @@ class TestSaveDialog:
             "status": "success",
             "interactive_elements": [{"name": "File name:", "control_type": "Edit"}],
         })
-        # set_value fails (element not found) — click Save should never run
+        # set_value fails (element not found) - click Save should never run
         mock_execute_accessible = AsyncMock(return_value={
             "status": "error", "found": False,
             "description": "Element not found: File name:",
@@ -69,7 +69,7 @@ class TestSaveDialog:
         result = await workflow_tools.save_dialog(str(tmp_path / "never_created.txt"))
         assert result["status"] == "error"
         assert "Failed to set file name" in result["description"]
-        # Only the set_value call should have been made — Save click never reached
+        # Only the set_value call should have been made - Save click never reached
         assert mock_execute_accessible.call_count == 1
 
     async def test_save_dialog_reports_error_when_file_not_created(self, monkeypatch, tmp_path):
@@ -90,7 +90,7 @@ class TestSaveDialog:
         monkeypatch.setattr("core.agent_tools.get_ui_context", mock_get_ui_context)
         monkeypatch.setattr("core.agent_tools.execute_accessible", mock_execute_accessible)
 
-        # File path does NOT exist on disk — the fake-success case
+        # File path does NOT exist on disk - the fake-success case
         result = await workflow_tools.save_dialog(str(tmp_path / "never_created.txt"))
         assert result["status"] == "error"
         assert "file was not created" in result["description"]
@@ -150,7 +150,7 @@ class TestLaunchApp:
 
     @pytest.mark.skipif(sys.platform != "win32", reason="Windows-specific app launch fallback (PowerShell Start-Process)")
     async def test_launch_app_no_uri_scheme_fallback(self, monkeypatch):
-        """URI scheme fallback is removed — only Start-Process by name is tried."""
+        """URI scheme fallback is removed - only Start-Process by name is tried."""
         cli_calls = []
         async def mock_execute_cli(command):
             cli_calls.append(command)

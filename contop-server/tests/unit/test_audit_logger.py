@@ -1,5 +1,5 @@
 """
-Unit tests for core/audit_logger.py — JSONL audit logging.
+Unit tests for core/audit_logger.py - JSONL audit logging.
 
 Tests 5.1–5.6 from Story 4.1.
 """
@@ -205,7 +205,7 @@ class TestWriteErrorsCaughtNotRaised:
     @pytest.mark.asyncio
     async def test_write_error_does_not_raise(self, tmp_path, audit_logger):
         with patch("builtins.open", side_effect=PermissionError("No permission")):
-            # Must NOT raise — fire-and-forget
+            # Must NOT raise - fire-and-forget
             await audit_logger.log(
                 session_id="s1",
                 user_prompt="test",

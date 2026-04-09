@@ -1,5 +1,5 @@
 """
-ATDD - Story 1.4: WebRTC P2P Session Tunnel — Signaling Server Tests
+ATDD - Story 1.4: WebRTC P2P Session Tunnel - Signaling Server Tests
 Unit Tests for WebSocket signaling endpoint, token validation, and connection registry
 
 These tests validate acceptance criteria:
@@ -227,7 +227,7 @@ class TestSignalingMessageRouting:
             except Exception:
                 pass
 
-        # Then — answer sent back to client via WebSocket
+        # Then - answer sent back to client via WebSocket
         sent_messages = [
             call.args[0]
             for call in mock_ws.send_json.call_args_list
@@ -314,13 +314,13 @@ class TestSignalingMessageRouting:
                 return_value=mock_peer_manager,
             ),
         ):
-            # When / Then — no unhandled exception should propagate
+            # When / Then - no unhandled exception should propagate
             try:
                 await signaling_websocket(mock_ws)
             except Exception:
                 pass
 
-        # Then — the WebSocket should have been accepted (connection was valid)
+        # Then - the WebSocket should have been accepted (connection was valid)
         mock_ws.accept.assert_called_once()
         # And the server should not have force-closed the connection
         mock_ws.close.assert_not_called()
@@ -364,7 +364,7 @@ class TestConnectionRegistryCleanup:
             except Exception:
                 pass
 
-        # Then — the token should no longer be in the connection registry
+        # Then - the token should no longer be in the connection registry
         assert token_str not in connection_registry, (
             f"Token '{token_str}' should have been removed from connection_registry after disconnect"
         )
@@ -377,7 +377,7 @@ class TestConnectionRegistryCleanup:
         Then:  The WebSocket and peer connection must be force-closed
               and the registry entry removed
         """
-        # Given — manually seed the connection registry and active peers with a mock session
+        # Given - manually seed the connection registry and active peers with a mock session
         token_str = str(uuid.uuid4())
         mock_ws = AsyncMock()
         mock_peer_manager = AsyncMock()
@@ -387,7 +387,7 @@ class TestConnectionRegistryCleanup:
         }
         _active_peers[token_str] = mock_peer_manager
 
-        # When — import and call the force-close function
+        # When - import and call the force-close function
         from core.webrtc_signaling import force_close_session
 
         await force_close_session(token_str)

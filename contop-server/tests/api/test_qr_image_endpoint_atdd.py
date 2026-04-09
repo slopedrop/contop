@@ -1,5 +1,5 @@
 """
-ATDD - Story 1.8: Desktop GUI Application Shell — QR Image Endpoint
+ATDD - Story 1.8: Desktop GUI Application Shell - QR Image Endpoint
 API Tests for GET /api/qr-image
 
 These tests validate the acceptance criterion:
@@ -10,7 +10,7 @@ Endpoint under test:
   GET /api/qr-image  - Retrieve current QR code as PNG image
 
 RED PHASE: All tests are expected to FAIL because the endpoint does not
-exist yet.  Do NOT add skip markers — let them fail naturally.
+exist yet.  Do NOT add skip markers - let them fail naturally.
 """
 
 import pytest

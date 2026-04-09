@@ -91,7 +91,7 @@ describe('ViewLayoutManager (Story 5.2)', () => {
     for (const [layoutMode, orientation] of layouts) {
       mockStore(layoutMode, orientation);
       const { unmount } = render(<ViewLayoutManager videoContent={VIDEO} threadContent={THREAD} />);
-      // Both containers ALWAYS exist — components never unmounted
+      // Both containers ALWAYS exist - components never unmounted
       expect(screen.getByTestId('video-container')).toBeTruthy();
       expect(screen.getByTestId('thread-container')).toBeTruthy();
       expect(screen.getByTestId('video-content')).toBeTruthy();

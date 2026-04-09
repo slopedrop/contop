@@ -1,7 +1,7 @@
 """
-Workflow tools — deterministic multi-step workflows exposed as single tool calls.
+Workflow tools - deterministic multi-step workflows exposed as single tool calls.
 
-These are NOT LLM-driven — they orchestrate existing primitives with deterministic
+These are NOT LLM-driven - they orchestrate existing primitives with deterministic
 branching/conditions. The LLM decides *what* to do; the workflow handles *how*.
 
 All tools follow the standard async pattern: async def, dict return with
@@ -28,12 +28,12 @@ _MODIFIER = "command" if _PLATFORM == "Darwin" else "ctrl"
 
 
 async def save_dialog(file_path: str, file_type: str = "") -> dict:
-    """Automate a Save As dialog — open dialog, enter path, click Save.
+    """Automate a Save As dialog - open dialog, enter path, click Save.
 
     Orchestrates execute_gui, wait, get_ui_context, and execute_accessible
     to complete a Save As workflow without LLM involvement. Verifies each
     step's result and checks that the file exists on disk before reporting
-    success — a "success" return means the file is really there.
+    success - a "success" return means the file is really there.
 
     Args:
         file_path: Full path to save the file to.
@@ -57,7 +57,7 @@ async def save_dialog(file_path: str, file_type: str = "") -> dict:
     try:
         from core.agent_tools import execute_gui, wait, get_ui_context, execute_accessible
 
-        # Step 1: Send Ctrl+S — the app decides whether to open Save or Save As
+        # Step 1: Send Ctrl+S - the app decides whether to open Save or Save As
         await execute_gui(action="hotkey", target="save", coordinates={"keys": [_MODIFIER, "s"]})
         steps += 1
         await wait(2)
@@ -149,7 +149,7 @@ async def save_dialog(file_path: str, file_type: str = "") -> dict:
 
 
 async def open_dialog(file_path: str) -> dict:
-    """Automate an Open dialog — open dialog, enter path, click Open.
+    """Automate an Open dialog - open dialog, enter path, click Open.
 
     Verifies each step's result before reporting success.
 
@@ -335,7 +335,7 @@ async def launch_app(name: str, wait_ready: bool = True) -> dict:
             launched = False
             name_lower = name.lower()
 
-            # Launch directly via subprocess.Popen — avoids the
+            # Launch directly via subprocess.Popen - avoids the
             # execute_cli → Git Bash → PowerShell chain which can
             # trigger Windows "Select an app" dialogs.
             import shutil as _shutil
@@ -357,7 +357,7 @@ async def launch_app(name: str, wait_ready: bool = True) -> dict:
             cmd = f'open -a {shlex.quote(name)}'
             await execute_cli(command=cmd)
         else:
-            # Linux: try multiple strategies — not all apps have a PATH binary.
+            # Linux: try multiple strategies - not all apps have a PATH binary.
             launched = False
             # 1. Try direct command (works for apps on PATH)
             which_result = await execute_cli(command=f'which {shlex.quote(name.lower())}')
@@ -379,7 +379,7 @@ async def launch_app(name: str, wait_ready: bool = True) -> dict:
                 snap_result = await execute_cli(command=f'snap run {shlex.quote(name.lower())}')
                 if snap_result.get("status") == "success":
                     launched = True
-            # NOTE: No URI-scheme fallback (xdg-open name:) — same issue
+            # NOTE: No URI-scheme fallback (xdg-open name:) - same issue
             # as Windows: triggers error dialogs for regular apps.
 
         if not wait_ready:
@@ -390,7 +390,7 @@ async def launch_app(name: str, wait_ready: bool = True) -> dict:
                 "duration_ms": int((_time.monotonic() - start) * 1000),
             }
 
-        # Poll for window to appear — try both exact name and common variants
+        # Poll for window to appear - try both exact name and common variants
         matched_title = ""
         name_lower = name.lower()
         # Some apps use different window titles (e.g., "WhatsApp" → "WhatsApp Desktop")
@@ -426,7 +426,7 @@ async def launch_app(name: str, wait_ready: bool = True) -> dict:
             from core.agent_tools import process_info as _pi
             pi_result = await _pi(name=name)
             if pi_result.get("status") == "success" and pi_result.get("processes"):
-                # Process is running — try focusing via partial title match
+                # Process is running - try focusing via partial title match
                 wl_result = await _wl()
                 if wl_result.get("status") == "success":
                     for title in wl_result.get("windows", []):
@@ -450,7 +450,7 @@ async def launch_app(name: str, wait_ready: bool = True) -> dict:
                 "duration_ms": int((_time.monotonic() - start) * 1000),
             }
 
-        # No window found — check if process is at least running
+        # No window found - check if process is at least running
         from core.agent_tools import process_info as _pi
         pi_check = await _pi(name=name)
         has_process = (
@@ -1013,7 +1013,7 @@ async def set_env_var(name: str, value: str, scope: str = "session") -> dict:
 async def change_setting(setting_path: str, value: str) -> dict:
     """Change a system setting by navigating the Settings app.
 
-    This workflow is fragile — settings UIs change across OS versions.
+    This workflow is fragile - settings UIs change across OS versions.
     Falls back to clear error messages when navigation fails.
 
     Args:
@@ -1044,7 +1044,7 @@ async def change_setting(setting_path: str, value: str) -> dict:
             await wait(1)
 
         # Try to set the value
-        # This is inherently fragile — best effort
+        # This is inherently fragile - best effort
         result = await execute_accessible(action="set_value", element_name=parts[-1], value=value)
 
         return {

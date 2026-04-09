@@ -35,11 +35,11 @@ jest.mock('../../services/aiSettings', () => ({
 
 jest.mock('../../constants/providerConfig', () => ({
   LLM_MODELS: [
-    { value: 'gemini-3.1-pro-preview', label: 'Gemini 3.1 Pro',       description: 'Most powerful · Preview', cost: '$2.00 in · $12.00 out /1M' },
-    { value: 'gemini-3-flash-preview', label: 'Gemini 3 Flash',        description: 'Fast · Preview',          cost: '$0.50 in · $3.00 out /1M'  },
-    { value: 'gemini-2.5-pro',         label: 'Gemini 2.5 Pro',        description: 'Stable · Powerful',       cost: '$1.25 in · $10.00 out /1M' },
-    { value: 'gemini-2.5-flash',       label: 'Gemini 2.5 Flash',      description: 'Stable · Default',        cost: '$0.30 in · $2.50 out /1M'  },
-    { value: 'gemini-2.5-flash-lite',  label: 'Gemini 2.5 Flash Lite', description: 'Stable · Fastest',        cost: '$0.10 in · $0.40 out /1M'  },
+    { value: 'gemini-3.1-pro-preview', label: 'Gemini 3.1 Pro', description: 'Most powerful · Preview', cost: '$2.00 in · $12.00 out /1M' },
+    { value: 'gemini-3-flash-preview', label: 'Gemini 3 Flash', description: 'Fast · Preview', cost: '$0.50 in · $3.00 out /1M' },
+    { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro', description: 'Stable · Powerful', cost: '$1.25 in · $10.00 out /1M' },
+    { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash', description: 'Stable · Default', cost: '$0.30 in · $2.50 out /1M' },
+    { value: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite', description: 'Stable · Fastest', cost: '$0.10 in · $0.40 out /1M' },
   ],
   GEMINI_TEXT_MODEL: 'gemini-2.5-flash',
   SYSTEM_INSTRUCTION: 'Default system instruction for tests.',
@@ -119,7 +119,7 @@ jest.mock('../../stores/useAIStore', () => {
       () => getFullState(),
       {
         getState: getFullState,
-        subscribe: () => () => {},
+        subscribe: () => () => { },
       },
     ),
   };
@@ -153,7 +153,7 @@ describe('SettingsScreen', () => {
   });
 
   test('[P0] 5.7-SCREEN-001: renders conversation model picker trigger and shows all model options in dropdown', async () => {
-    // Use real timers — fake timers prevent async Promise resolution in waitFor
+    // Use real timers - fake timers prevent async Promise resolution in waitFor
     jest.useRealTimers();
 
     render(<SettingsScreen />);
@@ -290,7 +290,7 @@ describe('SettingsScreen', () => {
       fireEvent.press(screen.getByTestId('conversation-model-trigger'));
     });
 
-    // Gemini 2.5 Flash should be active (default) — its option should be visible
+    // Gemini 2.5 Flash should be active (default) - its option should be visible
     const flashOption = screen.getByTestId('model-option-gemini-2.5-flash');
     expect(flashOption).toBeTruthy();
     expect(flashOption.props.accessibilityState?.checked).toBe(true);
@@ -445,7 +445,7 @@ describe('Forget Connection', () => {
   });
 
   afterEach(() => {
-    // @ts-expect-error — restore global fetch
+    // @ts-expect-error - restore global fetch
     delete global.fetch;
   });
 

@@ -11,7 +11,7 @@ const MAX_GAP_MS = 2000;
  * RequestPacer enforces a natural delay between consecutive requests.
  *
  * This prevents burst patterns that would be detectable by provider
- * telemetry — a developer using a CLI doesn't send 10 requests/second.
+ * telemetry - a developer using a CLI doesn't send 10 requests/second.
  */
 export class RequestPacer {
   private lastRequestTime = 0;

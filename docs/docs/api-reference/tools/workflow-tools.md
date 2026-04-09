@@ -62,7 +62,7 @@ Open a file in its default application.
 - Uses `os.startfile()` on Windows, `open` on macOS, `xdg-open` on Linux
 - Polls for the application window to appear and returns the matched window title
 - Use this instead of `launch_app` when opening a specific file (`.xlsx`, `.pdf`, `.docx`, `.png`, etc.)
-- Do NOT pass file paths to `launch_app` — use `open_file` instead
+- Do NOT pass file paths to `launch_app` - use `open_file` instead
 
 ## `close_app`
 
@@ -98,7 +98,7 @@ Install an application via platform package manager or installer.
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `app_name` | `string` | Application name or package identifier |
-| `method` | `string` | Installation method (optional — auto-detected) |
+| `method` | `string` | Installation method (optional - auto-detected) |
 
 **Classification:** Host
 

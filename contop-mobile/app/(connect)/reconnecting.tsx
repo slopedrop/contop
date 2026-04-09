@@ -33,10 +33,10 @@ export default function ReconnectingScreen(): React.JSX.Element {
     return () => {
       mountedRef.current = false;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
   }, []);
 
-  // Navigate to session when connected — pass the payload via bridge so the
+  // Navigate to session when connected - pass the payload via bridge so the
   // session screen can reconnect with the correct connection_type (temp vs permanent).
   // Each screen has its own useWebRTC() hook instance, so the session screen
   // must call connect() itself after the reconnecting screen's hook unmounts.
@@ -138,7 +138,7 @@ export default function ReconnectingScreen(): React.JSX.Element {
       setFailed(false);
       attemptConnection(storedPayloadRef.current, 1);
     } else {
-      // No stored payload to retry with — go back to connect
+      // No stored payload to retry with - go back to connect
       router.replace('/(connect)/connect');
     }
   }
@@ -161,7 +161,7 @@ export default function ReconnectingScreen(): React.JSX.Element {
     if (isConfirming) return;
     setIsConfirming(true);
 
-    // Best-effort server notification with 3s timeout — never blocks local cleanup
+    // Best-effort server notification with 3s timeout - never blocks local cleanup
     try {
       const payload = storedPayloadRef.current;
       if (payload) {
@@ -176,14 +176,14 @@ export default function ReconnectingScreen(): React.JSX.Element {
           try {
             await fetch(`${base}/api/pair`, { method: 'DELETE', signal: ctrl.signal });
             clearTimeout(timer);
-            break; // Success — no need to try other hosts
-          } catch { /* Host unreachable or timed out — try next */ }
+            break; // Success - no need to try other hosts
+          } catch { /* Host unreachable or timed out - try next */ }
         }
         clearTimeout(timer);
       }
-    } catch { /* Ignore — local cleanup proceeds regardless */ }
+    } catch { /* Ignore - local cleanup proceeds regardless */ }
 
-    // Always clean up locally — wrapped so failures still navigate away
+    // Always clean up locally - wrapped so failures still navigate away
     try {
       disconnect();
       await clearPairingToken();
@@ -200,7 +200,7 @@ export default function ReconnectingScreen(): React.JSX.Element {
         <ContopIcon size={56} color="#ffffff" />
       </View>
 
-      {/* Spinner — hidden once all attempts exhausted */}
+      {/* Spinner - hidden once all attempts exhausted */}
       {!failed && (
         <ActivityIndicator
           testID="reconnecting-spinner"

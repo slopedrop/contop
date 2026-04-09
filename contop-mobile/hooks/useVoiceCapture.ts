@@ -58,7 +58,7 @@ export function useVoiceCapture() {
         channels: 1,
         bitsPerSample: 16,
         audioSource: 6, // VOICE_RECOGNITION (Android); iOS ignores this
-        wavFile: '', // Not recording to file — streaming only
+        wavFile: '', // Not recording to file - streaming only
       });
 
       audioChunksRef.current = [];

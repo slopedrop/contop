@@ -52,7 +52,7 @@ function CardHeader({ label, sub }: { label: string; sub: string }) {
 }
 
 /* ------------------------------------------------
-   Row 1, Card 1 — Terminal
+   Row 1, Card 1 - Terminal
    ------------------------------------------------ */
 function TerminalCard() {
   return (
@@ -75,7 +75,7 @@ function TerminalCard() {
       </div>
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Run shell commands on your desktop just like you would in a terminal — install packages, run scripts, manage files.
+        Run shell commands on your desktop just like you would in a terminal - install packages, run scripts, manage files.
       </p>
 
       {/* Safety features */}
@@ -96,7 +96,7 @@ function TerminalCard() {
 }
 
 /* ------------------------------------------------
-   Row 1, Card 2 — Screen Control
+   Row 1, Card 2 - Screen Control
    ------------------------------------------------ */
 function ScreenControlCard() {
   return (
@@ -104,7 +104,7 @@ function ScreenControlCard() {
       <CardHeader label="Screen Control" sub="See & Interact" />
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        The agent sees your screen, identifies every button and element, then clicks, types, and scrolls — just like a person would.
+        The agent sees your screen, identifies every button and element, then clicks, types, and scrolls - just like a person would.
       </p>
 
       {/* How it works */}
@@ -141,7 +141,7 @@ function ScreenControlCard() {
 }
 
 /* ------------------------------------------------
-   Row 1, Card 3 — Browser
+   Row 1, Card 3 - Browser
    ------------------------------------------------ */
 function BrowserCard() {
   return (
@@ -149,7 +149,7 @@ function BrowserCard() {
       <CardHeader label="Browser" sub="Navigate & Extract" />
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Controls Chrome directly — no screenshots needed. Navigates pages, fills forms, clicks buttons, and reads content efficiently.
+        Controls Chrome directly - no screenshots needed. Navigates pages, fills forms, clicks buttons, and reads content efficiently.
       </p>
 
       {/* What it can do */}
@@ -172,7 +172,7 @@ function BrowserCard() {
       {/* Efficiency callout */}
       <div className="rounded-md bg-cyan/[0.04] border border-cyan/10 px-3 py-2">
         <p className="text-[11px] text-text-secondary leading-relaxed">
-          Reads page text directly instead of taking screenshots — 10x more efficient for the AI.
+          Reads page text directly instead of taking screenshots - 10x more efficient for the AI.
         </p>
       </div>
     </div>
@@ -180,7 +180,7 @@ function BrowserCard() {
 }
 
 /* ------------------------------------------------
-   Row 2, Card 1 — Files & Documents
+   Row 2, Card 1 - Files & Documents
    ------------------------------------------------ */
 function FilesCard() {
   return (
@@ -188,7 +188,7 @@ function FilesCard() {
       <CardHeader label="Files" sub="Read · Edit · Search" />
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Works with any file on your machine — text, code, PDFs, images, and Excel spreadsheets.
+        Works with any file on your machine - text, code, PDFs, images, and Excel spreadsheets.
       </p>
 
       <div className="flex flex-col gap-1">
@@ -215,7 +215,7 @@ function FilesCard() {
 }
 
 /* ------------------------------------------------
-   Row 2, Card 2 — Windows & System
+   Row 2, Card 2 - Windows & System
    ------------------------------------------------ */
 function WindowCard() {
   return (
@@ -223,7 +223,7 @@ function WindowCard() {
       <CardHeader label="Windows" sub="Cross-Platform" />
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Manage windows, read the clipboard, monitor processes, and download files — works the same on every platform.
+        Manage windows, read the clipboard, monitor processes, and download files - works the same on every platform.
       </p>
 
       {/* Capabilities */}
@@ -260,7 +260,7 @@ function WindowCard() {
 }
 
 /* ------------------------------------------------
-   Row 2, Card 3 — Apps & Skills
+   Row 2, Card 3 - Apps & Skills
    ------------------------------------------------ */
 function AppsCard() {
   return (
@@ -289,7 +289,7 @@ function AppsCard() {
       <div className="rounded-lg bg-purple/[0.04] border border-purple/10 p-3">
         <p className="font-mono text-[10px] font-semibold text-text-primary mb-1.5">Custom Skills</p>
         <p className="text-[11px] text-text-secondary leading-relaxed mb-2">
-          Teach the agent new abilities by creating reusable skills — chain multiple steps into one command.
+          Teach the agent new abilities by creating reusable skills - chain multiple steps into one command.
         </p>
         <div className="flex items-center gap-1.5">
           {["Prompt", "Workflow", "Python", "Mixed"].map((t) => (
@@ -342,7 +342,7 @@ const descriptions = [
     icon: <TerminalIcon />,
     category: "EXECUTION",
     title: "Three ways to control your desktop",
-    desc: "Run terminal commands, automate GUI interactions by seeing your screen, or control Chrome directly — the agent picks the best approach for each task.",
+    desc: "Run terminal commands, automate GUI interactions by seeing your screen, or control Chrome directly - the agent picks the best approach for each task.",
   },
   {
     icon: <FolderIcon />,
@@ -354,7 +354,7 @@ const descriptions = [
     icon: <PuzzleIcon />,
     category: "EXTENSIBILITY",
     title: "Teach it new tricks",
-    desc: "Create custom skills to automate your unique workflows. Chain actions together, save them once, and reuse them forever — no coding required.",
+    desc: "Create custom skills to automate your unique workflows. Chain actions together, save them once, and reuse them forever - no coding required.",
   },
 ];
 
@@ -412,7 +412,7 @@ export default function AgentTools() {
         role="img"
         aria-label="Agent automation tools: Row 1 shows terminal command execution, screen control with AI vision, and browser automation. Row 2 shows file and document handling, cross-platform window management, and app launching with custom skills."
       >
-        {/* Row 1: Execution tools — 3 cards */}
+        {/* Row 1: Execution tools - 3 cards */}
         <FadeUp visible={visible} delay={100} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
@@ -423,7 +423,7 @@ export default function AgentTools() {
           </div>
         </FadeUp>
 
-        {/* Row 2: Support tools — 3 cards */}
+        {/* Row 2: Support tools - 3 cards */}
         <FadeUp visible={visible} delay={250} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">

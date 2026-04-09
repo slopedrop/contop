@@ -25,7 +25,7 @@ describe('ScreenContainer', () => {
     );
     const tree = toJSON();
     expect(tree).toBeTruthy();
-    // Default edges=['top', 'bottom'] — only requested edges are set,
+    // Default edges=['top', 'bottom'] - only requested edges are set,
     // left/right are omitted so className padding is not overridden
     expect(tree.props.style).toEqual({
       paddingTop: 44,

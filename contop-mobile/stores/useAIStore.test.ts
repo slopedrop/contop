@@ -9,35 +9,35 @@ describe('useAIStore Zustand store', () => {
 
   describe('connectionStatus', () => {
     test('[P0] 1.4-UNIT-014a: initial connectionStatus is "disconnected"', () => {
-      // Given — a freshly initialized Zustand store
+      // Given - a freshly initialized Zustand store
 
-      // When — reading the initial state
+      // When - reading the initial state
       const state = useAIStore.getState();
 
-      // Then — connectionStatus defaults to 'disconnected'
+      // Then - connectionStatus defaults to 'disconnected'
       expect(state.connectionStatus).toBe('disconnected');
     });
 
     test('[P0] 1.4-UNIT-014b: setConnectionStatus() updates state', () => {
-      // Given — the store is in its initial state with connectionStatus 'disconnected'
+      // Given - the store is in its initial state with connectionStatus 'disconnected'
       expect(useAIStore.getState().connectionStatus).toBe('disconnected');
 
-      // When — setConnectionStatus is called with 'connected'
+      // When - setConnectionStatus is called with 'connected'
       useAIStore.getState().setConnectionStatus('connected');
 
-      // Then — the connectionStatus is updated to 'connected'
+      // Then - the connectionStatus is updated to 'connected'
       expect(useAIStore.getState().connectionStatus).toBe('connected');
 
-      // When — setConnectionStatus is called with 'reconnecting'
+      // When - setConnectionStatus is called with 'reconnecting'
       useAIStore.getState().setConnectionStatus('reconnecting');
 
-      // Then — the connectionStatus is updated to 'reconnecting'
+      // Then - the connectionStatus is updated to 'reconnecting'
       expect(useAIStore.getState().connectionStatus).toBe('reconnecting');
 
-      // When — setConnectionStatus is called with 'disconnected'
+      // When - setConnectionStatus is called with 'disconnected'
       useAIStore.getState().setConnectionStatus('disconnected');
 
-      // Then — the connectionStatus is updated back to 'disconnected'
+      // Then - the connectionStatus is updated back to 'disconnected'
       expect(useAIStore.getState().connectionStatus).toBe('disconnected');
     });
   });
@@ -67,29 +67,29 @@ describe('useAIStore Zustand store', () => {
 
   describe('aiState', () => {
     test('[P1] 1.4-UNIT-014c: initial aiState is "idle"', () => {
-      // Given — a freshly initialized Zustand store
+      // Given - a freshly initialized Zustand store
 
-      // When — reading the initial state
+      // When - reading the initial state
       const state = useAIStore.getState();
 
-      // Then — aiState defaults to 'idle'
+      // Then - aiState defaults to 'idle'
       expect(state.aiState).toBe('idle');
     });
   });
 
   describe('resetStore (Story 1.5)', () => {
     test('[P0] 1.5-UNIT-008: resetStore() resets all state to initial values', () => {
-      // Given — store has non-default state
+      // Given - store has non-default state
       const store = useAIStore;
       store.getState().setConnectionStatus('connected');
       store.getState().setAIState('processing');
       store.getState().setConnectionFlow('session');
       store.getState().addExecutionEntry({ id: 'e1', type: 'user_message', content: 'test', timestamp: Date.now() });
 
-      // When — resetStore() is called
+      // When - resetStore() is called
       store.getState().resetStore();
 
-      // Then — all state is reset to initial values
+      // Then - all state is reset to initial values
       const state = store.getState();
       expect(state.connectionStatus).toBe('disconnected');
       expect(state.aiState).toBe('idle');
@@ -98,18 +98,18 @@ describe('useAIStore Zustand store', () => {
     });
 
     test('[P0] 5.8-UNIT-001: softReset() preserves isHostKeepAwake, hardReset() clears it', () => {
-      // Given — keep-awake is active
+      // Given - keep-awake is active
       useAIStore.getState().setIsHostKeepAwake(true);
       expect(useAIStore.getState().isHostKeepAwake).toBe(true);
 
-      // When — softReset() is called (e.g. on session disconnect)
+      // When - softReset() is called (e.g. on session disconnect)
       useAIStore.getState().softReset();
-      // Then — isHostKeepAwake is preserved (same server)
+      // Then - isHostKeepAwake is preserved (same server)
       expect(useAIStore.getState().isHostKeepAwake).toBe(true);
 
-      // When — hardReset() is called (e.g. forget connection)
+      // When - hardReset() is called (e.g. forget connection)
       useAIStore.getState().hardReset();
-      // Then — isHostKeepAwake is cleared (may connect to different server)
+      // Then - isHostKeepAwake is cleared (may connect to different server)
       expect(useAIStore.getState().isHostKeepAwake).toBe(false);
     });
   });
@@ -139,7 +139,7 @@ describe('useAIStore Zustand store', () => {
       };
       useAIStore.getState().addExecutionEntry(entry);
 
-      // Update only the status — callId and name should be preserved
+      // Update only the status - callId and name should be preserved
       useAIStore.getState().updateExecutionEntry('tc1', {
         metadata: { status: 'success' },
       });
@@ -170,7 +170,7 @@ describe('useAIStore Zustand store', () => {
       };
       useAIStore.getState().addExecutionEntry(entry);
 
-      // Update content only — metadata should stay intact
+      // Update content only - metadata should stay intact
       useAIStore.getState().updateExecutionEntry('tc1', { content: 'updated' });
 
       const updated = useAIStore.getState().executionEntries[0];
@@ -218,13 +218,13 @@ describe('useAIStore Zustand store', () => {
     });
 
     test('[P0] 5.2-UNIT-004: setLayoutMode() updates layoutMode and preferred portrait layout when portrait', () => {
-      // Given — orientation is portrait (default)
+      // Given - orientation is portrait (default)
       expect(useAIStore.getState().orientation).toBe('portrait');
 
-      // When — setLayoutMode is called
+      // When - setLayoutMode is called
       useAIStore.getState().setLayoutMode('video-focus');
 
-      // Then — layoutMode and preferred portrait layout update
+      // Then - layoutMode and preferred portrait layout update
       expect(useAIStore.getState().layoutMode).toBe('video-focus');
       expect(useAIStore.getState().preferredPortraitLayout).toBe('video-focus');
       // Landscape preference unchanged
@@ -232,13 +232,13 @@ describe('useAIStore Zustand store', () => {
     });
 
     test('[P0] 5.2-UNIT-005: setLayoutMode() updates preferred landscape layout when landscape', () => {
-      // Given — orientation is landscape
+      // Given - orientation is landscape
       useAIStore.getState().setOrientation('landscape');
 
-      // When — setLayoutMode is called with a landscape layout
+      // When - setLayoutMode is called with a landscape layout
       useAIStore.getState().setLayoutMode('fullscreen-video');
 
-      // Then — landscapePreferred updates, portrait unchanged
+      // Then - landscapePreferred updates, portrait unchanged
       expect(useAIStore.getState().layoutMode).toBe('fullscreen-video');
       expect(useAIStore.getState().preferredLandscapeLayout).toBe('fullscreen-video');
       expect(useAIStore.getState().preferredPortraitLayout).toBe('split-view');
@@ -250,14 +250,14 @@ describe('useAIStore Zustand store', () => {
     });
 
     test('[P0] 5.2-UNIT-007: resetStore() resets layout state to defaults', () => {
-      // Given — store has non-default layout state
+      // Given - store has non-default layout state
       useAIStore.getState().setOrientation('landscape');
       useAIStore.getState().setLayoutMode('fullscreen-video');
 
-      // When — resetStore is called
+      // When - resetStore is called
       useAIStore.getState().resetStore();
 
-      // Then — layout state reverts to defaults
+      // Then - layout state reverts to defaults
       const state = useAIStore.getState();
       expect(state.layoutMode).toBe('split-view');
       expect(state.orientation).toBe('portrait');

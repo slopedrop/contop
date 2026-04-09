@@ -179,7 +179,7 @@ export default function SettingsScreen(): React.JSX.Element {
     if (isConfirming) return;
     setIsConfirming(true);
 
-    // Best-effort server notification with 3s timeout — never blocks local cleanup
+    // Best-effort server notification with 3s timeout - never blocks local cleanup
     try {
       const payload = await getPairingToken();
       if (payload) {
@@ -194,14 +194,14 @@ export default function SettingsScreen(): React.JSX.Element {
           try {
             await fetch(`${base}/api/pair`, { method: 'DELETE', signal: ctrl.signal });
             clearTimeout(timer);
-            break; // Success — no need to try other hosts
-          } catch { /* Host unreachable or timed out — try next */ }
+            break; // Success - no need to try other hosts
+          } catch { /* Host unreachable or timed out - try next */ }
         }
         clearTimeout(timer);
       }
-    } catch { /* Ignore — local cleanup proceeds regardless */ }
+    } catch { /* Ignore - local cleanup proceeds regardless */ }
 
-    // Always clean up locally — wrapped so failures still navigate away
+    // Always clean up locally - wrapped so failures still navigate away
     try {
       disconnect();
       await clearPairingToken();
@@ -217,9 +217,9 @@ export default function SettingsScreen(): React.JSX.Element {
 
   const STT_OPTIONS: Array<{ value: STTProviderType; label: string; description: string }> = [
     { value: 'gemini', label: 'Gemini', description: 'Uses Gemini generateContent for transcription' },
-    { value: 'openai', label: 'OpenAI Whisper', description: 'Dedicated STT API — fast and accurate' },
+    { value: 'openai', label: 'OpenAI Whisper', description: 'Dedicated STT API - fast and accurate' },
     { value: 'openrouter', label: 'OpenRouter', description: 'Whisper via OpenRouter gateway' },
-    { value: 'disabled', label: 'Disabled', description: 'Voice input disabled — text only' },
+    { value: 'disabled', label: 'Disabled', description: 'Voice input disabled - text only' },
   ];
 
   function handleSTTSelect(value: STTProviderType) {
@@ -311,7 +311,7 @@ export default function SettingsScreen(): React.JSX.Element {
                 </View>
                 <Text style={styles.pickerDescription}>{activeExecutionModel.description}</Text>
                 {useAIStore.getState().isSubscriptionActive(getProviderForModel(settings.executionModel)) && (
-                  <Text style={styles.pickerHint}>Vision fallback unavailable via CLI proxy — uses local vision backend only</Text>
+                  <Text style={styles.pickerHint}>Vision fallback unavailable via CLI proxy - uses local vision backend only</Text>
                 )}
               </View>
               <Ionicons name="chevron-down" size={16} color="#6B7280" />
@@ -355,7 +355,7 @@ export default function SettingsScreen(): React.JSX.Element {
           </Pressable>
         </View>
 
-        {/* Subscription Mode — right after model pickers */}
+        {/* Subscription Mode - right after model pickers */}
         {providerAuth && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
@@ -513,7 +513,7 @@ export default function SettingsScreen(): React.JSX.Element {
             </View>
           </View>
 
-          {/* Away Mode — engage/disengage from phone */}
+          {/* Away Mode - engage/disengage from phone */}
           <Pressable
             testID="away-mode-button"
             onPress={handleAwayModeToggle}
@@ -531,7 +531,7 @@ export default function SettingsScreen(): React.JSX.Element {
             </Text>
           </Pressable>
 
-          {/* Lock Screen — button or inline confirmation */}
+          {/* Lock Screen - button or inline confirmation */}
           {!showLockConfirm ? (
             <Pressable
               testID="lock-screen-button"

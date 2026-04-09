@@ -1,4 +1,4 @@
-// Global test setup — ensure native Expo modules are mocked in all test files
+// Global test setup - ensure native Expo modules are mocked in all test files
 jest.mock('expo-camera');
 jest.mock('expo-blur', () => ({
   BlurView: ({ children, style, ...props }) =>

@@ -1,5 +1,5 @@
 """
-In-process OmniParser V2 — auto-downloads models from HuggingFace and runs
+In-process OmniParser V2 - auto-downloads models from HuggingFace and runs
 UI element detection locally (no separate server needed).
 
 Models used:
@@ -26,15 +26,15 @@ logger = logging.getLogger(__name__)
 
 # HuggingFace model ID for OmniParser V2 weights
 HF_MODEL_ID = "microsoft/OmniParser-v2.0"
-# Default cache dir — follows HuggingFace convention
+# Default cache dir - follows HuggingFace convention
 _WEIGHTS_DIR: Path | None = None
 
 # Detection thresholds
-BOX_THRESHOLD = 0.20  # Raised from 0.05 — eliminates low-confidence noise while keeping real UI elements
+BOX_THRESHOLD = 0.20  # Raised from 0.05 - eliminates low-confidence noise while keeping real UI elements
 IOU_THRESHOLD = 0.7
 OCR_CONFIDENCE = 0.8
 YOLO_IMGSZ = 640  # Overridden to 416 on CPU at runtime (see _run_yolo)
-CAPTION_BATCH_SIZE = 4  # Keep small — CPU can't handle large batches (128 needs ~2.4 GB)
+CAPTION_BATCH_SIZE = 4  # Keep small - CPU can't handle large batches (128 needs ~2.4 GB)
 ICON_CROP_SIZE = 64
 
 # Color palette for bounding box annotations
@@ -138,7 +138,7 @@ class OmniParserLocal:
         self._yolo = YOLO(str(yolo_path))
         logger.info("YOLO model loaded from %s", yolo_path)
 
-        # Florence-2 icon captioner — only loaded on GPU.
+        # Florence-2 icon captioner - only loaded on GPU.
         # On CPU, captioning is skipped (too slow at ~30s per screenshot) and the
         # agent identifies elements visually from the annotated screenshot instead.
         if self._device.type != "cpu":
@@ -156,7 +156,7 @@ class OmniParserLocal:
             ).to(self._device)
             logger.info("Florence-2 caption model loaded from %s", caption_path)
         else:
-            logger.info("Skipping Florence-2 load (CPU mode — captioning disabled for speed)")
+            logger.info("Skipping Florence-2 load (CPU mode - captioning disabled for speed)")
 
         # EasyOCR
         self._load_status = "Loading text recognition (EasyOCR)..."
@@ -334,11 +334,11 @@ class OmniParserLocal:
                     intersection = self._intersection_area(icon["bbox"], ocr_elem["bbox"])
 
                     if ocr_area > 0 and intersection / ocr_area > 0.8:
-                        # OCR is inside icon — absorb text
+                        # OCR is inside icon - absorb text
                         absorbed_text = ocr_elem["content"]
                         remove_ocr_indices.append(idx)
                     elif icon_area > 0 and intersection / icon_area > 0.8:
-                        # Icon is inside OCR — discard icon
+                        # Icon is inside OCR - discard icon
                         icon_inside_ocr = True
                         break
 
@@ -366,7 +366,7 @@ class OmniParserLocal:
     ) -> None:
         """Caption icon elements that have no text content using Florence-2.
 
-        On CPU, captioning is skipped entirely — it takes ~30s per screenshot
+        On CPU, captioning is skipped entirely - it takes ~30s per screenshot
         and the agent can identify elements visually from the annotated screenshot
         with numbered bounding boxes. Icons get a generic "icon" label instead.
         """
@@ -377,12 +377,12 @@ class OmniParserLocal:
         if not uncaptioned:
             return
 
-        # Skip captioning on CPU — too slow (~30s), agent uses visual screenshot instead
+        # Skip captioning on CPU - too slow (~30s), agent uses visual screenshot instead
         if self._device.type == "cpu":
             for idx, _ in uncaptioned:
                 elements[idx]["content"] = "icon"
             logger.info(
-                "Skipped Florence-2 captioning for %d icons (CPU mode — too slow)",
+                "Skipped Florence-2 captioning for %d icons (CPU mode - too slow)",
                 len(uncaptioned),
             )
             return
@@ -532,7 +532,7 @@ async def preload_omniparser() -> None:
     """Eagerly load OmniParser models in a background thread.
 
     Call this at server startup so models are warm by the time the first
-    observe_screen request arrives.  Safe to call multiple times — loading
+    observe_screen request arrives.  Safe to call multiple times - loading
     is idempotent.
     """
     local = get_omniparser_local()

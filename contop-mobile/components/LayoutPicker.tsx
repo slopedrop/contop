@@ -31,7 +31,7 @@ export default function LayoutPicker({ className, onDisconnect }: LayoutPickerPr
 
   return (
     <View testID="layout-picker-container" className={className}>
-      {/* Trigger button — 36×36 glassmorphic circle */}
+      {/* Trigger button - 36×36 glassmorphic circle */}
       <Pressable
         testID="layout-picker-button"
         onPress={() => setOpen(true)}
@@ -49,7 +49,7 @@ export default function LayoutPicker({ className, onDisconnect }: LayoutPickerPr
         animationType="fade"
         onRequestClose={() => setOpen(false)}
       >
-        {/* Backdrop — dismiss on outside tap */}
+        {/* Backdrop - dismiss on outside tap */}
         <Pressable
           testID="layout-picker-backdrop"
           style={StyleSheet.absoluteFillObject}

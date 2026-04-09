@@ -20,7 +20,7 @@ let turnCounter = 0;
 let pendingOpts: { sessionId: string; provider: string; model: string } | null = null;
 
 /** Register session info for logging. The log file is created lazily on
- *  the first actual LLM call — avoids empty files from proxy startup. */
+ *  the first actual LLM call - avoids empty files from proxy startup. */
 export function initLlmLog(opts: {
   sessionId: string;
   provider: string;
@@ -53,7 +53,7 @@ function ensureLogFile(): void {
 
   const header =
     `${SEP}\n` +
-    `  LLM CALL LOG — SUBSCRIPTION MODE\n` +
+    `  LLM CALL LOG - SUBSCRIPTION MODE\n` +
     `${SEP}\n` +
     `  Session ID : ${pendingOpts.sessionId}\n` +
     `  Provider   : ${pendingOpts.provider}\n` +
@@ -79,12 +79,12 @@ export function logSubSpawn(opts: {
   turnCounter++;
   const block =
     `${SEP}\n` +
-    `  TURN ${turnCounter} — SPAWN\n` +
+    `  TURN ${turnCounter} - SPAWN\n` +
     `${SEP}\n` +
     `  Time       : ${new Date().toISOString()}\n` +
     `  Binary     : ${opts.binary}\n` +
     `  Model      : ${opts.model}\n` +
-    `  Resume ID  : ${opts.resumeId || '(none — new session)'}\n` +
+    `  Resume ID  : ${opts.resumeId || '(none - new session)'}\n` +
     `  Has Tools  : ${opts.hasTools}\n` +
     `  Effort     : ${opts.effort || '(default)'}\n` +
     `${THIN_SEP}\n` +
@@ -162,7 +162,7 @@ export function logApiCall(opts: {
     : '';
   let block =
     `${SEP}\n` +
-    `  TURN ${turnCounter} — API CALL\n` +
+    `  TURN ${turnCounter} - API CALL\n` +
     `${SEP}\n` +
     `  Time       : ${new Date().toISOString()}\n` +
     `  Endpoint   : ${opts.endpoint}\n` +
@@ -259,6 +259,6 @@ function write(content: string): void {
   try {
     appendFileSync(logPath, content, 'utf8');
   } catch {
-    // Fire-and-forget — never block the proxy
+    // Fire-and-forget - never block the proxy
   }
 }

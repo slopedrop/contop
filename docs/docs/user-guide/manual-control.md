@@ -20,15 +20,15 @@ A floating joystick for cursor movement. Drag to move the mouse cursor on your d
 
 ### Click Buttons
 
-- **Left click** — Tap the L button
-- **Right click** — Tap the R button
-- **Long press** — Press and hold the L button to initiate a drag operation (sends `mouse_down` on press, `mouse_up` on release)
+- **Left click** - Tap the L button
+- **Right click** - Tap the R button
+- **Long press** - Press and hold the L button to initiate a drag operation (sends `mouse_down` on press, `mouse_up` on release)
 
 ### Scroll
 
-- **Pinch gesture** — Pinch on the video feed to zoom (video zoom, not desktop scroll)
-- **Scroll controls** — Dedicated scroll buttons with 5 clicks per event
-- **Long press scroll** — Hold a scroll button for continuous scrolling (250ms delay, 80ms repeat interval, haptic feedback)
+- **Pinch gesture** - Pinch on the video feed to zoom (video zoom, not desktop scroll)
+- **Scroll controls** - Dedicated scroll buttons with 5 clicks per event
+- **Long press scroll** - Hold a scroll button for continuous scrolling (250ms delay, 80ms repeat interval, haptic feedback)
 
 ### Keyboard Grid
 

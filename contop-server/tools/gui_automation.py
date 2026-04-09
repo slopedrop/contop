@@ -1,5 +1,5 @@
 """
-GUI automation tool — executes clicks, typing, scrolling, drag-and-drop,
+GUI automation tool - executes clicks, typing, scrolling, drag-and-drop,
 keyboard shortcuts, and mouse movements via PyAutoGUI.
 
 Coordinates received from the ADK agent are in screenshot space (max 1280px wide)
@@ -11,8 +11,8 @@ the event loop (pyautogui is synchronous).
 NOTE: pyautogui.scroll() is broken on Windows (does not multiply by WHEEL_DELTA
 and passes erratic coordinates). We bypass it with direct ctypes mouse_event calls.
 
-[Source: architecture.md — tools/gui_automation.py is FR13]
-[Source: project-context.md — Error Handling, Mandatory voice_message]
+[Source: architecture.md - tools/gui_automation.py is FR13]
+[Source: project-context.md - Error Handling, Mandatory voice_message]
 """
 import asyncio
 import ctypes  # stdlib on all platforms; windll only accessed on Windows
@@ -83,10 +83,10 @@ class GUIAutomation:
                 "action": action,
                 "target": target,
                 "coordinates": coordinates,
-                "description": "PyAutoGUI failsafe triggered — mouse moved to screen corner.",
+                "description": "PyAutoGUI failsafe triggered - mouse moved to screen corner.",
                 "duration_ms": duration_ms,
                 "voice_message": (
-                    "The emergency failsafe was triggered — the mouse was moved to the "
+                    "The emergency failsafe was triggered - the mouse was moved to the "
                     "corner. No action was taken. Should I continue?"
                 ),
             }

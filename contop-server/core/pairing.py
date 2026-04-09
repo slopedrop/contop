@@ -1,5 +1,5 @@
 """
-Pairing module — token generation, validation, revocation, and QR code encoding.
+Pairing module - token generation, validation, revocation, and QR code encoding.
 
 Handles the secure out-of-band pairing flow between the host desktop server
 and mobile client via QR code containing DTLS fingerprint and STUN config.
@@ -357,7 +357,7 @@ def get_token_status(device_id: str | None = None) -> dict:
         if pairing_token is None:
             return {"status": "none"}
     elif _token_registry:
-        # Prefer permanent tokens — temp tokens shouldn't shadow a valid permanent one
+        # Prefer permanent tokens - temp tokens shouldn't shadow a valid permanent one
         pairing_token = _find_permanent_token() or list(_token_registry.values())[-1]
     else:
         return {"status": "none"}
@@ -387,7 +387,7 @@ def get_active_token_string(device_id: str | None = None) -> str | None:
     if not _token_registry:
         return None
 
-    # Prefer permanent tokens — a temp token should never shadow the permanent one
+    # Prefer permanent tokens - a temp token should never shadow the permanent one
     perm = _find_permanent_token()
     if perm is not None:
         return perm.token
@@ -469,12 +469,12 @@ def _get_local_ip() -> str:
                 return ip
     except OSError:
         pass
-    # Fallback — may return 127.0.0.1 on Docker/WSL/misconfigured hosts
+    # Fallback - may return 127.0.0.1 on Docker/WSL/misconfigured hosts
     fallback = socket.gethostbyname(socket.gethostname())
     if fallback.startswith("127."):
         import logging
         logging.getLogger(__name__).warning(
-            "Local IP resolved to %s — mobile clients may not be able to connect via LAN", fallback
+            "Local IP resolved to %s - mobile clients may not be able to connect via LAN", fallback
         )
     return fallback
 
@@ -535,7 +535,7 @@ def _generate_qr_code_sync(token: PairingToken, gemini_api_key: str, signaling_u
     if gemini_api_key:
         payload["g"] = gemini_api_key
 
-    # Always include API keys if present — mobile can use either API key or subscription
+    # Always include API keys if present - mobile can use either API key or subscription
     oai = get_openai_api_key()
     if oai:
         payload["o"] = oai
@@ -546,8 +546,8 @@ def _generate_qr_code_sync(token: PairingToken, gemini_api_key: str, signaling_u
     if orr:
         payload["r"] = orr
 
-    # Compact provider auth (pa) — tells mobile which providers have subscription available.
-    # API keys and subscription coexist — mobile user can switch between them.
+    # Compact provider auth (pa) - tells mobile which providers have subscription available.
+    # API keys and subscription coexist - mobile user can switch between them.
     pa: dict = {}
     if is_subscription_mode("gemini"):
         pa["g"] = "sub"
@@ -558,13 +558,13 @@ def _generate_qr_code_sync(token: PairingToken, gemini_api_key: str, signaling_u
     if pa:
         payload["pa"] = pa
 
-    # STUN config is hardcoded on mobile — omitted from QR to save space
+    # STUN config is hardcoded on mobile - omitted from QR to save space
 
     tailscale_ip = _get_tailscale_ip()
     if tailscale_ip:
         payload["ts"] = tailscale_ip
 
-    # Only include signaling_url for temp connections — prevents stale Cloudflare URLs
+    # Only include signaling_url for temp connections - prevents stale Cloudflare URLs
     # from being persisted on the mobile device for permanent connections
     if signaling_url and token.connection_type == "temp":
         payload["s"] = signaling_url

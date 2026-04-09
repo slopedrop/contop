@@ -7,7 +7,7 @@ BDD-style acceptance tests covering all ACs across 4 tiers:
 - Tier 3: OmniParser Tuning
 - Tier 4: UI-TARS via OpenRouter
 
-[Source: tech-spec-gui-agent-optimization.md — Task 22]
+[Source: tech-spec-gui-agent-optimization.md - Task 22]
 """
 import os
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -104,7 +104,7 @@ class TestAC5_SecurityGateClassification:
 class TestAC6_SystemPromptSections:
     """AC 6: Given the system prompt in agent_config.py,
     When read as a string,
-    Then it contains sections titled 'Execution Strategy — Keyboard First',
+    Then it contains sections titled 'Execution Strategy - Keyboard First',
     'Common Application Hotkeys', and 'Element Disambiguation'."""
 
     def test_contains_keyboard_first_section(self):

@@ -1,5 +1,5 @@
 """
-Unit tests for tools/gemini_computer_use.py — Gemini Computer Use plan-only adapter.
+Unit tests for tools/gemini_computer_use.py - Gemini Computer Use plan-only adapter.
 
 Tests coordinate denormalization, CU→gui_automation action mapping, safety_decision
 handling, blocked key combos, navigate decomposition, and conversation history.
@@ -93,7 +93,7 @@ class TestActionMapping:
         assert actions[0].coordinates["keys"] == ["ctrl", "c"]
 
     def test_key_combination_blocked(self, client):
-        """Blocked combos return empty list — no action planned."""
+        """Blocked combos return empty list - no action planned."""
         actions = client._map_to_gui_actions("key_combination", {"keys": "alt+f4"})
         assert len(actions) == 0
 
@@ -319,6 +319,6 @@ class TestResizeScreenshot:
         resized_bytes = base64.b64decode(resized_b64)
         resized_img = Image.open(io.BytesIO(resized_bytes))
 
-        # thumbnail preserves aspect ratio — should fit within 1440x900
+        # thumbnail preserves aspect ratio - should fit within 1440x900
         assert resized_img.width <= 1440
         assert resized_img.height <= 900

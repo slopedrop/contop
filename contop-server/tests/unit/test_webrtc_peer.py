@@ -149,23 +149,23 @@ class TestClientLivenessDetection:
 
     async def test_incoming_message_resets_missed_counter(self):
         """[P0] 1.5-UNIT-S002: Any data channel message resets _missed_client_responses to 0."""
-        # Given — a peer manager with some missed responses
+        # Given - a peer manager with some missed responses
         with patch("core.webrtc_peer.RTCPeerConnection") as MockPC:
             mock_pc = AsyncMock()
             MockPC.return_value = mock_pc
             manager = WebRTCPeerManager(stun_config=STUN_CONFIG)
             manager._missed_client_responses = 2
 
-            # When — any data channel message is received
+            # When - any data channel message is received
             manager._on_data_channel_message('{"type":"keepalive","id":"test","payload":{}}')
 
-            # Then — counter is reset to 0
+            # Then - counter is reset to 0
             assert manager._missed_client_responses == 0
 
     async def test_three_missed_responses_logs_warning_but_keeps_alive(self):
         """[P0] 1.5-UNIT-S003: 3 consecutive missed responses logs warning but does NOT close.
 
-        Mobile apps pause JS when backgrounded — keepalive replies stop but ICE
+        Mobile apps pause JS when backgrounded - keepalive replies stop but ICE
         transport stays alive. Closing here would kill a viable session.
         """
         with patch("core.webrtc_peer.RTCPeerConnection") as MockPC:
@@ -215,11 +215,11 @@ class TestSessionEndHandler:
             manager = WebRTCPeerManager(stun_config=STUN_CONFIG)
             manager.close = AsyncMock()
 
-            # When — session_end message is received on data channel
+            # When - session_end message is received on data channel
             message = '{"type":"session_end","id":"test-uuid","payload":{}}'
             manager._on_data_channel_message(message)
 
-            # Then — close() is triggered
+            # Then - close() is triggered
             # Need to wait for async task
             await asyncio.sleep(0.1)
             manager.close.assert_called_once()
@@ -235,9 +235,9 @@ class TestSessionEndHandler:
             mock_task = AsyncMock()
             manager._keepalive_task = mock_task
 
-            # When — close() is called
+            # When - close() is called
             await manager.close()
 
-            # Then — keepalive is cancelled and PC is closed
+            # Then - keepalive is cancelled and PC is closed
             mock_task.cancel.assert_called_once()
             mock_pc.close.assert_called_once()

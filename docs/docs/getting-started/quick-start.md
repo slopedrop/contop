@@ -13,7 +13,7 @@ Open Contop from your Start Menu, Applications folder, or run the AppImage.
 `[SCREENSHOT: Contop desktop app main window with QR code]`
 
 :::note First launch
-If this is your first time opening Contop (after installing via Homebrew, Scoop, or direct download on macOS/Linux), the app will automatically download and install Python dependencies. A progress overlay shows the download status — this takes a few minutes depending on your internet speed. Subsequent launches skip this step.
+If this is your first time opening Contop (after installing via Homebrew, Scoop, or direct download on macOS/Linux), the app will automatically download and install Python dependencies. A progress overlay shows the download status - this takes a few minutes depending on your internet speed. Subsequent launches skip this step.
 :::
 
 The app automatically starts the Python server as a sidecar process. You'll see the QR code appear once the server is ready.

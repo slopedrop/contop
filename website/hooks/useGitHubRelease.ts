@@ -80,7 +80,7 @@ export function useGitHubRelease() {
         });
       })
       .catch(() => {
-        // Silently fail — component shows fallback
+        // Silently fail - component shows fallback
       })
       .finally(() => setLoading(false));
 

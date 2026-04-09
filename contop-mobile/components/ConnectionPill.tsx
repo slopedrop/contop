@@ -53,7 +53,7 @@ export default function ConnectionPill({
   }));
 
   const latencyText =
-    status === 'connected' && latencyMs != null ? `${latencyMs}ms` : '—';
+    status === 'connected' && latencyMs != null ? `${latencyMs}ms` : '-';
 
   const pathLabel =
     status === 'connected' && connectionPath

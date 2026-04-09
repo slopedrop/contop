@@ -1,5 +1,5 @@
 """
-Cloudflare Tunnel manager — spawns and manages a cloudflared Quick Tunnel subprocess.
+Cloudflare Tunnel manager - spawns and manages a cloudflared Quick Tunnel subprocess.
 
 Provides a public HTTPS/WSS URL for the local FastAPI server so that mobile clients
 can reach the signaling WebSocket from anywhere in the world, without port forwarding.
@@ -83,7 +83,7 @@ def _get_data_dir() -> Path:
 
 
 def _find_cloudflared() -> str | None:
-    """Find the cloudflared binary — first on PATH, then in app data directory."""
+    """Find the cloudflared binary - first on PATH, then in app data directory."""
     # Check PATH first
     binary_name = "cloudflared.exe" if platform.system().lower() == "windows" else "cloudflared"
     path_result = shutil.which(binary_name)
@@ -153,7 +153,7 @@ def _ensure_cloudflared() -> str | None:
     if binary:
         return binary
 
-    logger.info("cloudflared not found on PATH or in app data — attempting download")
+    logger.info("cloudflared not found on PATH or in app data - attempting download")
     return _download_cloudflared()
 
 
@@ -167,7 +167,7 @@ async def start_tunnel(local_port: int) -> str | None:
     Also starts a background health monitor that auto-restarts the tunnel if it dies.
 
     DNS readiness probing runs as a background task so it does not block server
-    startup — the FastAPI lifespan must complete quickly for the /health endpoint
+    startup - the FastAPI lifespan must complete quickly for the /health endpoint
     to become available (Tauri health polling times out at 30s).
     """
     global _tunnel_process, _tunnel_url, _local_port
@@ -177,7 +177,7 @@ async def start_tunnel(local_port: int) -> str | None:
     binary = _ensure_cloudflared()
     if binary is None:
         logger.warning(
-            "cloudflared binary not available — remote connections will not work. "
+            "cloudflared binary not available - remote connections will not work. "
             "Install cloudflared (https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) "
             "or place it on your PATH for global connectivity."
         )
@@ -195,7 +195,7 @@ async def _post_tunnel_setup(tunnel_url: str) -> None:
     """Background task: wait for DNS propagation, then start the health monitor."""
     dns_ready = await _wait_for_dns(tunnel_url)
     if not dns_ready:
-        logger.warning("Tunnel URL DNS did not become resolvable within %ds — proceeding anyway",
+        logger.warning("Tunnel URL DNS did not become resolvable within %ds - proceeding anyway",
                        _DNS_PROBE_INTERVAL_SECONDS * _DNS_PROBE_MAX_ATTEMPTS)
     _start_health_monitor()
 
@@ -329,16 +329,16 @@ async def _health_monitor_loop() -> None:
 
         try:
             # Check 1: Is the cloudflared subprocess still running?
-            # Process death is definitive — restart immediately.
+            # Process death is definitive - restart immediately.
             # Capture reference locally to avoid interleaving issues across await.
             proc = _tunnel_process
             if proc is None:
-                logger.warning("Tunnel health check: process is None — restarting")
+                logger.warning("Tunnel health check: process is None - restarting")
                 await _restart_tunnel()
                 continue
             elif proc.poll() is not None:
                 exit_code = proc.returncode
-                logger.warning("Tunnel health check: cloudflared exited with code %s — restarting", exit_code)
+                logger.warning("Tunnel health check: cloudflared exited with code %s - restarting", exit_code)
                 await _restart_tunnel()
                 continue
 
@@ -358,7 +358,7 @@ async def _health_monitor_loop() -> None:
                         _consecutive_failures, _MAX_CONSECUTIVE_FAILURES, _tunnel_url,
                     )
                     if _consecutive_failures >= _MAX_CONSECUTIVE_FAILURES:
-                        logger.warning("Tunnel unreachable after %d consecutive probes — restarting", _MAX_CONSECUTIVE_FAILURES)
+                        logger.warning("Tunnel unreachable after %d consecutive probes - restarting", _MAX_CONSECUTIVE_FAILURES)
                         _consecutive_failures = 0
                         await _restart_tunnel()
 
@@ -385,9 +385,9 @@ async def _restart_tunnel() -> None:
         if new_url:
             logger.info("Tunnel restarted successfully: %s", new_url)
         else:
-            logger.error("Tunnel restart failed — will retry in %ds", _HEALTH_CHECK_INTERVAL_SECONDS)
+            logger.error("Tunnel restart failed - will retry in %ds", _HEALTH_CHECK_INTERVAL_SECONDS)
     else:
-        logger.error("Cannot restart tunnel — binary or port unavailable")
+        logger.error("Cannot restart tunnel - binary or port unavailable")
 
 
 async def _wait_for_dns(url: str) -> bool:

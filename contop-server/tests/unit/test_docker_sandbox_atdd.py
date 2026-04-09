@@ -1,5 +1,5 @@
 """
-ATDD acceptance tests for tools/docker_sandbox.py — Story 3.4 acceptance criteria.
+ATDD acceptance tests for tools/docker_sandbox.py - Story 3.4 acceptance criteria.
 
 BDD-style tests mapping to each AC scenario (AC #1–#7).
 """

@@ -15,9 +15,9 @@ import { logParsedResult } from './llm-logger.js';
  * API backed by a CLI session manager.
  *
  * Endpoints:
- * - POST /v1/chat/completions — chat completion (streaming + non-streaming)
- * - GET  /v1/models           — list available models
- * - GET  /health              — session health check
+ * - POST /v1/chat/completions - chat completion (streaming + non-streaming)
+ * - GET  /v1/models           - list available models
+ * - GET  /health              - session health check
  */
 export function createServer(
   session: ISession,
@@ -116,11 +116,11 @@ export function createServer(
         try {
           if (hasTools) {
             // ── Tool-call mode: buffer full response, emit proper tool_calls chunk ──
-            // The CLI returns {"tool_call":...} JSON as text — toOpenAIResponse parses
+            // The CLI returns {"tool_call":...} JSON as text - toOpenAIResponse parses
             // it into tool_calls.  We can't do that inline per text_delta, so we let
             // sendMessageStreaming accumulate everything, then emit a single SSE turn.
             const cliResponse = await session.sendMessageStreaming(
-              messages, () => { /* buffering — no per-event SSE */ }, tools, effort, requestedModel,
+              messages, () => { /* buffering - no per-event SSE */ }, tools, effort, requestedModel,
             );
             const openaiResponse = toOpenAIResponse(cliResponse, model);
             const choice = openaiResponse.choices[0];
@@ -156,7 +156,7 @@ export function createServer(
               };
               res.write(`data: ${JSON.stringify(toolCallsChunk)}\n\n`);
             } else if (choice.message.content) {
-              // No tool call — stream as a regular text chunk
+              // No tool call - stream as a regular text chunk
               res.write(`data: ${JSON.stringify({
                 id: chunkId, object: 'chat.completion.chunk',
                 created: Math.floor(Date.now() / 1000), model,

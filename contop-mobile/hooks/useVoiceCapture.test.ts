@@ -189,7 +189,7 @@ describe('useVoiceCapture', () => {
       await result.current.stopCapture();
     });
 
-    // Start new recording — buffer should be cleared
+    // Start new recording - buffer should be cleared
     await act(async () => {
       await result.current.startCapture();
     });
@@ -218,7 +218,7 @@ describe('useVoiceCapture', () => {
       result.current.setOnAudioData(null);
     });
 
-    // Simulate data — callback should NOT be called
+    // Simulate data - callback should NOT be called
     const onDataHandler = LiveAudioStreamMock.default.on.mock.calls.find(
       (call: any[]) => call[0] === 'data',
     )?.[1];

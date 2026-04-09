@@ -69,7 +69,7 @@ def init_tracing(service_name: str = "contop-agent"):
         return _tracer
 
     except ImportError:
-        logger.info("OpenTelemetry not installed — tracing disabled")
+        logger.info("OpenTelemetry not installed - tracing disabled")
         return None
 
 

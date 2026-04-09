@@ -1,5 +1,5 @@
 """
-Window & clipboard tools — structured window management and clipboard operations.
+Window & clipboard tools - structured window management and clipboard operations.
 
 Provides window_list, window_focus, resize_window, clipboard_read, clipboard_write
 as ADK FunctionTools. Routes through platform_adapters for cross-platform support.
@@ -101,7 +101,7 @@ async def resize_window(
     If width/height are given, resize to exact dimensions.
 
     Args:
-        layout: Snap layout — "left_half", "right_half", "top_half",
+        layout: Snap layout - "left_half", "right_half", "top_half",
                 "bottom_half", "maximize", "restore".
         width: New width in pixels (used when layout is empty).
         height: New height in pixels.

@@ -41,9 +41,9 @@ Change models from the mobile app's AI Settings without restarting:
 
 Toggle extended thinking for supported models (Gemini 2.5/3.x, OpenAI o3/o4-mini, Claude Opus/Sonnet):
 
-- **Enabled** — Model uses chain-of-thought reasoning (slower but more accurate for complex tasks)
-- **Disabled** — Faster responses for simple tasks
-- **Default** — Uses the model's built-in default
+- **Enabled** - Model uses chain-of-thought reasoning (slower but more accurate for complex tasks)
+- **Disabled** - Faster responses for simple tasks
+- **Default** - Uses the model's built-in default
 
 ## Cost/Capability Tradeoffs
 
@@ -59,10 +59,10 @@ Instead of API keys, you can use your existing LLM subscription (Claude Pro/Max,
 
 - The mobile app shows a **SUB** badge on model chips when subscription mode is active for that provider
 - A **NO KEY** badge appears when no API key is configured for a provider (the model can still be used via subscription)
-- The mobile `use_subscription` flag is authoritative — the phone decides per-request whether to use subscription or API key mode
-- **Vision limitation**: CLI tools accept text only — in subscription mode, the execution agent's LLM vision fallback (direct screenshot analysis) is unavailable. The agent relies on local vision backends instead.
+- The mobile `use_subscription` flag is authoritative - the phone decides per-request whether to use subscription or API key mode
+- **Vision limitation**: CLI tools accept text only - in subscription mode, the execution agent's LLM vision fallback (direct screenshot analysis) is unavailable. The agent relies on local vision backends instead.
 
-See [Configuration — Subscription Mode](/getting-started/configuration#subscription-mode-optional) for setup instructions.
+See [Configuration - Subscription Mode](/getting-started/configuration#subscription-mode-optional) for setup instructions.
 
 ## Vision Backends
 

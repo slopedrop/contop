@@ -1,5 +1,5 @@
 """
-Screen capture module — captures primary display via mss and provides
+Screen capture module - captures primary display via mss and provides
 a WebRTC video track and JPEG frame relay for LLM context.
 
 Architecture ref: tools/screen_capture.py (FR10: mss capture + JPEG relay)
@@ -47,13 +47,13 @@ class ScreenCaptureTrack(MediaStreamTrack):
         with mss.mss() as sct:
             self._monitor = sct.monitors[1]  # Primary display
 
-        # Thread-local storage — each executor thread creates its own mss instance
+        # Thread-local storage - each executor thread creates its own mss instance
         self._thread_local = threading.local()
 
         self._native_width: int = self._monitor["width"]
         self._native_height: int = self._monitor["height"]
 
-        # Manual mode — cursor caching for reduced latency
+        # Manual mode - cursor caching for reduced latency
         self._manual_mode: bool = False
         self._cached_cursor_pos: tuple[int, int] | None = None  # (abs_x, abs_y)
 
@@ -77,7 +77,7 @@ class ScreenCaptureTrack(MediaStreamTrack):
         self._start_time: float | None = None
 
     def set_manual_mode(self, enabled: bool) -> None:
-        """Toggle manual mode — enables cursor caching."""
+        """Toggle manual mode - enables cursor caching."""
         self._manual_mode = enabled
         if not enabled:
             self._cached_cursor_pos = None
@@ -134,7 +134,7 @@ class ScreenCaptureTrack(MediaStreamTrack):
     def _grab_and_convert(self) -> av.VideoFrame:
         """Capture screenshot with mss and convert to av.VideoFrame.
 
-        Synchronous method — must be called via run_in_executor.
+        Synchronous method - must be called via run_in_executor.
         Also stores the resized PIL Image as latest_frame for JPEG relay.
         Draws a cursor crosshair since mss doesn't capture the OS cursor.
         """
@@ -148,7 +148,7 @@ class ScreenCaptureTrack(MediaStreamTrack):
         self._latest_frame = resized
         return av.VideoFrame.from_image(resized)
 
-    # Arrow cursor polygon — tip at (0,0), classic pointer shape, small
+    # Arrow cursor polygon - tip at (0,0), classic pointer shape, small
     _CURSOR_SHAPE = [
         (0, 0), (0, 12), (3, 9), (6, 14), (8, 13), (5, 8), (9, 8), (0, 0),
     ]
@@ -171,7 +171,7 @@ class ScreenCaptureTrack(MediaStreamTrack):
             draw = ImageDraw.Draw(img)
             # Offset polygon to cursor position
             pts = [(cx + x, cy + y) for x, y in self._CURSOR_SHAPE]
-            # Black outline then white fill — visible on any background
+            # Black outline then white fill - visible on any background
             draw.polygon(pts, outline=(0, 0, 0), fill=(255, 255, 255))
         except Exception:
             pass
@@ -179,7 +179,7 @@ class ScreenCaptureTrack(MediaStreamTrack):
     def capture(self) -> Image.Image:
         """Capture a screenshot and return as PIL Image. Also updates latest_frame.
 
-        Synchronous method — call via run_in_executor from async code.
+        Synchronous method - call via run_in_executor from async code.
         Unlike _grab_and_convert(), does not create an av.VideoFrame.
         """
         sct = self._get_sct()
@@ -210,7 +210,7 @@ def start_jpeg_relay(
 
     Args:
         track: The ScreenCaptureTrack providing latest_frame.
-        send_fn: Callable(msg_type, payload) — typically WebRTCPeerManager.send_message.
+        send_fn: Callable(msg_type, payload) - typically WebRTCPeerManager.send_message.
         interval: Seconds between JPEG sends (default 1.0s for LLM context).
 
     Returns:

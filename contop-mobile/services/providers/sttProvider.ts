@@ -7,7 +7,7 @@ export interface STTProvider {
   transcribe(wavBase64: string): Promise<string>;
 }
 
-/** Gemini STT — sends audio to generateContent with a transcription prompt */
+/** Gemini STT - sends audio to generateContent with a transcription prompt */
 export class GeminiSTT implements STTProvider {
   private ai: GoogleGenAI;
 
@@ -30,7 +30,7 @@ export class GeminiSTT implements STTProvider {
   }
 }
 
-/** OpenAI Whisper — dedicated STT endpoint */
+/** OpenAI Whisper - dedicated STT endpoint */
 export class OpenAISTT implements STTProvider {
   private client: OpenAI;
 
@@ -59,7 +59,7 @@ export class OpenAISTT implements STTProvider {
   }
 }
 
-/** OpenRouter STT — routes Whisper through OpenRouter */
+/** OpenRouter STT - routes Whisper through OpenRouter */
 export class OpenRouterSTT implements STTProvider {
   private client: OpenAI;
 

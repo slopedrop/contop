@@ -3,7 +3,7 @@ Integration-level tests for the accessibility backend execution path.
 
 Tests tool set selection, DualToolEvaluator classification, and self-verification.
 
-[Source: tech-spec-accessibility-tree-backend.md — Task 19]
+[Source: tech-spec-accessibility-tree-backend.md - Task 19]
 """
 import os
 from unittest.mock import MagicMock, patch

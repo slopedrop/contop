@@ -195,7 +195,7 @@ describe('ExecutionEntryCard', () => {
         <ExecutionEntryCard entry={interventionEntry()} isLastThinking={false} />,
       );
       expect(screen.getByTestId('intervention-card')).toBeTruthy();
-      expect(screen.getByText(/INTERVENTION — Sandbox Caught/)).toBeTruthy();
+      expect(screen.getByText(/INTERVENTION - Sandbox Caught/)).toBeTruthy();
       expect(screen.getByText('rm -rf /var/cache/*')).toBeTruthy();
       expect(screen.getByText('delete the cache directory')).toBeTruthy();
       expect(screen.getByText(/forbidden_command/)).toBeTruthy();
@@ -240,13 +240,15 @@ describe('ExecutionEntryCard', () => {
     test('[P0] 3.5-UNIT-004: buttons disabled (not rendered) after response sent', () => {
       render(
         <ExecutionEntryCard
-          entry={interventionEntry({ metadata: {
-            request_id: 'req-123',
-            tool: 'execute_cli',
-            command: 'rm -rf /var/cache/*',
-            reason: 'forbidden_command',
-            status: 'executed',
-          } })}
+          entry={interventionEntry({
+            metadata: {
+              request_id: 'req-123',
+              tool: 'execute_cli',
+              command: 'rm -rf /var/cache/*',
+              reason: 'forbidden_command',
+              status: 'executed',
+            }
+          })}
           isLastThinking={false}
         />,
       );
@@ -284,7 +286,7 @@ describe('ExecutionEntryCard', () => {
       render(<ExecutionEntryCard entry={entry} isLastThinking={false} />);
       fireEvent.press(screen.getByTestId('intervention-execute-btn'));
 
-      // Entry status should remain 'pending' — action was blocked
+      // Entry status should remain 'pending' - action was blocked
       const updated = useAIStore.getState().executionEntries.find((e: any) => e.id === 'confirm-null');
       expect(updated?.metadata?.status).toBe('pending');
     });
@@ -292,13 +294,15 @@ describe('ExecutionEntryCard', () => {
     test('[P1] 3.5-UNIT-009: aborted state shows dimmed card', () => {
       render(
         <ExecutionEntryCard
-          entry={interventionEntry({ metadata: {
-            request_id: 'req-123',
-            tool: 'execute_cli',
-            command: 'rm -rf /var/cache/*',
-            reason: 'forbidden_command',
-            status: 'aborted',
-          } })}
+          entry={interventionEntry({
+            metadata: {
+              request_id: 'req-123',
+              tool: 'execute_cli',
+              command: 'rm -rf /var/cache/*',
+              reason: 'forbidden_command',
+              status: 'aborted',
+            }
+          })}
           isLastThinking={false}
         />,
       );
@@ -309,13 +313,15 @@ describe('ExecutionEntryCard', () => {
     test('[P1] 3.5-UNIT-010: short command does not render Show more toggle', () => {
       render(
         <ExecutionEntryCard
-          entry={interventionEntry({ metadata: {
-            request_id: 'req-123',
-            tool: 'execute_cli',
-            command: 'rm -rf /var/cache/*',
-            reason: 'forbidden_command',
-            status: 'pending',
-          } })}
+          entry={interventionEntry({
+            metadata: {
+              request_id: 'req-123',
+              tool: 'execute_cli',
+              command: 'rm -rf /var/cache/*',
+              reason: 'forbidden_command',
+              status: 'pending',
+            }
+          })}
           isLastThinking={false}
         />,
       );
@@ -326,13 +332,15 @@ describe('ExecutionEntryCard', () => {
       const longCommand = 'echo ' + 'A'.repeat(300);
       render(
         <ExecutionEntryCard
-          entry={interventionEntry({ metadata: {
-            request_id: 'req-123',
-            tool: 'execute_cli',
-            command: longCommand,
-            reason: 'forbidden_command',
-            status: 'pending',
-          } })}
+          entry={interventionEntry({
+            metadata: {
+              request_id: 'req-123',
+              tool: 'execute_cli',
+              command: longCommand,
+              reason: 'forbidden_command',
+              status: 'pending',
+            }
+          })}
           isLastThinking={false}
         />,
       );
@@ -346,13 +354,15 @@ describe('ExecutionEntryCard', () => {
       const longCommand = 'echo ' + 'B'.repeat(300);
       render(
         <ExecutionEntryCard
-          entry={interventionEntry({ metadata: {
-            request_id: 'req-123',
-            tool: 'execute_cli',
-            command: longCommand,
-            reason: 'forbidden_command',
-            status: 'pending',
-          } })}
+          entry={interventionEntry({
+            metadata: {
+              request_id: 'req-123',
+              tool: 'execute_cli',
+              command: longCommand,
+              reason: 'forbidden_command',
+              status: 'pending',
+            }
+          })}
           isLastThinking={false}
         />,
       );
@@ -544,7 +554,7 @@ describe('ExecutionEntryCard', () => {
         />,
       );
       expect(screen.getByTestId('intervention-card')).toBeTruthy();
-      expect(screen.getByText(/INTERVENTION — Sandbox Caught/)).toBeTruthy();
+      expect(screen.getByText(/INTERVENTION - Sandbox Caught/)).toBeTruthy();
       expect(screen.getByText('Restricted path access')).toBeTruthy();
     });
   });
@@ -564,15 +574,15 @@ describe('ExecutionEntryCard', () => {
         ...overrides,
       });
 
-    test('[P0] 3.6-UNIT-001: renders "WARNING — Destructive Command" when reason is destructive_command', () => {
+    test('[P0] 3.6-UNIT-001: renders "WARNING - Destructive Command" when reason is destructive_command', () => {
       render(
         <ExecutionEntryCard entry={destructiveEntry()} isLastThinking={false} />,
       );
       expect(screen.getByTestId('intervention-card')).toBeTruthy();
-      expect(screen.getByText(/WARNING — Destructive Command/)).toBeTruthy();
+      expect(screen.getByText(/WARNING - Destructive Command/)).toBeTruthy();
     });
 
-    test('[P0] 3.6-UNIT-002: renders "INTERVENTION — Sandbox Caught" when reason is NOT destructive_command (regression)', () => {
+    test('[P0] 3.6-UNIT-002: renders "INTERVENTION - Sandbox Caught" when reason is NOT destructive_command (regression)', () => {
       render(
         <ExecutionEntryCard
           entry={destructiveEntry({
@@ -587,7 +597,7 @@ describe('ExecutionEntryCard', () => {
           isLastThinking={false}
         />,
       );
-      expect(screen.getByText(/INTERVENTION — Sandbox Caught/)).toBeTruthy();
+      expect(screen.getByText(/INTERVENTION - Sandbox Caught/)).toBeTruthy();
     });
 
     test('[P0] 3.6-UNIT-003: RUN button sends agent_confirmation_response with approved: true', () => {
@@ -624,7 +634,7 @@ describe('ExecutionEntryCard', () => {
       expect(mockSendConfirmation).toHaveBeenCalledWith('req-dest-1', false);
     });
 
-    test('[P0] 3.6-UNIT-005b: renders "EXECUTED — On host" when destructive command is approved', () => {
+    test('[P0] 3.6-UNIT-005b: renders "EXECUTED - On host" when destructive command is approved', () => {
       render(
         <ExecutionEntryCard
           entry={destructiveEntry({
@@ -639,7 +649,7 @@ describe('ExecutionEntryCard', () => {
           isLastThinking={false}
         />,
       );
-      expect(screen.getByText(/EXECUTED — On host/)).toBeTruthy();
+      expect(screen.getByText(/EXECUTED - On host/)).toBeTruthy();
       // Buttons should not render after execution
       expect(screen.queryByTestId('intervention-execute-btn')).toBeNull();
       expect(screen.queryByTestId('intervention-abort-btn')).toBeNull();

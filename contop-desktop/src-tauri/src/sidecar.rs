@@ -1,4 +1,4 @@
-/// CLI proxy sidecar management — starts/stops/monitors contop-cli-proxy processes.
+/// CLI proxy sidecar management - starts/stops/monitors contop-cli-proxy processes.
 ///
 /// Each provider (claude, gemini, codex) runs as a separate Node.js subprocess
 /// listening on a fixed localhost port:
@@ -74,7 +74,7 @@ fn resolve_cli_path() -> String {
         candidates.push(home.join(".local").join("bin"));
     }
 
-    // nvm — resolve the active node version's bin directory
+    // nvm - resolve the active node version's bin directory
     #[cfg(unix)]
     {
         let nvm_dir = std::env::var("NVM_DIR")
@@ -139,7 +139,7 @@ fn kill_proxy(child: &mut Child) {
         }
     }
 
-    // Bounded wait — never block indefinitely (child.wait() can hang on Windows)
+    // Bounded wait - never block indefinitely (child.wait() can hang on Windows)
     for _ in 0..20 {
         match child.try_wait() {
             Ok(Some(_)) | Err(_) => return,
@@ -172,7 +172,7 @@ pub fn start_proxy(
     if let Some(child) = processes.get_mut(&provider) {
         match child.try_wait() {
             Ok(None) => {
-                // Process handle is alive — but is it actually serving?
+                // Process handle is alive - but is it actually serving?
                 let addr = std::net::SocketAddr::from(([127, 0, 0, 1], port));
                 let port_in_use = std::net::TcpStream::connect_timeout(
                     &addr, std::time::Duration::from_millis(300),
@@ -180,13 +180,13 @@ pub fn start_proxy(
                 if port_in_use {
                     return Err(format!("{} proxy is already running", provider));
                 }
-                // Process alive but not serving — kill the zombie and start fresh
+                // Process alive but not serving - kill the zombie and start fresh
                 if let Some(mut stale) = processes.remove(&provider) {
                     kill_proxy(&mut stale);
                 }
             }
             _ => {
-                // Process exited — remove stale handle
+                // Process exited - remove stale handle
                 processes.remove(&provider);
             }
         }
@@ -283,7 +283,7 @@ pub fn start_proxy(
             dist_script.display()
         ));
     }
-    // Strip \\?\ prefix — Node.js on Windows cannot resolve extended-length paths
+    // Strip \\?\ prefix - Node.js on Windows cannot resolve extended-length paths
     let dist_script_str = dist_script.to_string_lossy().to_string();
     let dist_script_clean = dist_script_str.strip_prefix(r"\\?\").unwrap_or(&dist_script_str).to_string();
 
@@ -317,9 +317,9 @@ pub fn start_proxy(
     // Ensure CLI binaries (claude, gemini, codex) are discoverable by the child
     // process. GUI apps often inherit a minimal PATH that is missing user-installed
     // tools:
-    //   Windows — %APPDATA%\npm stays unexpanded when launched from Git Bash
-    //   macOS   — Finder/Spotlight give only /usr/bin:/bin, missing Homebrew & nvm
-    //   Linux   — desktop launchers skip .bashrc/.profile
+    //   Windows - %APPDATA%\npm stays unexpanded when launched from Git Bash
+    //   macOS   - Finder/Spotlight give only /usr/bin:/bin, missing Homebrew & nvm
+    //   Linux   - desktop launchers skip .bashrc/.profile
     let resolved_path = resolve_cli_path();
 
     let mut child_cmd = StdCommand::new(cmd);
@@ -372,10 +372,10 @@ pub fn stop_proxy(
 /// Return status of the proxy for the given provider.
 ///
 /// Status values:
-///   "running"  — process alive AND /health reports session_active: true
-///   "degraded" — process alive but session not active (CLI binary missing, auth failure, etc.)
-///   "starting" — process alive but HTTP server not ready yet
-///   "stopped"  — process not running
+///   "running"  - process alive AND /health reports session_active: true
+///   "degraded" - process alive but session not active (CLI binary missing, auth failure, etc.)
+///   "starting" - process alive but HTTP server not ready yet
+///   "stopped"  - process not running
 #[tauri::command]
 pub fn proxy_status(
     provider: String,
@@ -394,7 +394,7 @@ pub fn proxy_status(
             Some(child) => match child.try_wait() {
                 Ok(None) => true,
                 Ok(Some(_)) | Err(_) => {
-                    // Process exited — clean up stale handle
+                    // Process exited - clean up stale handle
                     processes.remove(&provider);
                     false
                 }
@@ -410,7 +410,7 @@ pub fn proxy_status(
         }));
     }
 
-    // Process is alive — verify via HTTP health check that the session is active.
+    // Process is alive - verify via HTTP health check that the session is active.
     let status = if let Some(p) = port {
         let url = format!("http://127.0.0.1:{}/health", p);
         let agent = ureq::AgentBuilder::new()
@@ -437,7 +437,7 @@ pub fn proxy_status(
             Err(_) => "starting", // process alive but HTTP not ready yet
         }
     } else {
-        "running" // no port known — fall back to process-alive check
+        "running" // no port known - fall back to process-alive check
     };
 
     Ok(serde_json::json!({

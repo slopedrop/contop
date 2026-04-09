@@ -1,5 +1,5 @@
 """
-Unit tests for tools/gui_automation.py — GUIAutomation class.
+Unit tests for tools/gui_automation.py - GUIAutomation class.
 
 Tests all action handlers with mocked pyautogui to avoid actual screen interaction.
 Validates coordinate scaling, voice_message generation, error handling, and timing.
@@ -24,7 +24,7 @@ def gui():
 
 
 # ---------------------------------------------------------------------------
-# Task 1 subtask tests — basic action dispatch and scaling
+# Task 1 subtask tests - basic action dispatch and scaling
 # ---------------------------------------------------------------------------
 
 class TestClickAction:

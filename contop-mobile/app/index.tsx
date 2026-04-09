@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { getPairingToken } from '../services/secureStorage';
 
 /**
- * Entry point — connection flow controller.
+ * Entry point - connection flow controller.
  * Checks stored token + credentials to determine routing:
  *   - Token + (any API key OR subscription provider) → splash → reconnecting
  *   - Token but no keys/subscriptions → splash → connect (with message)
@@ -15,14 +15,14 @@ export default function HomeScreen(): React.JSX.Element {
 
   useEffect(() => {
     checkStoredCredentials();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
   }, []);
 
   async function checkStoredCredentials() {
     const token = await getPairingToken();
 
     if (!token) {
-      // No stored token — first launch flow
+      // No stored token - first launch flow
       router.replace({
         pathname: '/(connect)/splash',
         params: { next: 'connect' },
@@ -30,7 +30,7 @@ export default function HomeScreen(): React.JSX.Element {
       return;
     }
 
-    // Valid token — returning user flow
+    // Valid token - returning user flow
     router.replace({
       pathname: '/(connect)/splash',
       params: { next: 'reconnecting' },

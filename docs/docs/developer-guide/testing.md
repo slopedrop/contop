@@ -30,7 +30,7 @@ npx jest
 
 ### Mocking Strategy
 
-- **WebRTC**: Mock `react-native-webrtc` in Jest setup — never expect WebRTC tunnels to open during tests
+- **WebRTC**: Mock `react-native-webrtc` in Jest setup - never expect WebRTC tunnels to open during tests
 - **Expo APIs**: Mock `expo-local-authentication`, `expo-haptics`, `expo-camera`, and other native modules
 - **Stores**: Test Zustand stores by calling actions and asserting state changes
 

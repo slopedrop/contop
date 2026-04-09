@@ -1,5 +1,5 @@
 """
-ATDD - Story 3.1: The Dual-Tool Evaluator Core — Integration Tests
+ATDD - Story 3.1: The Dual-Tool Evaluator Core - Integration Tests
 
 Tests for the tool_call data channel message flow through WebRTCPeerManager,
 verifying state_update + tool_result responses and gemini_call_id round-trip.
@@ -212,7 +212,7 @@ class TestGeminiCallIdRoundTrip:
         )
 
     async def test_force_host_in_payload_ignored_for_security(self):
-        """[P0] force_host in payload must be ignored — server never trusts client bypass.
+        """[P0] force_host in payload must be ignored - server never trusts client bypass.
 
         Given: A tool_call with restricted path and force_host=True in payload
         When:  The tool_call is processed
@@ -238,7 +238,7 @@ class TestGeminiCallIdRoundTrip:
         assert len(sent) == 2
         state_update = sent[0]
         assert state_update["payload"]["ai_state"] == "sandboxed", (
-            "force_host in payload must be ignored — restricted path must still be sandboxed"
+            "force_host in payload must be ignored - restricted path must still be sandboxed"
         )
         tool_result = sent[1]
         assert tool_result["payload"]["status"] == "sandboxed"
@@ -308,7 +308,7 @@ class TestExecutionCancelledReset:
         manager._on_data_channel_message(stop_msg)
         assert manager._execution_cancelled is True
 
-        # Then: send a new tool_call — flag must reset
+        # Then: send a new tool_call - flag must reset
         tool_call_msg = json.dumps({
             "type": "tool_call",
             "id": "msg-008",
@@ -702,7 +702,7 @@ class TestClassifyDestructive:
         assert result.require_confirmation is False
 
     async def test_force_host_bypasses_destructive_confirmation(self):
-        """[P0] 7.9: force_host=True bypasses destructive confirmation — require_confirmation=False."""
+        """[P0] 7.9: force_host=True bypasses destructive confirmation - require_confirmation=False."""
         from core.dual_tool_evaluator import DualToolEvaluator
 
         evaluator = DualToolEvaluator()
@@ -832,7 +832,7 @@ class TestForbiddenMatches:
 
         # Double-space evasion: the forbidden pattern is "rm -rf /" (single space)
         # Word-boundary matching starts at \brm, so "rm  -rf /" doesn't contain
-        # the exact substring "rm -rf /".  This is correct — the command IS different.
+        # the exact substring "rm -rf /".  This is correct - the command IS different.
         assert DualToolEvaluator._forbidden_matches("rm  -rf /", "rm -rf /") is False
 
 

@@ -103,10 +103,10 @@ class TestKeepAwake:
         def mock_set_state(flags):
             nonlocal call_count
             call_count += 1
-            # First call is _keep_awake_off_internal — allow it
+            # First call is _keep_awake_off_internal - allow it
             if call_count == 1:
                 return True
-            # Second call is the actual enable — fail it
+            # Second call is the actual enable - fail it
             return False
         with patch("tools.device_control.platform.system", return_value="Windows"), \
              patch("tools.device_control._win_set_execution_state", side_effect=mock_set_state):
@@ -117,7 +117,7 @@ class TestKeepAwake:
     async def test_keep_awake_on_process_exits_immediately_returns_error(self):
         mock_proc = AsyncMock()
         mock_proc.wait = AsyncMock(return_value=1)
-        mock_proc.returncode = 1  # exited immediately — binary not found or crashed
+        mock_proc.returncode = 1  # exited immediately - binary not found or crashed
         with patch("tools.device_control.platform.system", return_value="Darwin"), \
              patch("tools.device_control.asyncio.create_subprocess_exec",
                    return_value=mock_proc):

@@ -8,11 +8,11 @@ When your command requires tool execution, the server-side [ADK](/architecture/a
 
 ## How Execution Works
 
-1. **Intent received** — Server receives `user_intent` with your command and optional screen context
-2. **Planning** — Agent analyzes the request and plans execution steps
-3. **Tool execution** — Agent iterates through tools: observe screen, run commands, click UI elements
-4. **Progress streaming** — Each tool call streams `agent_progress` updates to your phone in real time
-5. **Result delivery** — Final `agent_result` sent with the answer, step count, and duration
+1. **Intent received** - Server receives `user_intent` with your command and optional screen context
+2. **Planning** - Agent analyzes the request and plans execution steps
+3. **Tool execution** - Agent iterates through tools: observe screen, run commands, click UI elements
+4. **Progress streaming** - Each tool call streams `agent_progress` updates to your phone in real time
+5. **Result delivery** - Final `agent_result` sent with the answer, step count, and duration
 
 ## Execution Thread Entries
 

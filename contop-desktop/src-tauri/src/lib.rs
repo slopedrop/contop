@@ -95,7 +95,7 @@ fn kill_server_process(child: &mut Child) {
         }
     }
 
-    // Reap the direct child process with a bounded timeout — never block indefinitely.
+    // Reap the direct child process with a bounded timeout - never block indefinitely.
     // child.wait() can hang forever on Windows even after taskkill, so we only use try_wait.
     for _ in 0..30 {
         match child.try_wait() {
@@ -104,7 +104,7 @@ fn kill_server_process(child: &mut Child) {
             Err(_) => return,
         }
     }
-    // Still alive after 3 seconds — force kill and give it one more short window
+    // Still alive after 3 seconds - force kill and give it one more short window
     let _ = child.kill();
     for _ in 0..10 {
         match child.try_wait() {
@@ -112,7 +112,7 @@ fn kill_server_process(child: &mut Child) {
             Ok(None) => std::thread::sleep(std::time::Duration::from_millis(50)),
         }
     }
-    // Give up — don't block the close sequence
+    // Give up - don't block the close sequence
 }
 
 /// Find the `uv` binary by checking PATH first, then common install locations.
@@ -304,7 +304,7 @@ fn start_server(app: tauri::AppHandle, state: State<'_, ServerState>) -> Result<
 async fn run_first_launch_setup(app: tauri::AppHandle) -> Result<String, String> {
     let paths = resolve_server_paths(&app)?;
 
-    // Check setup status — skip if already completed with matching hash
+    // Check setup status - skip if already completed with matching hash
     let contop_dir = dirs::home_dir()
         .ok_or("Cannot determine home directory")?
         .join(".contop");
@@ -391,7 +391,7 @@ async fn run_first_launch_setup(app: tauri::AppHandle) -> Result<String, String>
 
 /// Simple hash for pyproject.toml staleness detection.
 fn md5_hash(data: &[u8]) -> u64 {
-    // Using a simple FNV-1a hash — no crypto dependency needed for staleness check
+    // Using a simple FNV-1a hash - no crypto dependency needed for staleness check
     let mut hash: u64 = 0xcbf29ce484222325;
     for &byte in data {
         hash ^= byte as u64;
@@ -446,7 +446,7 @@ async fn ensure_dependencies_installed(app: tauri::AppHandle) -> Result<String, 
         let has_nvidia = detect_nvidia_gpu();
 
         let extras = if has_nvidia {
-            emit("installing", "NVIDIA GPU detected — downloading Python dependencies with CUDA support", "This download is ~2.5 GB and may take several minutes");
+            emit("installing", "NVIDIA GPU detected - downloading Python dependencies with CUDA support", "This download is ~2.5 GB and may take several minutes");
             vec!["--extra", "omniparser", "--extra", "cu126"]
         } else {
             emit("installing", "Downloading Python dependencies", "This download is ~500 MB and may take a few minutes");
@@ -499,7 +499,7 @@ async fn ensure_dependencies_installed(app: tauri::AppHandle) -> Result<String, 
 fn detect_nvidia_gpu() -> bool {
     #[cfg(target_os = "windows")]
     {
-        // Use full path — NSIS and installed apps may not have nvidia-smi on PATH
+        // Use full path - NSIS and installed apps may not have nvidia-smi on PATH
         let windir = std::env::var("WINDIR").unwrap_or_else(|_| "C:\\Windows".to_string());
         let nvidia_smi = format!("{}\\System32\\nvidia-smi.exe", windir);
         StdCommand::new(&nvidia_smi)
@@ -697,7 +697,7 @@ fn load_settings() -> Result<serde_json::Value, String> {
     let val: serde_json::Value = match serde_json::from_str(&content) {
         Ok(v) => v,
         Err(_) => {
-            // Corrupted — overwrite with defaults and return them (AC4: silent recovery)
+            // Corrupted - overwrite with defaults and return them (AC4: silent recovery)
             std::fs::write(&path, DEFAULT_SETTINGS_JSON)
                 .map_err(|e| format!("Failed to restore defaults: {e}"))?;
             return serde_json::from_str(DEFAULT_SETTINGS_JSON)
@@ -817,7 +817,7 @@ async fn forget_connection(state: State<'_, ServerState>) -> Result<(), String> 
         }
 
         // 2. Always delete the tokens file so the server can't reload the old
-        //    token on next start — this is the reliable fallback when the
+        //    token on next start - this is the reliable fallback when the
         //    server-side DELETE fails (e.g. server is off).
         if let Some(home) = dirs::home_dir() {
             let tokens_path = home.join(".contop").join("tokens.json");
@@ -922,7 +922,7 @@ async fn fetch_connection_info(state: State<'_, ServerState>) -> Result<serde_js
     .map_err(|e| format!("Task join error: {e}"))?
 }
 
-/// Generic GET proxy — forwards any path to the local FastAPI server.
+/// Generic GET proxy - forwards any path to the local FastAPI server.
 /// Used by pages (e.g. Skills) that need simple REST calls without dedicated commands.
 #[tauri::command]
 async fn proxy_get(state: State<'_, ServerState>, path: String) -> Result<serde_json::Value, String> {
@@ -949,7 +949,7 @@ async fn proxy_get(state: State<'_, ServerState>, path: String) -> Result<serde_
     .map_err(|e| format!("Task join error: {e}"))?
 }
 
-/// Generic POST proxy — forwards any path to the local FastAPI server.
+/// Generic POST proxy - forwards any path to the local FastAPI server.
 /// Accepts an optional JSON body for POST requests that need one.
 #[tauri::command]
 async fn proxy_post(state: State<'_, ServerState>, path: String, body: Option<serde_json::Value>) -> Result<serde_json::Value, String> {
@@ -982,7 +982,7 @@ async fn proxy_post(state: State<'_, ServerState>, path: String, body: Option<se
     .map_err(|e| format!("Task join error: {e}"))?
 }
 
-/// Generic DELETE proxy — forwards any path to the local FastAPI server.
+/// Generic DELETE proxy - forwards any path to the local FastAPI server.
 #[tauri::command]
 async fn proxy_delete(state: State<'_, ServerState>, path: String) -> Result<serde_json::Value, String> {
     let port = state.port;
@@ -1008,7 +1008,7 @@ async fn proxy_delete(state: State<'_, ServerState>, path: String) -> Result<ser
     .map_err(|e| format!("Task join error: {e}"))?
 }
 
-/// Generic PUT proxy — forwards path + JSON body to the local FastAPI server.
+/// Generic PUT proxy - forwards path + JSON body to the local FastAPI server.
 #[tauri::command]
 async fn proxy_put(state: State<'_, ServerState>, path: String, body: serde_json::Value) -> Result<serde_json::Value, String> {
     let port = state.port;
@@ -1191,7 +1191,7 @@ pub fn run() {
                     });
                 }
                 tauri::RunEvent::Exit => {
-                    // Final synchronous cleanup — runs after the event loop stops,
+                    // Final synchronous cleanup - runs after the event loop stops,
                     // so blocking here is acceptable. Catches anything the background
                     // thread from ExitRequested hasn't finished yet.
                     let state = app_handle.state::<ServerState>();

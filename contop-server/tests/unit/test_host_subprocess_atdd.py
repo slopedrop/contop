@@ -1,5 +1,5 @@
 """
-ATDD acceptance tests for tools/host_subprocess.py — Story 3.2 acceptance criteria.
+ATDD acceptance tests for tools/host_subprocess.py - Story 3.2 acceptance criteria.
 
 BDD-style tests mapping to each AC scenario.
 """
@@ -39,7 +39,7 @@ class TestAC1_SafeCommandExecution:
 
     @pytest.mark.asyncio
     async def test_async_execution(self):
-        """Verify the execution is truly async — can run concurrently."""
+        """Verify the execution is truly async - can run concurrently."""
         host = HostSubprocess()
         # Run two commands concurrently
         results = await asyncio.gather(

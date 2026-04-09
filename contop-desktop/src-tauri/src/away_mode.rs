@@ -1,4 +1,4 @@
-//! Away Mode — physical access protection with continuous automation.
+//! Away Mode - physical access protection with continuous automation.
 //!
 //! Provides:
 //! - PIN setup/verification (bcrypt hashed, async via spawn_blocking) [F10]
@@ -19,15 +19,15 @@ use tauri::{AppHandle, Manager, State, WebviewUrl, WebviewWindowBuilder};
 // ── State ──
 
 pub static AWAY_MODE_ACTIVE: AtomicBool = AtomicBool::new(false);
-/// Separate from AWAY_MODE_ACTIVE — tracks whether the overlay window exists.
+/// Separate from AWAY_MODE_ACTIVE - tracks whether the overlay window exists.
 /// The health server reads this independently so the watchdog can detect
 /// "away mode active but overlay crashed". [F8]
 static OVERLAY_ACTIVE: AtomicBool = AtomicBool::new(false);
 
-/// Keyring-stored key prefix — used to detect already-migrated keys.
+/// Keyring-stored key prefix - used to detect already-migrated keys.
 const KEYRING_PREFIX: &str = "keyring:";
 
-/// Legacy DPAPI prefix — used for backward-compatible migration on Windows.
+/// Legacy DPAPI prefix - used for backward-compatible migration on Windows.
 #[cfg(target_os = "windows")]
 const DPAPI_PREFIX: &str = "dpapi:";
 
@@ -313,7 +313,7 @@ fn create_overlay_window(app: &AppHandle) -> Result<(), String> {
 
     // Let mouse events pass through so pyautogui and phone manual-control
     // clicks reach the desktop. Physical attackers still can't do anything
-    // useful — overlay is visually opaque and keyboard block blocks all keys.
+    // useful - overlay is visually opaque and keyboard block blocks all keys.
     let _ = overlay.set_ignore_cursor_events(true);
     Ok(())
 }
@@ -407,7 +407,7 @@ pub fn get_decrypted_api_keys() -> Result<serde_json::Value, String> {
             continue;
         }
         let decrypted = if let Some(key_name) = value.strip_prefix(KEYRING_PREFIX) {
-            // Value is in keyring — retrieve by the key name stored in the marker
+            // Value is in keyring - retrieve by the key name stored in the marker
             keyring_retrieve(key_name).unwrap_or_else(|_| value.to_string())
         } else {
             #[cfg(target_os = "windows")]
@@ -469,7 +469,7 @@ pub fn migrate_keys_to_plaintext() -> Result<(), String> {
                         .and_then(|e| e.delete_credential());
                 }
                 Err(_) => {
-                    // Key lost from keyring — clear the broken marker
+                    // Key lost from keyring - clear the broken marker
                     eprintln!("Warning: keyring entry for {field} is gone, clearing marker");
                     obj.insert(field.to_string(), serde_json::Value::String(String::new()));
                 }
@@ -596,7 +596,7 @@ mod macos_overlay {
             .ns_window()
             .map_err(|e| format!("ns_window: {e}"))? as id;
         unsafe {
-            // NSWindowSharingNone = 0 — exclude from screen capture (pre-Sequoia)
+            // NSWindowSharingNone = 0 - exclude from screen capture (pre-Sequoia)
             let _: () = msg_send![ns_window, setSharingType: 0i64];
         }
         Ok(())
@@ -635,7 +635,7 @@ mod macos_input {
                 "Warning: Input Monitoring permission not granted. \
                  Using presentationOptions-only fallback (partial keyboard blocking)."
             );
-            // Return sentinel — presentationOptions are still active
+            // Return sentinel - presentationOptions are still active
             return Ok(0);
         }
 
@@ -681,7 +681,7 @@ mod macos_input {
                 tap.enable();
                 // Extract raw CFMachPortRef as our handle for later cleanup
                 let port = tap.mach_port.as_concrete_TypeRef() as isize;
-                // Leak the tap to keep it alive — we'll disable it on disengage
+                // Leak the tap to keep it alive - we'll disable it on disengage
                 std::mem::forget(tap);
                 Ok(port)
             }
@@ -790,7 +790,7 @@ pub fn get_idle_time_ms() -> u32 {
                 CFNumber::wrap_under_get_rule(value.as_concrete_TypeRef() as core_foundation::number::CFNumberRef)
             };
             if let Some(nanos) = cf_number.to_i64() {
-                // HIDIdleTime is in nanoseconds — convert to milliseconds
+                // HIDIdleTime is in nanoseconds - convert to milliseconds
                 let ms = nanos / 1_000_000;
                 return ms.min(u32::MAX as i64) as u32;
             }
@@ -842,13 +842,13 @@ mod linux_input {
                 // Wayland: rely on Tauri's fullscreen overlay grabbing focus.
                 // Full ext-session-lock-v1 integration deferred to follow-up.
                 eprintln!(
-                    "Away Mode: Wayland session — using fullscreen overlay focus for keyboard blocking. \
+                    "Away Mode: Wayland session - using fullscreen overlay focus for keyboard blocking. \
                      Full ext-session-lock-v1 support planned for future release."
                 );
                 Ok(1) // sentinel: active via overlay focus
             }
             SessionType::Unknown => {
-                eprintln!("Away Mode: Unknown session type — keyboard blocking unavailable.");
+                eprintln!("Away Mode: Unknown session type - keyboard blocking unavailable.");
                 Ok(0)
             }
         }
@@ -865,7 +865,7 @@ mod linux_input {
         let root = conn.setup().roots[screen_num].root;
 
         conn.grab_keyboard(
-            true,  // owner_events — report events to our window too
+            true,  // owner_events - report events to our window too
             root,
             CURRENT_TIME,
             GrabMode::ASYNC,
@@ -913,7 +913,7 @@ pub fn get_idle_time_ms() -> u32 {
         linux_input::SessionType::X11 => get_idle_time_ms_x11(),
         _ => {
             // Wayland: no reliable idle detection without ext-idle-notify-v1.
-            // Return 0 (never idle) — idle auto-engage won't trigger on Wayland.
+            // Return 0 (never idle) - idle auto-engage won't trigger on Wayland.
             0
         }
     }
@@ -1059,7 +1059,7 @@ pub fn get_idle_time_ms() -> u32 {
     }
 }
 
-/// Start idle monitoring — polls every 30s, engages Away Mode on main thread when threshold exceeded.
+/// Start idle monitoring - polls every 30s, engages Away Mode on main thread when threshold exceeded.
 pub fn start_idle_monitor(app: AppHandle) {
     std::thread::spawn(move || loop {
         std::thread::sleep(std::time::Duration::from_secs(30));

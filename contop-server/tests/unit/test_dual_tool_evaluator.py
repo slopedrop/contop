@@ -1,7 +1,7 @@
 """
-Unit tests for core/dual_tool_evaluator.py — The Dual-Tool Evaluator Core.
+Unit tests for core/dual_tool_evaluator.py - The Dual-Tool Evaluator Core.
 
-Story 3.1 — Tests for the classification gate that routes tool_call commands
+Story 3.1 - Tests for the classification gate that routes tool_call commands
 to either "host" (direct execution) or "sandbox" (containerized execution).
 
 Module under test: core.dual_tool_evaluator
@@ -225,7 +225,7 @@ class TestCaseSensitivity:
 
 @pytest.mark.unit
 class TestEdgeCases:
-    """4.9: Edge cases — empty commands, unknown tool names, missing args."""
+    """4.9: Edge cases - empty commands, unknown tool names, missing args."""
 
     async def test_empty_command_returns_host(self, evaluator):
         """Given an empty command string, classify() must return route='host'."""

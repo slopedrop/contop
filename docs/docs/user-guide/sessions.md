@@ -10,23 +10,23 @@ Contop persists your interaction history across app restarts so you can review p
 
 Sessions are stored on-device using AsyncStorage:
 
-- **Session index** — Metadata array at `@contop:session_index` (session ID, name, timestamp, entry count, model used, connection type, tool stats)
-- **Session entries** — Per-session entries at `@contop:session:${id}:entries`
+- **Session index** - Metadata array at `@contop:session_index` (session ID, name, timestamp, entry count, model used, connection type, tool stats)
+- **Session entries** - Per-session entries at `@contop:session:${id}:entries`
 
 ### Storage Optimizations
 
-- **Base64 image stripping** — Screenshots (`image_b64` metadata) are removed before persisting to prevent storage bloat (each screenshot is 300–500 KB)
-- **Write debouncing** — Persistence writes are debounced at 500ms intervals to avoid excessive I/O
-- **Max 20 sessions** — Oldest sessions are pruned automatically on startup
-- **Emergency storage** — A `_storageFull` flag prevents cascading writes when storage is nearly full. `emergencyClearEntries()` can nuke entry data while keeping the session index
+- **Base64 image stripping** - Screenshots (`image_b64` metadata) are removed before persisting to prevent storage bloat (each screenshot is 300–500 KB)
+- **Write debouncing** - Persistence writes are debounced at 500ms intervals to avoid excessive I/O
+- **Max 20 sessions** - Oldest sessions are pruned automatically on startup
+- **Emergency storage** - A `_storageFull` flag prevents cascading writes when storage is nearly full. `emergencyClearEntries()` can nuke entry data while keeping the session index
 
 ## Session History
 
 Access past sessions from the session menu. The history viewer supports:
 
-- **Search** — Filter sessions by name, date range (Today, This Week, All), or model used
-- **Session cards** — Shows title, date, entry count, and a preview of the first message
-- **Resume** — Tap a session to view its full execution thread
+- **Search** - Filter sessions by name, date range (Today, This Week, All), or model used
+- **Session cards** - Shows title, date, entry count, and a preview of the first message
+- **Resume** - Tap a session to view its full execution thread
 
 ### What Gets Restored
 

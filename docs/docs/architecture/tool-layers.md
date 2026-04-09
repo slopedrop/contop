@@ -91,7 +91,7 @@ graph TB
     style Accessible stroke-dasharray: 5 5
 ```
 
-> Tools with dashed borders (⚙️) are **conditional** — registered only for specific vision backends. Advanced Workflow Tools are loaded on-demand via the "advanced-workflows" skill. See [Conditional Tools](#conditional-tools) below.
+> Tools with dashed borders (⚙️) are **conditional** - registered only for specific vision backends. Advanced Workflow Tools are loaded on-demand via the "advanced-workflows" skill. See [Conditional Tools](#conditional-tools) below.
 
 ## Tool Return Contract
 
@@ -112,9 +112,9 @@ Every tool returns a dict with `status` as the only universal field. Other keys 
 ```
 
 Common optional keys:
-- `voice_message` — Optional audio feedback for mobile (present on errors for some tools)
-- `image_b64`, `raw_image_b64` — `observe_screen` (annotated + raw screenshots)
-- `duration_ms` — Most tools include execution time
+- `voice_message` - Optional audio feedback for mobile (present on errors for some tools)
+- `image_b64`, `raw_image_b64` - `observe_screen` (annotated + raw screenshots)
+- `duration_ms` - Most tools include execution time
 
 ## Conditional Tools
 
@@ -140,7 +140,7 @@ Every tool call passes through the [Dual-Tool Evaluator](/security/dual-tool-eva
 | **Always host (document)** | `read_pdf`, `read_image`, `read_excel`, `write_excel` |
 | **Always host (system)** | `process_info`, `system_info`, `download_file` |
 | **Always host (workflow)** | `save_dialog`, `open_dialog`, `launch_app`, `close_app`, `fill_form`, `extract_text`, `copy_between_apps`, `app_menu` |
-| **Direct bypass** | `device_control`, `manual_control` (not ADK tools — direct handlers) |
+| **Direct bypass** | `device_control`, `manual_control` (not ADK tools - direct handlers) |
 
 ---
 

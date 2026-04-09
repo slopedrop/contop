@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 EXECUTION_AGENT_MODEL = "gemini-2.5-flash"  # Fallback when mobile doesn't specify a model
 
 MAX_ITERATIONS = 50
-LLM_CALL_TIMEOUT = 120  # seconds — abort if no LLM response within this window
-MAX_EXECUTION_TIME = 600  # seconds (10 min) — total wall-clock cap per intent
+LLM_CALL_TIMEOUT = 120  # seconds - abort if no LLM response within this window
+MAX_EXECUTION_TIME = 600  # seconds (10 min) - total wall-clock cap per intent
 
 COMPUTER_USE_MODELS = [
     "gemini-2.5-computer-use-preview-10-2025",
@@ -71,7 +71,7 @@ MAX_CUSTOM_INSTRUCTIONS_LENGTH = 4000
 _FORMAT_VARS = {
     "platform": _PLATFORM,
     "home_dir": _HOME_DIR,
-    # shell_note removed — injected dynamically via _get_shell_note()
+    # shell_note removed - injected dynamically via _get_shell_note()
     "modifier": _MODIFIER,
     "undo_hotkey": _UNDO_HOTKEY,
     "undo_keys": _UNDO_KEYS,
@@ -84,23 +84,23 @@ _BACKEND_MODE_INSTRUCTIONS: dict[str, str] = {
         "### Active Mode: Accessibility\n\n"
         "You are running in **accessibility mode**. Tool selection depends on what you are interacting with.\n\n"
         "#### Native desktop apps (File Explorer, Notepad, Office, Settings, dialogs)\n"
-        "- **Observation**: `get_ui_context` — ALWAYS call this first. Do NOT call `observe_screen` "
+        "- **Observation**: `get_ui_context` - ALWAYS call this first. Do NOT call `observe_screen` "
         "unless `get_ui_context` returns zero interactive elements.\n"
-        "- **Interaction**: `execute_accessible` — use the EXACT element_name and control_type from "
+        "- **Interaction**: `execute_accessible` - use the EXACT element_name and control_type from "
         "`get_ui_context`. Only fall back to `execute_gui` if `execute_accessible` returns found=false.\n"
-        "- **NEVER call `observe_screen` after a successful `get_ui_context`** — if `get_ui_context` "
+        "- **NEVER call `observe_screen` after a successful `get_ui_context`** - if `get_ui_context` "
         "returned elements, use `execute_accessible` to interact. Calling `observe_screen` wastes "
         "12-18 seconds on CPU and image tokens. `get_ui_context` IS your verification tool.\n"
-        "- **NEVER call `execute_accessible` without first calling `get_ui_context`** — element names "
+        "- **NEVER call `execute_accessible` without first calling `get_ui_context`** - element names "
         "are often different from what you expect.\n"
         "- If `execute_accessible` returns found=false, check `available_elements` and retry ONCE "
         "before falling back to vision.\n"
         "- **WARNING about `observe_screen` element_id**: Element IDs are numbered by screen position "
-        "and include ALL visible UI — taskbar, system tray, browser chrome, other windows, not just the "
+        "and include ALL visible UI - taskbar, system tray, browser chrome, other windows, not just the "
         "target app. Never assume a specific element_id corresponds to the element you want. Always read "
         "the element description/content before clicking.\n\n"
         "#### Web pages / browser tasks\n"
-        "`get_ui_context` only sees browser chrome (address bar, tabs, toolbar buttons) — NOT the web "
+        "`get_ui_context` only sees browser chrome (address bar, tabs, toolbar buttons) - NOT the web "
         "page content. `execute_accessible` cannot interact with DOM elements.\n\n"
         "**Default: Use `execute_browser` (PinchTab CDP)**. No screenshot, no image tokens, no "
         "coordinate guessing. It is faster, cheaper, and more reliable than vision.\n\n"
@@ -109,33 +109,33 @@ _BACKEND_MODE_INSTRUCTIONS: dict[str, str] = {
         "- Extracting text from a page (action=\"extract_text\")\n"
         "- Any task where the user does NOT need to see the browser on their desktop\n\n"
         "**When to use `execute_browser` with `visible: true`:**\n"
-        "- ONLY when the user explicitly wants to WATCH the automation — phrases like "
+        "- ONLY when the user explicitly wants to WATCH the automation - phrases like "
         "\"show me\", \"I want to see it\", \"let me watch\", \"display it on screen\"\n"
-        "- \"Open in Chrome\" or \"open in browser\" does NOT mean visible — the user just wants "
+        "- \"Open in Chrome\" or \"open in browser\" does NOT mean visible - the user just wants "
         "you to navigate to the URL. Use headless (default) unless they specifically ask to see the process.\n"
         "- Pass params={{\"visible\": true}} on the navigate/open_tab action to launch a headed browser\n\n"
         "**When to use `observe_screen` + `execute_gui` instead:**\n"
         "- You need to verify visual layout, colors, images, or canvas content\n"
         "- Drag-and-drop or complex mouse interactions on the page\n"
         "- `execute_browser` failed or PinchTab is unavailable\n\n"
-        "**Example — \"open this article in Chrome and scroll down\" (headless, default):**\n"
+        "**Example - \"open this article in Chrome and scroll down\" (headless, default):**\n"
         "1. `execute_browser` action=\"navigate\", url=\"https://example.com/article\"\n"
         "2. `execute_browser` action=\"snapshot\" → get element refs\n"
         "3. `execute_browser` action=\"press\", params={{\"ref\": \"e0\", \"key\": \"End\"}}\n"
         "4. `execute_browser` action=\"snapshot\" → read results\n\n"
-        "**Example — searching the web:**\n"
+        "**Example - searching the web:**\n"
         "1. `execute_browser` action=\"navigate\", url=\"https://google.com\"\n"
         "2. `execute_browser` action=\"snapshot\" → get element refs\n"
         "3. `execute_browser` action=\"fill\", params={{\"ref\": \"e5\", \"value\": \"search query\"}}\n"
         "4. `execute_browser` action=\"press\", params={{\"ref\": \"e5\", \"key\": \"Enter\"}}\n"
         "5. `execute_browser` action=\"snapshot\" → read results\n\n"
-        "**Example — user says \"show me the browser\" (visible):**\n"
+        "**Example - user says \"show me the browser\" (visible):**\n"
         "1. `execute_browser` action=\"navigate\", url=\"https://example.com\", "
         "params={{\"visible\": true}}\n"
         "2. `execute_browser` action=\"snapshot\" → verify page loaded\n\n"
         "#### Dialog handling (Save As, Open, Print)\n"
         "After sending a hotkey that opens a dialog (Ctrl+S, Ctrl+O):\n"
-        "1. Call `wait(1.5)` — dialogs take time to appear.\n"
+        "1. Call `wait(1.5)` - dialogs take time to appear.\n"
         "2. Pass `window_title` to `get_ui_context` (e.g., `window_title=\"Save As\"`).\n"
         "3. Pass the same `window_title` to `execute_accessible`."
     ),
@@ -143,31 +143,31 @@ _BACKEND_MODE_INSTRUCTIONS: dict[str, str] = {
         "### Active Mode: Vision (with Accessibility-First Strategy)\n\n"
         "#### Native desktop apps\n"
         "**ALWAYS call `get_ui_context` FIRST** for native desktop apps. It returns the accessibility "
-        "tree with element names and control types — faster and more reliable than screenshots.\n"
+        "tree with element names and control types - faster and more reliable than screenshots.\n"
         "- If `get_ui_context` returns interactive elements, use `execute_accessible` to interact. "
-        "**Do NOT call `observe_screen`** — you already have what you need.\n"
-        "- **NEVER call `observe_screen` after a successful `get_ui_context`** — if `get_ui_context` "
+        "**Do NOT call `observe_screen`** - you already have what you need.\n"
+        "- **NEVER call `observe_screen` after a successful `get_ui_context`** - if `get_ui_context` "
         "returned elements, use `execute_accessible` to interact. Calling `observe_screen` wastes "
         "12-18 seconds and image tokens. `get_ui_context` IS your observation.\n"
-        "- **NEVER call `execute_accessible` without first calling `get_ui_context`** — element names "
+        "- **NEVER call `execute_accessible` without first calling `get_ui_context`** - element names "
         "are often different from what you expect.\n"
         "- Only call `observe_screen` if `get_ui_context` returns ZERO interactive elements or you "
         "specifically need pixel coordinates for drag/drop or visual verification.\n"
         "- If `execute_accessible` returns found=false, check `available_elements` and retry ONCE "
         "before falling back to vision.\n"
         "- **WARNING about `observe_screen` element_id**: Element IDs are numbered by screen position "
-        "and include ALL visible UI — taskbar, system tray, browser chrome, other windows, not just the "
+        "and include ALL visible UI - taskbar, system tray, browser chrome, other windows, not just the "
         "target app. Never assume a specific element_id corresponds to the element you want. Always read "
         "the element description/content before clicking.\n\n"
         "#### Web pages / browser tasks\n"
-        "**Default: Use `execute_browser` (PinchTab CDP)** for web tasks — no screenshot needed, "
+        "**Default: Use `execute_browser` (PinchTab CDP)** for web tasks - no screenshot needed, "
         "no image tokens wasted. It is faster and more reliable than vision-based clicking.\n\n"
         "**Use `execute_browser` when:**\n"
         "- Navigating to a URL, searching, reading/extracting page content, filling forms, clicking links\n"
         "- Any task where the user does NOT need to see the browser on their desktop\n\n"
         "**Use `execute_browser` with `visible: true` when:**\n"
         "- ONLY when the user explicitly wants to WATCH the automation (\"show me\", \"let me see it\", "
-        "\"display it on screen\"). \"Open in Chrome\" does NOT mean visible — use headless.\n"
+        "\"display it on screen\"). \"Open in Chrome\" does NOT mean visible - use headless.\n"
         "- Pass params={{\"visible\": true}} on navigate/open_tab to launch a headed browser\n\n"
         "**Use `observe_screen` + `execute_gui` ONLY when:**\n"
         "- `get_ui_context` returned zero elements (sparse accessibility tree)\n"
@@ -186,7 +186,7 @@ def _get_backend_mode_instructions(backend: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Per-tool instructions — platform-aware guidance injected into system prompt
+# Per-tool instructions - platform-aware guidance injected into system prompt
 # ---------------------------------------------------------------------------
 # Keys: tool name → dict with "_all" (all platforms) and/or platform keys
 # ("Windows", "Darwin", "Linux"). At prompt-build time the current platform's
@@ -196,7 +196,7 @@ def _get_backend_mode_instructions(backend: str) -> str:
 _TOOL_INSTRUCTIONS: dict[str, dict[str, str]] = {
     # ── Path-sensitive tools ──────────────────────────────────────────────
     "execute_cli": {
-        # Windows value is dynamic — resolved in _build_tool_instructions()
+        # Windows value is dynamic - resolved in _build_tool_instructions()
         # based on whether Git Bash is discovered at runtime.
         "Windows": None,  # placeholder, replaced by _get_execute_cli_windows_instruction()
         "Darwin": (
@@ -212,7 +212,7 @@ _TOOL_INSTRUCTIONS: dict[str, dict[str, str]] = {
         "Windows": (
             "The `file_path` parameter MUST use **Windows backslash paths** "
             "(`C:\\Users\\name\\Documents\\file.txt`). This path is typed into "
-            "a native Windows file dialog via the accessibility tree — forward "
+            "a native Windows file dialog via the accessibility tree - forward "
             "slashes will cause navigation failures or save to the wrong location. "
             "Always provide the FULL absolute path including drive letter."
         ),
@@ -231,7 +231,7 @@ _TOOL_INSTRUCTIONS: dict[str, dict[str, str]] = {
         "Windows": (
             "The `file_path` parameter MUST use **Windows backslash paths** "
             "(`C:\\Users\\name\\Documents\\file.txt`). This path is typed into "
-            "a native Windows file dialog — forward slashes will fail. "
+            "a native Windows file dialog - forward slashes will fail. "
             "Always provide the FULL absolute path including drive letter."
         ),
         "Darwin": (
@@ -268,7 +268,7 @@ _TOOL_INSTRUCTIONS: dict[str, dict[str, str]] = {
     "edit_file": {
         "Windows": (
             "Accepts both path formats. Use the SAME path format you used in "
-            "`read_file` — the tool checks that the file was previously read, "
+            "`read_file` - the tool checks that the file was previously read, "
             "and the resolved path must match."
         ),
     },
@@ -327,7 +327,7 @@ _TOOL_INSTRUCTIONS: dict[str, dict[str, str]] = {
             "or document name."
         ),
         "Linux": (
-            "Match by window title. Titles vary by toolkit — typically "
+            "Match by window title. Titles vary by toolkit - typically "
             "`filename - AppName` or just `AppName`."
         ),
     },
@@ -368,9 +368,9 @@ _TOOL_INSTRUCTIONS: dict[str, dict[str, str]] = {
             "Uses pywinauto. Control types: `Button`, `Edit`, `ComboBox`, "
             "`CheckBox`, `RadioButton`, `Hyperlink`, `MenuItem`, `ListItem`, "
             "`TabItem`, `Document`, `Text`, `Pane`, `Window`. Element names "
-            "come from UIA — always call `get_ui_context` first to get exact "
+            "come from UIA - always call `get_ui_context` first to get exact "
             "names. The main editing area of text editors (Notepad, WordPad, "
-            "Word, VS Code) is a `Document`, NOT an `Edit` — `Edit` is only for "
+            "Word, VS Code) is a `Document`, NOT an `Edit` - `Edit` is only for "
             "single-line fields like file-name boxes and search bars. If you "
             "are unsure of the control_type, omit it and rely on `element_name` "
             "alone. For file dialogs: `File name:` (Edit), `Save` (Button), "
@@ -379,7 +379,7 @@ _TOOL_INSTRUCTIONS: dict[str, dict[str, str]] = {
         "Darwin": (
             "Uses pyobjc AXUIElement. Roles: `AXButton`, `AXTextField`, "
             "`AXCheckBox`, `AXPopUpButton`, `AXMenuItem`. "
-            "Element names use accessibility labels — always call "
+            "Element names use accessibility labels - always call "
             "`get_ui_context` first. macOS file dialog labels differ from Windows."
         ),
         "Linux": (
@@ -411,17 +411,17 @@ _TOOL_INSTRUCTIONS: dict[str, dict[str, str]] = {
     "set_env_var": {
         "Windows": (
             "Session scope sets in current process only. "
-            "User/system scope uses `setx` — requires a new terminal session "
+            "User/system scope uses `setx` - requires a new terminal session "
             "to take effect. System scope may need admin elevation."
         ),
         "Darwin": (
             "Session scope sets in current process. "
-            "User scope uses `launchctl setenv` — affects new processes. "
+            "User scope uses `launchctl setenv` - affects new processes. "
             "For shell-persistent vars, also add to `~/.zshrc`."
         ),
         "Linux": (
             "Session scope sets in current process. "
-            "User scope appends `export` to `~/.bashrc` — only affects new "
+            "User scope appends `export` to `~/.bashrc` - only affects new "
             "shell sessions. Run `source ~/.bashrc` to apply immediately."
         ),
     },
@@ -430,7 +430,7 @@ _TOOL_INSTRUCTIONS: dict[str, dict[str, str]] = {
             "Opens `ms-settings:` URI. Settings paths use Windows Settings "
             "section names: `Display > Scale`, `System > Sound`, "
             "`Personalization > Themes`. The tool navigates via accessibility "
-            "tree — exact names depend on Windows version."
+            "tree - exact names depend on Windows version."
         ),
         "Darwin": (
             "Opens System Preferences via `x-apple.systempreferences:`. "
@@ -440,7 +440,7 @@ _TOOL_INSTRUCTIONS: dict[str, dict[str, str]] = {
         "Linux": (
             "Opens GNOME Control Center. Section names: `display`, `sound`, "
             "`background`, `network`. Other DEs (KDE, XFCE) have different "
-            "settings apps — this tool is GNOME-focused."
+            "settings apps - this tool is GNOME-focused."
         ),
     },
 
@@ -463,7 +463,7 @@ def _get_execute_cli_windows_instruction() -> str:
         return (
             "Commands run in **Git Bash**. Use **forward-slash paths** "
             f"(`C:/Users/name/file.txt`). Do NOT use backslashes in shell "
-            "commands — Git Bash treats `\\` as an escape character. "
+            "commands - Git Bash treats `\\` as an escape character. "
             f"Use `$HOME` or the absolute forward-slash home path, never `~` "
             f"(MSYS expansion is disabled, home dir is {_HOME_DIR}). "
             "Windows `.exe` programs are on PATH and work normally. "
@@ -479,7 +479,7 @@ def _get_execute_cli_windows_instruction() -> str:
     )
 
 
-# Dynamic instruction resolvers — keyed by tool name.
+# Dynamic instruction resolvers - keyed by tool name.
 # Called at prompt-build time when the static entry is None.
 _DYNAMIC_TOOL_INSTRUCTIONS: dict[str, dict[str, callable]] = {
     "execute_cli": {"Windows": _get_execute_cli_windows_instruction},
@@ -658,6 +658,6 @@ def get_planning_system_prompt(tool_descriptions: str = "") -> str:
         )
 
 
-# Backward-compatible constant — frozen at import time.
+# Backward-compatible constant - frozen at import time.
 # New code should call get_execution_system_prompt() instead.
 EXECUTION_AGENT_SYSTEM_PROMPT = _load_prompt_from_file()

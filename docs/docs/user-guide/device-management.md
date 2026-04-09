@@ -49,10 +49,10 @@ Revoking a device:
 
 The desktop app sends OS-level notifications for device events:
 
-- **Device connected** — A paired device established a WebRTC session
-- **Device disconnected** — A paired device's session ended
-- **Token replaced** — A device re-paired, replacing its old token
+- **Device connected** - A paired device established a WebRTC session
+- **Device disconnected** - A paired device's session ended
+- **Token replaced** - A device re-paired, replacing its old token
 
 ---
 
-**Related:** [Connection Methods](/user-guide/connection-methods) · [REST API — Devices](/api-reference/rest-api) · [Pairing & Encryption](/security/pairing-and-encryption)
+**Related:** [Connection Methods](/user-guide/connection-methods) · [REST API - Devices](/api-reference/rest-api) · [Pairing & Encryption](/security/pairing-and-encryption)

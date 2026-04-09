@@ -8,7 +8,7 @@ Contop supports three connection methods for reaching your desktop from anywhere
 
 ## LAN (Local Network)
 
-The fastest option — use when your phone and desktop are on the same Wi-Fi network.
+The fastest option - use when your phone and desktop are on the same Wi-Fi network.
 
 - **Latency**: Under 10ms typical
 - **Setup**: None (auto-detected)
@@ -28,7 +28,7 @@ For remote access without exposing your desktop to the internet.
 For access from anywhere in the world, no VPN required.
 
 - **Latency**: 50–200ms depending on region
-- **Setup**: None — `cloudflared` is auto-installed
+- **Setup**: None - `cloudflared` is auto-installed
 - **How it works**: The server starts a Cloudflare Tunnel on demand (when you generate a temporary QR code), creating a public WebSocket URL. The mobile app connects via this URL for signaling, then establishes a direct WebRTC P2P connection.
 
 :::note
@@ -39,9 +39,9 @@ The Cloudflare Tunnel is only used for the initial WebRTC signaling (SDP/ICE exc
 
 Regardless of connection method, all data between your phone and desktop is encrypted:
 
-- **DTLS** — Encrypts data channels
-- **SRTP** — Encrypts video stream
-- **Certificate fingerprint** — Verified during pairing via the QR code payload
+- **DTLS** - Encrypts data channels
+- **SRTP** - Encrypts video stream
+- **Certificate fingerprint** - Verified during pairing via the QR code payload
 
 [STUN servers](/architecture/webrtc-transport) (Google's public STUN) are used for NAT traversal to establish the P2P connection.
 

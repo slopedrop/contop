@@ -152,7 +152,7 @@ function ThinkingCard({ isLastThinking }: { isLastThinking: boolean }) {
       dot2Opacity.value = 0.3;
       dot3Opacity.value = 0.3;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLastThinking]);
 
   const dot1Style = useAnimatedStyle(() => ({ opacity: dot1Opacity.value }));
@@ -275,7 +275,7 @@ function InterventionCard({ entry }: { entry: ExecutionEntry }) {
         ? Haptics.NotificationFeedbackType.Warning
         : Haptics.NotificationFeedbackType.Error,
     );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleApprove = useCallback(() => {
@@ -301,14 +301,14 @@ function InterventionCard({ entry }: { entry: ExecutionEntry }) {
 
   // Header text varies by state and type (destructive vs sandbox)
   const pendingHeader = isDestructive
-    ? 'WARNING — Destructive Command'
-    : 'INTERVENTION — Sandbox Caught';
+    ? 'WARNING - Destructive Command'
+    : 'INTERVENTION - Sandbox Caught';
   const headerText = isExecuted
-    ? (isDestructive ? 'EXECUTED — On host' : 'EXECUTED — Forced to host')
+    ? (isDestructive ? 'EXECUTED - On host' : 'EXECUTED - Forced to host')
     : isAborted
       ? 'ABORTED'
       : isExpired
-        ? 'EXPIRED — Connection lost'
+        ? 'EXPIRED - Connection lost'
         : pendingHeader;
 
   // Button labels vary by type
@@ -483,12 +483,12 @@ function AgentProgressCard({ entry }: { entry: ExecutionEntry }) {
             />
             {status === 'running'
               ? <TextShimmer style={s.toolText} numberOfLines={2} testID="progress-status-running">
-                  {`${step ? `[${step}] ` : ''}${tool === 'observe_screen' ? 'Screenshot' : tool === 'get_ui_context' ? 'Accessibility tree' : entry.content}`}
-                </TextShimmer>
+                {`${step ? `[${step}] ` : ''}${tool === 'observe_screen' ? 'Screenshot' : tool === 'get_ui_context' ? 'Accessibility tree' : entry.content}`}
+              </TextShimmer>
               : <Text style={s.toolText} numberOfLines={2}>
-                  {step ? `[${step}] ` : ''}
-                  {tool === 'observe_screen' ? 'Screenshot' : tool === 'get_ui_context' ? 'Accessibility tree' : entry.content}
-                </Text>
+                {step ? `[${step}] ` : ''}
+                {tool === 'observe_screen' ? 'Screenshot' : tool === 'get_ui_context' ? 'Accessibility tree' : entry.content}
+              </Text>
             }
           </View>
           <View>
@@ -500,7 +500,7 @@ function AgentProgressCard({ entry }: { entry: ExecutionEntry }) {
             )}
           </View>
         </View>
-        {/* Model/backend inline — always visible when present */}
+        {/* Model/backend inline - always visible when present */}
         {(model || backend) && (
           <View style={s.toolModelRow}>
             {model && <Text style={s.toolModelText}>{model}</Text>}
@@ -588,7 +588,7 @@ function AgentResultCard({ entry }: { entry: ExecutionEntry }) {
             <Text style={s.errorLabel}>ERROR</Text>
           </View>
           <Text style={s.errorText}>{entry.content}</Text>
-          {/* Show failed model in error cards — this is the only place it's visible */}
+          {/* Show failed model in error cards - this is the only place it's visible */}
           {model && (
             <View style={s.modelInfoRow}>
               <Text style={s.toolModelText}>{model}</Text>
@@ -646,7 +646,7 @@ function PlanApprovalCard({ entry }: { entry: ExecutionEntry }) {
   useEffect(() => {
     if (status !== 'pending') return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleApprove = useCallback(() => {
@@ -982,7 +982,7 @@ const s = StyleSheet.create({
     lineHeight: 21,
   },
 
-  // Tool call (inner card — wrapper handles marginBottom)
+  // Tool call (inner card - wrapper handles marginBottom)
   toolCardInner: {
     backgroundColor: '#0A0A0A',
     borderWidth: 1,
@@ -1041,7 +1041,7 @@ const s = StyleSheet.create({
     color: '#095BB9',
   },
 
-  // Thinking — static
+  // Thinking - static
   thinkingStatic: {
     marginBottom: 16,
     paddingVertical: 8,
@@ -1052,7 +1052,7 @@ const s = StyleSheet.create({
     color: '#6B7280',
   },
 
-  // Thinking — animated
+  // Thinking - animated
   thinkingAnimated: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1124,7 +1124,7 @@ const s = StyleSheet.create({
     fontStyle: 'italic',
   },
 
-  // Intervention — full interactive card
+  // Intervention - full interactive card
   interventionCardFull: {
     backgroundColor: '#0A0A0A',
     borderRadius: 12,

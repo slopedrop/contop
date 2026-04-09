@@ -38,7 +38,7 @@ The Python server is bundled as a sidecar. The Tauri app manages it via `uv run 
 
 - The `uv` binary and server code are included in the installer / portable zip
 - Server dependencies are resolved at install (NSIS) or first launch (all other methods) via `uv sync`
-- NVIDIA GPU is auto-detected — CUDA PyTorch (~2.5 GB) is installed if available, otherwise CPU-only (~500 MB)
+- NVIDIA GPU is auto-detected - CUDA PyTorch (~2.5 GB) is installed if available, otherwise CPU-only (~500 MB)
 - First-launch setup shows a progress overlay with download status
 - The sidecar is spawned on app startup and killed on exit
 
@@ -77,9 +77,9 @@ Production builds require EAS Build or `expo run:android` / `expo run:ios` with 
 | Windows | Direct download (NSIS installer) | Active | SmartScreen (More info → Run anyway) |
 | Linux | Direct download (AppImage / DEB) | Active | None |
 | Android | Direct APK | Beta | Install from unknown sources |
-| iOS | — | Not yet available | — |
-| iOS App Store | Planned | — | — |
-| Google Play | Planned | — | — |
+| iOS | - | Not yet available | - |
+| iOS App Store | Planned | - | - |
+| Google Play | Planned | - | - |
 
 ### Package Manager Repos
 

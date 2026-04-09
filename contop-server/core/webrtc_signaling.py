@@ -1,5 +1,5 @@
 """
-WebRTC signaling module — FastAPI WebSocket endpoint for SDP/ICE exchange.
+WebRTC signaling module - FastAPI WebSocket endpoint for SDP/ICE exchange.
 
 Handles the signaling phase of WebRTC connection setup between mobile client
 and host server. After ICE negotiation completes, all communication moves
@@ -158,7 +158,7 @@ async def signaling_websocket(websocket: WebSocket) -> None:
                 pass
 
             else:
-                # Unknown message type — handle gracefully, keep connection open
+                # Unknown message type - handle gracefully, keep connection open
                 logger.debug("Unknown signaling message type: %s", msg_type)
 
     except WebSocketDisconnect:
@@ -174,7 +174,7 @@ async def signaling_websocket(websocket: WebSocket) -> None:
         # Remove WebSocket from registry but do NOT close the peer connection.
         # The signaling WebSocket is only needed for the initial SDP/ICE exchange.
         # Once P2P is established, the tunnel WebSocket may be dropped by Cloudflare
-        # (idle timeout) — this must not kill the working P2P connection.
+        # (idle timeout) - this must not kill the working P2P connection.
         # The peer_manager stays alive and is only closed when:
         #   - A new signaling connection arrives for the same token (reconnection, line 41-48)
         #   - The session is explicitly revoked via force_close_session()

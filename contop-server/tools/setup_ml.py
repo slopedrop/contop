@@ -1,6 +1,6 @@
 """GPU detection and ML stack installation via uv.
 
-Standalone module — no torch/ML imports at module level (must run before torch exists).
+Standalone module - no torch/ML imports at module level (must run before torch exists).
 All installation goes through `uv sync` with the correct extras.
 """
 
@@ -21,7 +21,7 @@ def detect_gpu() -> dict:
     """Detect GPU type and capabilities.
 
     Returns dict with keys: type, cuda_version, device_name.
-    Never raises — returns {"type": "cpu"} if detection fails.
+    Never raises - returns {"type": "cpu"} if detection fails.
     """
     # macOS Apple Silicon
     if platform.system() == "Darwin" and platform.machine() == "arm64":

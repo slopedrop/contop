@@ -1,5 +1,5 @@
 """
-ATDD-style acceptance tests for Story 3.0 — ADK Execution Agent Foundation.
+ATDD-style acceptance tests for Story 3.0 - ADK Execution Agent Foundation.
 
 Tests the acceptance criteria from the story specification at the integration level.
 """
@@ -526,7 +526,7 @@ class TestActionHistoryTracking:
 
     @patch("core.settings.get_gemini_api_key", return_value="test-key")
     async def test_action_history_capped_at_50(self, mock_key):
-        """[P0] 7.2: _action_history capped at 50 entries — oldest dropped."""
+        """[P0] 7.2: _action_history capped at 50 entries - oldest dropped."""
         from core.execution_agent import ExecutionAgent
 
         agent = ExecutionAgent()

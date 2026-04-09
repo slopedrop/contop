@@ -319,7 +319,7 @@ export class SessionManager {
       // ── LLM Logger: log persistent-mode input ──
       logSubSpawn({
         binary: this.provider.binary,
-        args: ['(persistent session — stdin pipe)'],
+        args: ['(persistent session - stdin pipe)'],
         model: this.model,
         prompt: request.content,
         hasTools: false,
@@ -394,7 +394,7 @@ export class SessionManager {
   }): Promise<CliResponse> {
     return new Promise((resolve, reject) => {
       // If the provider sends full history in every message (useResume=false),
-      // never pass --resume — it would duplicate context and bleed session
+      // never pass --resume - it would duplicate context and bleed session
       // state across user sessions.
       // In tool-calling mode ADK also sends full history, so skip resume there too.
       const canResume = this.provider.useResume !== false;

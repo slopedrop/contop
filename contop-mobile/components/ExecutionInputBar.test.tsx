@@ -23,14 +23,14 @@ jest.mock('../constants/modelRegistry', () => ({
   },
 }));
 
-// Avoid require('react-native') inside factory — NativeWind's Babel transform
+// Avoid require('react-native') inside factory - NativeWind's Babel transform
 // would inject _ReactNativeCSSInterop which is invalid in hoisted mock factories.
 jest.mock('@expo/vector-icons', () => ({
   Ionicons: () => null,
 }));
 
 // react-native-safe-area-context is globally mocked in jest.setup.js
-// AuroraVoice is NOT mocked — real implementation renders testID="aurora-voice"
+// AuroraVoice is NOT mocked - real implementation renders testID="aurora-voice"
 // with Reanimated/expo-haptics globally mocked in jest.setup.js
 
 const useAIStoreMock = jest.requireMock('../stores/useAIStore') as {
@@ -78,7 +78,7 @@ describe('ExecutionInputBar', () => {
   });
 
   describe('text mode (isVoiceActive=false)', () => {
-    test('[P0] 5.4-UNIT-001: text mode — chat-text-input, mic-button, chat-send-button all rendered', () => {
+    test('[P0] 5.4-UNIT-001: text mode - chat-text-input, mic-button, chat-send-button all rendered', () => {
       render(<ExecutionInputBar {...defaultProps()} />);
 
       expect(screen.getByTestId('chat-text-input')).toBeTruthy();
@@ -125,7 +125,7 @@ describe('ExecutionInputBar', () => {
 
       render(<ExecutionInputBar {...defaultProps({ chatInput: '', onSend })} />);
 
-      // When disabled, onPress is undefined — pressing it should not trigger onSend
+      // When disabled, onPress is undefined - pressing it should not trigger onSend
       fireEvent.press(screen.getByTestId('chat-send-button'));
       expect(onSend).not.toHaveBeenCalled();
     });
@@ -157,7 +157,7 @@ describe('ExecutionInputBar', () => {
       expect(onMicPress).toHaveBeenCalledTimes(1);
     });
 
-    test('[P0] 5.4-UNIT-010: text mode shown by default — chat-text-input rendered, aurora-voice absent', () => {
+    test('[P0] 5.4-UNIT-010: text mode shown by default - chat-text-input rendered, aurora-voice absent', () => {
       render(<ExecutionInputBar {...defaultProps({ isVoiceActive: false })} />);
 
       expect(screen.getByTestId('chat-text-input')).toBeTruthy();
@@ -247,10 +247,10 @@ describe('ExecutionInputBar', () => {
         jest.advanceTimersByTime(3000);
       });
 
-      // Switch back to text mode — timer clears and resets
+      // Switch back to text mode - timer clears and resets
       rerender(<ExecutionInputBar {...defaultProps({ isVoiceActive: false })} />);
 
-      // Re-enter voice mode — duration should reset to 0:00
+      // Re-enter voice mode - duration should reset to 0:00
       rerender(<ExecutionInputBar {...defaultProps({ isVoiceActive: true })} />);
 
       expect(screen.getByTestId('aurora-duration').props.children).toBe('0:00');

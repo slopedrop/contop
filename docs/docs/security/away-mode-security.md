@@ -42,14 +42,14 @@ Platform-specific keyboard interception ensures only PIN entry keys work:
 
 ### Mouse Pass-Through
 
-While the overlay is active, mouse events pass through to the desktop below. This allows your phone to continue controlling the desktop via manual control mode — you can work remotely while the physical screen is locked.
+While the overlay is active, mouse events pass through to the desktop below. This allows your phone to continue controlling the desktop via manual control mode - you can work remotely while the physical screen is locked.
 
 ## PIN Security
 
 - **Regular PIN length**: 4–12 digits
 - **Emergency PIN length**: 6–12 digits (higher minimum for security)
-- **Storage**: bcrypt hash (cost factor 10) — PINs are never stored in plaintext
-- **Three unlock methods**: Screen PIN, phone command, emergency PIN — all independent
+- **Storage**: bcrypt hash (cost factor 10) - PINs are never stored in plaintext
+- **Three unlock methods**: Screen PIN, phone command, emergency PIN - all independent
 
 ## API Key Protection
 
@@ -61,7 +61,7 @@ Away Mode can automatically engage when no keyboard or mouse activity is detecte
 
 - **Default timeout**: 5 minutes (configurable)
 - **Detection method**: Polls for input activity every 30 seconds
-- **Behavior**: Engages silently — no confirmation dialog
+- **Behavior**: Engages silently - no confirmation dialog
 
 ## Security Alerts
 
@@ -78,9 +78,9 @@ If the Away Mode protection is disrupted while active, your phone receives a `se
 
 ## Limitations
 
-- **PIN only** — No biometric unlock on the desktop side
-- **Monitor-based** — The overlay protects the primary display; multi-monitor support covers the primary monitor
-- **Wayland** — Idle detection and keyboard grabbing are limited due to Wayland's security model
+- **PIN only** - No biometric unlock on the desktop side
+- **Monitor-based** - The overlay protects the primary display; multi-monitor support covers the primary monitor
+- **Wayland** - Idle detection and keyboard grabbing are limited due to Wayland's security model
 
 ---
 

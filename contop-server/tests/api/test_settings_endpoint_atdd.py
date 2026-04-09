@@ -72,7 +72,7 @@ class TestPutSettingsEndpoint:
         Then:  Response must be 200 with updated values
         And:   Subsequent GET must reflect the changes
         """
-        # Given — ensure defaults exist
+        # Given - ensure defaults exist
         client.get("/api/settings")
 
         # When
@@ -130,7 +130,7 @@ class TestPostSettingsResetEndpoint:
         Then:  Response must be 200 with DEFAULT_SETTINGS values
         And:   Subsequent GET must return defaults
         """
-        # Given — save custom settings
+        # Given - save custom settings
         custom = {
             "version": 1,
             "restricted_paths": ["/custom"],

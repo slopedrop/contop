@@ -10,35 +10,35 @@ Contop uses a **tri-node architecture** where three components collaborate to de
 
 ```mermaid
 graph TB
-    subgraph Phone["Mobile Client — Expo / React Native"]
-        STT["Multi-Provider STT — Voice Input"]
-        LLM["Multi-Provider LLM — Conversation Agent"]
-        UI["Session UI — Execution Thread + Remote Screen"]
+    subgraph Phone["Mobile Client - Expo / React Native"]
+        STT["Multi-Provider STT - Voice Input"]
+        LLM["Multi-Provider LLM - Conversation Agent"]
+        UI["Session UI - Execution Thread + Remote Screen"]
     end
 
     subgraph Desktop["Desktop Host"]
-        subgraph Tauri["Tauri v2 — Rust + Vite"]
-            GUI["Settings GUI — QR Pairing / Config"]
-            Sidecar["Python Sidecar — Process Manager"]
-            Away["Away Mode — PIN Overlay"]
-            CLIProxy["CLI Proxy — Claude / Gemini / Codex"]
+        subgraph Tauri["Tauri v2 - Rust + Vite"]
+            GUI["Settings GUI - QR Pairing / Config"]
+            Sidecar["Python Sidecar - Process Manager"]
+            Away["Away Mode - PIN Overlay"]
+            CLIProxy["CLI Proxy - Claude / Gemini / Codex"]
         end
 
-        subgraph Server["FastAPI Server — Python 3.12"]
+        subgraph Server["FastAPI Server - Python 3.12"]
             Signal["WebRTC Signaling"]
-            ADK["ADK Execution Agent — Multi-Provider"]
-            DTE["Dual-Tool Evaluator — Security Gate"]
+            ADK["ADK Execution Agent - Multi-Provider"]
+            DTE["Dual-Tool Evaluator - Security Gate"]
             Audit["JSONL Audit Logger"]
             Skills["Skills Engine"]
         end
 
         subgraph Tools["30+ Execution Tools"]
-            CLI["execute_cli — Host / Git Bash"]
-            GUIAuto["execute_gui — PyAutoGUI"]
-            Sandbox["execute_cli_sandboxed — Docker"]
-            Screen["observe_screen — Smart Vision Routing"]
-            CU["execute_computer_use — Gemini CU"]
-            Browser["execute_browser — PinchTab CDP"]
+            CLI["execute_cli - Host / Git Bash"]
+            GUIAuto["execute_gui - PyAutoGUI"]
+            Sandbox["execute_cli_sandboxed - Docker"]
+            Screen["observe_screen - Smart Vision Routing"]
+            CU["execute_computer_use - Gemini CU"]
+            Browser["execute_browser - PinchTab CDP"]
             FileOps["File / Document / Window Tools"]
         end
     end
@@ -107,9 +107,9 @@ graph TB
 
 | Concern | Handled By |
 |---------|-----------|
-| User interface | Mobile Client — always in your pocket |
-| AI reasoning + tool execution | Contop Server — needs desktop OS access |
-| Native OS integration | Desktop Host — Rust for low-level APIs |
+| User interface | Mobile Client - always in your pocket |
+| AI reasoning + tool execution | Contop Server - needs desktop OS access |
+| Native OS integration | Desktop Host - Rust for low-level APIs |
 | Security isolation | Split between Server (evaluator) and Host (sandboxing) |
 
 The mobile client handles user interaction; the server handles AI reasoning and tool execution; the desktop host handles native OS integration that Python can't do (overlay windows, keyboard hooks, process tree management).
@@ -126,7 +126,7 @@ The mobile client handles user interaction; the server handles AI reasoning and 
 | Server → CLI Proxy | HTTP localhost | Subscription mode LLM routing |
 
 :::note Subscription Mode Vision Limitation
-CLI tools (`claude -p`, `gemini`, `codex`) accept only text — they cannot receive base64 images. In subscription mode, the execution agent's LLM vision fallback (direct screenshot analysis when no local vision backend processes a frame) is unavailable. The agent falls back to text-only tools like `get_ui_context`. The mobile app shows a **NO VISION** badge on the execution model card when subscription mode is active.
+CLI tools (`claude -p`, `gemini`, `codex`) accept only text - they cannot receive base64 images. In subscription mode, the execution agent's LLM vision fallback (direct screenshot analysis when no local vision backend processes a frame) is unavailable. The agent falls back to text-only tools like `get_ui_context`. The mobile app shows a **NO VISION** badge on the execution model card when subscription mode is active.
 :::
 
 ---

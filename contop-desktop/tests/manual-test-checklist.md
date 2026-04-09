@@ -1,11 +1,11 @@
-# Desktop GUI Application Shell — Manual Test Checklist
+# Desktop GUI Application Shell - Manual Test Checklist
 
-**Story:** 1.8 — Desktop GUI Application Shell
+**Story:** 1.8 - Desktop GUI Application Shell
 **Prerequisites:** Rust toolchain installed, `GEMINI_API_KEY` env var set, `uv` installed
 
 ## Test Cases
 
-### 1. App Launch — Initial State
+### 1. App Launch - Initial State
 - [ ] App window opens with title "Contop"
 - [ ] Status shows "Stopped" with gray dot
 - [ ] "Start Server" button is enabled
@@ -13,7 +13,7 @@
 - [ ] QR placeholder text reads "Start the server to generate a pairing QR code"
 - [ ] No QR image is visible
 
-### 2. Start Server — Status Transitions
+### 2. Start Server - Status Transitions
 - [ ] Click "Start Server"
 - [ ] Status immediately changes to "Starting" with amber dot
 - [ ] "Start Server" button becomes disabled
@@ -53,28 +53,28 @@
 - [ ] Error message is displayed in the QR area or error status shown
 
 ### 8. Restart Cycle
-- [ ] Click "Start Server" — wait for "Running"
-- [ ] Click "Stop Server" — wait for "Stopped"
-- [ ] Click "Start Server" again — verify it reaches "Running" again
+- [ ] Click "Start Server" - wait for "Running"
+- [ ] Click "Stop Server" - wait for "Stopped"
+- [ ] Click "Start Server" again - verify it reaches "Running" again
 - [ ] QR code appears on second start
-- [ ] Click "Stop Server" — verify clean stop
+- [ ] Click "Stop Server" - verify clean stop
 
 ---
 
-## Story 1.9 — Settings Persistence & Configuration Panel
+## Story 1.9 - Settings Persistence & Configuration Panel
 
-### 9. First Launch — Default Settings Creation
+### 9. First Launch - Default Settings Creation
 - [ ] Delete `~/.contop/settings.json` if it exists
 - [ ] Launch the app
 - [ ] Verify `~/.contop/settings.json` is created with default restricted paths and forbidden commands
 
-### 10. Settings Panel — Open/Close
+### 10. Settings Panel - Open/Close
 - [ ] Click the gear icon in the header
 - [ ] Verify the main view (status, QR, controls) is hidden and settings panel is shown
 - [ ] Click the gear icon again
 - [ ] Verify the settings panel is hidden and main view is restored
 
-### 11. Settings Panel — Display Defaults
+### 11. Settings Panel - Display Defaults
 - [ ] Open Settings panel
 - [ ] Verify default restricted paths are listed (e.g., `/root`, `C:\Windows\System32`)
 - [ ] Verify default forbidden commands are listed (e.g., `rm -rf /`, `mkfs`)

@@ -1,8 +1,8 @@
 """
-Skill executor — execute workflow YAML definitions and load Python tool functions.
+Skill executor - execute workflow YAML definitions and load Python tool functions.
 
 Workflow steps map to existing execute_gui() actions. Python tool loading uses
-importlib for dynamic module import — no exec() or eval().
+importlib for dynamic module import - no exec() or eval().
 """
 import importlib.util
 import json
@@ -35,7 +35,7 @@ async def execute_skill(skill_name: str, workflow_name: str, params: str = "{}")
     start = _time.monotonic()
     logger.info("execute_skill: skill=%s, workflow=%s", skill_name, workflow_name)
 
-    # Validate skill_name — prevent path traversal (F2)
+    # Validate skill_name - prevent path traversal (F2)
     if not _VALID_SKILL_NAME_RE.match(skill_name):
         return {
             "status": "error",
@@ -197,7 +197,7 @@ def load_python_tools(skill_path: Path) -> list[Callable]:
         return []
 
     logger.warning(
-        "Loading Python skill tools from %s — code runs with full server privileges.",
+        "Loading Python skill tools from %s - code runs with full server privileges.",
         scripts_dir,
     )
 
@@ -248,7 +248,7 @@ async def load_skill(skill_name: str) -> dict:
     """
     from core.skill_loader import parse_skill_md, load_skill_instructions
 
-    # Validate skill_name — prevent path traversal (F2)
+    # Validate skill_name - prevent path traversal (F2)
     if not _VALID_SKILL_NAME_RE.match(skill_name):
         return {
             "status": "error",
@@ -295,7 +295,7 @@ async def create_skill(name: str, description: str, instructions: str, skill_typ
     """Create a new skill directory with SKILL.md.
 
     This is the `create_skill` ADK FunctionTool function.
-    Created skills are DISABLED by default — user must enable manually.
+    Created skills are DISABLED by default - user must enable manually.
 
     Args:
         name: Skill name (lowercase, hyphens only, max 64 chars).
@@ -308,7 +308,7 @@ async def create_skill(name: str, description: str, instructions: str, skill_typ
     """
     logger.info("create_skill: name=%s, type=%s", name, skill_type)
 
-    # Validate name — no path traversal
+    # Validate name - no path traversal
     if not _VALID_SKILL_NAME_RE.match(name):
         return {
             "status": "error",
@@ -329,7 +329,7 @@ async def create_skill(name: str, description: str, instructions: str, skill_typ
             "description": f"Skill '{name}' already exists. Use edit_skill to modify it.",
         }
 
-    # Create directory and SKILL.md (use yaml.dump to prevent YAML injection — F5)
+    # Create directory and SKILL.md (use yaml.dump to prevent YAML injection - F5)
     skill_dir.mkdir(parents=True)
     frontmatter = {"name": name, "description": description, "version": "1.0.0"}
     fm_str = yaml.dump(frontmatter, default_flow_style=False).strip()
@@ -364,7 +364,7 @@ async def edit_skill(name: str, instructions: str = "", description: str = "") -
     """
     logger.info("edit_skill: name=%s", name)
 
-    # Validate name — same check as create_skill (F3: prevent path traversal)
+    # Validate name - same check as create_skill (F3: prevent path traversal)
     if not _VALID_SKILL_NAME_RE.match(name):
         return {
             "status": "error",
@@ -375,7 +375,7 @@ async def edit_skill(name: str, instructions: str = "", description: str = "") -
     if not instructions and not description:
         return {
             "status": "error",
-            "description": "Nothing to update — provide 'instructions' and/or 'description'.",
+            "description": "Nothing to update - provide 'instructions' and/or 'description'.",
         }
 
     skills_dir = get_skills_dir()

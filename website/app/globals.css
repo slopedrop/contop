@@ -9,7 +9,7 @@ html::-webkit-scrollbar {
 }
 
 /* ============================================
-   Contop Design System — Tailwind v4 Theme
+   Contop Design System - Tailwind v4 Theme
    ============================================ */
 
 @theme {
@@ -27,7 +27,7 @@ html::-webkit-scrollbar {
   --color-text-secondary: #A1A1AA;
   --color-text-muted: #71717A;
 
-  /* Spacing — 8px base grid */
+  /* Spacing - 8px base grid */
   --spacing-grid-1: 8px;
   --spacing-grid-2: 16px;
   --spacing-grid-3: 24px;
@@ -82,7 +82,7 @@ body {
 }
 
 /* ============================================
-   Atmosphere — Dot Grid
+   Atmosphere - Dot Grid
    Subtle precision-engineering texture
    ============================================ */
 
@@ -216,10 +216,10 @@ body {
 }
 
 /* ============================================
-   Architecture diagram — How It Works section
+   Architecture diagram - How It Works section
    ============================================ */
 
-/* Illustration container — top row */
+/* Illustration container - top row */
 .arch-container {
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -250,7 +250,7 @@ body {
   pointer-events: none;
 }
 
-/* Stage description cards — bottom row */
+/* Stage description cards - bottom row */
 .arch-stage-card {
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-md);
@@ -275,7 +275,7 @@ body {
 }
 
 /* ============================================
-   How It Works — Explainer Page
+   How It Works - Explainer Page
    ============================================ */
 
 .explainer-beat {
@@ -287,7 +287,7 @@ body {
   padding: 2rem 1.5rem;
 }
 
-/* Cinematic explainer — pinned scenes */
+/* Cinematic explainer - pinned scenes */
 .scene {
   position: absolute;
   inset: 0;

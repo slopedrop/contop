@@ -1,9 +1,9 @@
 """
-Windows platform adapter — window management + accessibility via pywinauto (UIA backend).
+Windows platform adapter - window management + accessibility via pywinauto (UIA backend).
 
 Falls back gracefully if pywinauto is not installed.
 
-[Source: architecture.md — Cross-Platform OS Abstraction Layer, pywinauto]
+[Source: architecture.md - Cross-Platform OS Abstraction Layer, pywinauto]
 """
 import ctypes
 import ctypes.wintypes
@@ -19,7 +19,7 @@ try:
     _HAS_PYWINAUTO = True
 except ImportError:
     _HAS_PYWINAUTO = False
-    logger.info("pywinauto not installed — WindowsAdapter will use fallback")
+    logger.info("pywinauto not installed - WindowsAdapter will use fallback")
 
 # Interactive control types to include in get_interactive_elements()
 _INTERACTIVE_TYPES = {
@@ -37,7 +37,7 @@ _INTERACTIVE_TYPES = {
 # These should never be selected as a fallback when looking for an app window.
 _SYSTEM_WINDOW_TITLES = frozenset({"", "Taskbar", "Status"})
 
-# ctypes callback type for EnumWindows — pre-allocated at module load to avoid recreation overhead
+# ctypes callback type for EnumWindows - pre-allocated at module load to avoid recreation overhead
 _WNDENUMPROC = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.wintypes.HWND, ctypes.wintypes.LPARAM)
 
 MAX_ELEMENTS = 200
@@ -85,12 +85,12 @@ def _find_window_by_title(title: str):
     during dialog transitions (e.g. Save As appearing after Ctrl+S).
 
     Three-stage search:
-    1. **Top-level title match** — fast, handles classic separate-window dialogs.
-    2. **Embedded child search** — walks non-system windows' children (depth ≤ 2)
+    1. **Top-level title match** - fast, handles classic separate-window dialogs.
+    2. **Embedded child search** - walks non-system windows' children (depth ≤ 2)
        looking for a child whose name matches *title*.  This handles modern apps
        (e.g. Windows 11 Notepad) where dialogs like Save As are embedded children,
        not separate top-level windows.
-    3. **Foreground fallback** — last resort via ``GetForegroundWindow()``.
+    3. **Foreground fallback** - last resort via ``GetForegroundWindow()``.
 
     Returns the matching UIAWrapper, or ``None``.
     """
@@ -141,7 +141,7 @@ def _find_window_by_title(title: str):
         except Exception:
             continue
 
-    # Stage 3: Last resort — foreground window.  May be wrong during dialog
+    # Stage 3: Last resort - foreground window.  May be wrong during dialog
     # transitions but is better than returning None.
     fallback = _get_top_window()
     if fallback:
@@ -190,7 +190,7 @@ class WindowsAdapter(PlatformAdapter):
             except Exception:
                 logger.warning("Failed to list windows via pywinauto")
 
-        # Fallback: ctypes EnumWindows — catches windows that UIA misses
+        # Fallback: ctypes EnumWindows - catches windows that UIA misses
         # (e.g. Office Click-to-Run, some UWP apps during launch)
         if not titles:
             titles = self._list_windows_ctypes()
@@ -235,7 +235,7 @@ class WindowsAdapter(PlatformAdapter):
         if not _HAS_PYWINAUTO:
             return {}
         try:
-            # Use UIA's GetFocusedElement() directly — UIAWrapper doesn't
+            # Use UIA's GetFocusedElement() directly - UIAWrapper doesn't
             # have get_focus(), so we go through pywinauto's IUIA singleton.
             from pywinauto.uia_defines import IUIA
             from pywinauto.uia_element_info import UIAElementInfo
@@ -315,7 +315,7 @@ class WindowsAdapter(PlatformAdapter):
             return super().interact_element(name, automation_id, control_type, action, value, window_title)
 
         try:
-            # Find target window — by title if given, else foreground
+            # Find target window - by title if given, else foreground
             if window_title:
                 win = _find_window_by_title(window_title)
             else:
@@ -380,7 +380,7 @@ class WindowsAdapter(PlatformAdapter):
                 "element_name": elem_name, "element_type": elem_type,
                 "action_performed": action,
                 "description": f"Successfully performed '{action}' on '{elem_name}' ({elem_type}).",
-                "voice_message": f"Done — {action} on {elem_name}.",
+                "voice_message": f"Done - {action} on {elem_name}.",
             }
 
         except Exception as exc:
@@ -485,12 +485,12 @@ class WindowsAdapter(PlatformAdapter):
             except Exception:
                 element.click_input()
         elif action == "set_value":
-            # Strategy: clipboard paste is preferred — it's fast (constant-time
+            # Strategy: clipboard paste is preferred - it's fast (constant-time
             # regardless of text length), preserves newlines/tabs/unicode, and
             # works in file dialogs (Ctrl+V is a standard shortcut). Fall back
             # to type_keys() with with_newlines/with_tabs enabled so multi-line
             # text is still typed correctly if the clipboard path fails.
-            # set_edit_text() is last-resort — file dialogs silently ignore it.
+            # set_edit_text() is last-resort - file dialogs silently ignore it.
             try:
                 element.set_focus()
             except Exception:
@@ -635,7 +635,7 @@ class WindowsAdapter(PlatformAdapter):
             if not hwnd:
                 return False
             if show_cmd == self._SW_MAXIMIZE:
-                return True  # Already maximized — idempotent
+                return True  # Already maximized - idempotent
             return bool(ctypes.windll.user32.ShowWindow(hwnd, self._SW_MAXIMIZE))
         except Exception:
             logger.warning("Failed to maximize window via user32")
@@ -669,7 +669,7 @@ class WindowsAdapter(PlatformAdapter):
             hwnd = self._resolve_hwnd(title)
             if not hwnd:
                 return False
-            # Restore if maximized — MoveWindow doesn't work on maximized windows
+            # Restore if maximized - MoveWindow doesn't work on maximized windows
             wp = self._WINDOWPLACEMENT()
             wp.length = ctypes.sizeof(self._WINDOWPLACEMENT)
             ctypes.windll.user32.GetWindowPlacement(hwnd, ctypes.byref(wp))

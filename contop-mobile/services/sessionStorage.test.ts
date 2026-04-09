@@ -83,7 +83,7 @@ describe('sessionStorage', () => {
       const s3 = makeMeta({ id: 's3', startTime: 3000 });
       // s3 is first (newest), s1 is last
       mockGetItem.mockResolvedValueOnce(JSON.stringify([s3, s2, s1]));
-      // Update s1 (oldest) — should move to top
+      // Update s1 (oldest) - should move to top
       const updatedS1 = { ...s1, entryCount: 10 };
       await upsertSessionMeta(updatedS1);
 

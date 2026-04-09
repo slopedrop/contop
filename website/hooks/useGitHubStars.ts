@@ -33,7 +33,7 @@ export function useGitHubStars() {
         }
       })
       .catch(() => {
-        // Silently fail — show icon only
+        // Silently fail - show icon only
       });
 
     return () => controller.abort();

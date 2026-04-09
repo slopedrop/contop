@@ -1,7 +1,7 @@
 #!/bin/bash
 # stage-desktop-resources.sh
 # Downloads and stages external binaries needed by the Tauri desktop build.
-# Run before `tauri build` — called automatically in CI.
+# Run before `tauri build` - called automatically in CI.
 #
 # Usage: bash scripts/stage-desktop-resources.sh
 # Set CONTOP_PLATFORM to override auto-detection (windows, macos, linux)
@@ -63,7 +63,7 @@ else
   echo "[stage] $UV_BIN already exists, skipping."
 fi
 
-# ── MinGit (Git Bash) — Windows only ────────────────────────────
+# ── MinGit (Git Bash) - Windows only ────────────────────────────
 if [[ "$PLATFORM" == "windows" ]]; then
   MINGIT_VERSION="2.47.1"
   MINGIT_ASSET="MinGit-${MINGIT_VERSION}-busybox-64-bit.zip"

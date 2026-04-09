@@ -16,7 +16,7 @@ Supports multiple vision models via the `model` parameter:
 - allenai/molmo2-8b
 - Hcompany/Holotron-12B
 
-[Source: tech-spec-gui-agent-optimization.md — Tier 4: UI-TARS via OpenRouter]
+[Source: tech-spec-gui-agent-optimization.md - Tier 4: UI-TARS via OpenRouter]
 """
 import logging
 import re
@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 UI_TARS_MODEL = "bytedance/ui-tars-1.5-7b"
 REQUEST_TIMEOUT = 30.0
 
-# Default grounding system prompt — single source of truth for element detection.
+# Default grounding system prompt - single source of truth for element detection.
 # Imported by agent_tools.py as _VISION_PROMPT_GROUNDING.
 DEFAULT_GROUNDING_SYSTEM_PROMPT = (
     "You are a UI grounding model. Given a screenshot, identify all "
@@ -50,7 +50,7 @@ VISION_BACKEND_MODELS: dict[str, str] = {
     "holotron_vision": "Hcompany/Holotron-12B",
 }
 
-# Module-level cached clients — reuses HTTP connections across observe_screen calls.
+# Module-level cached clients - reuses HTTP connections across observe_screen calls.
 # Keyed by (api_key, model) so the client is recreated if the key or model changes.
 _cached_clients: dict[str, Any] = {}
 
@@ -104,7 +104,7 @@ class VisionClient:
                 Set to False for understanding mode (returns raw prose).
 
         Returns:
-            dict with action, coordinates, description — or None on failure.
+            dict with action, coordinates, description - or None on failure.
         """
         if not self._api_key:
             return None
@@ -177,7 +177,7 @@ class VisionClient:
         mode), the raw text is returned as-is.
 
         Note: When vision grounding succeeds, OmniParser element_id resolution is
-        unavailable — the agent must use coordinates from the description
+        unavailable - the agent must use coordinates from the description
         or re-observe with OmniParser if element_id targeting is needed.
         """
         cleaned = text.strip()
@@ -232,9 +232,9 @@ class VisionClient:
         annotated = _COORD_RE.sub(_annotate, text)
 
         legend = (
-            f"[Screen zones — y<={toolbar_y}: BROWSER TOOLBAR/ADDRESS BAR, "
+            f"[Screen zones - y<={toolbar_y}: BROWSER TOOLBAR/ADDRESS BAR, "
             f"y>={taskbar_y}: SYSTEM TASKBAR, between: PAGE CONTENT. "
-            f"NEVER type search queries into BROWSER TOOLBAR elements — "
+            f"NEVER type search queries into BROWSER TOOLBAR elements - "
             f"use the app's keyboard shortcut to focus its search input instead.]\n\n"
         )
         return legend + annotated

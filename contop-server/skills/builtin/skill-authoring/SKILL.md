@@ -21,10 +21,10 @@ You can create new skills when the user asks you to. Use `create_skill` to write
 5. Tell the user the skill was created but needs to be enabled
 
 ## Skill Types
-- **prompt** — Instructions only (SKILL.md markdown). The agent reads the instructions and follows them using existing tools.
-- **workflow** — YAML step definitions in `scripts/`. Executed via `execute_skill(skill_name, workflow_name)`. Steps: hotkey, type_text, click, scroll, press_key, wait.
-- **python** — Custom Python tools in `scripts/`. Async functions with `dict` return type are auto-registered as agent tools.
-- **mixed** — Both workflow YAML and Python tools.
+- **prompt** - Instructions only (SKILL.md markdown). The agent reads the instructions and follows them using existing tools.
+- **workflow** - YAML step definitions in `scripts/`. Executed via `execute_skill(skill_name, workflow_name)`. Steps: hotkey, type_text, click, scroll, press_key, wait.
+- **python** - Custom Python tools in `scripts/`. Async functions with `dict` return type are auto-registered as agent tools.
+- **mixed** - Both workflow YAML and Python tools.
 
 ## Workflow YAML Format
 ```yaml
@@ -51,12 +51,12 @@ steps:
 ```python
 async def my_tool(param1: str, param2: int = 10) -> dict:
     """Tool description shown to the agent."""
-    # Your code here — full server privileges
+    # Your code here - full server privileges
     return {"status": "success", "result": "..."}
 ```
 
 ## Rules
-- NEVER enable a skill you just created — tell the user to enable it
-- NEVER overwrite an existing skill — use `edit_skill` to modify
+- NEVER enable a skill you just created - tell the user to enable it
+- NEVER overwrite an existing skill - use `edit_skill` to modify
 - Keep skill names lowercase with hyphens (e.g., "my-email-workflow")
-- Keep descriptions under 200 chars — they appear in the prompt metadata
+- Keep descriptions under 200 chars - they appear in the prompt metadata

@@ -1,5 +1,5 @@
 """
-Unit tests for tools/host_subprocess.py — Host subprocess execution (safe route).
+Unit tests for tools/host_subprocess.py - Host subprocess execution (safe route).
 
 Tests 3.1-3.8 from Story 3.2, plus interactive prompt handling tests.
 """
@@ -30,7 +30,7 @@ from tools.host_subprocess import (
 
 
 class TestSuccessfulExecution:
-    """Test successful command execution — verify stdout, stderr, status, exit_code, duration_ms."""
+    """Test successful command execution - verify stdout, stderr, status, exit_code, duration_ms."""
 
     @pytest.mark.asyncio
     async def test_successful_echo_command(self):
@@ -65,7 +65,7 @@ class TestSuccessfulExecution:
 
 
 class TestCommandFailure:
-    """Test command failure — verify error status."""
+    """Test command failure - verify error status."""
 
     @pytest.mark.asyncio
     async def test_nonzero_exit_code_returns_error_status(self):
@@ -86,7 +86,7 @@ class TestCommandFailure:
 
 
 class TestTimeoutEnforcement:
-    """Test timeout — verify subprocess killed and error payload returned."""
+    """Test timeout - verify subprocess killed and error payload returned."""
 
     @pytest.mark.asyncio
     async def test_timeout_kills_process_and_returns_error(self):
@@ -104,7 +104,7 @@ class TestTimeoutEnforcement:
     async def test_timeout_captures_partial_output(self):
         """AC #2: partial stdout/stderr captured before timeout must be included."""
         host = HostSubprocess()
-        # Print output with flush=True then sleep — timeout should capture the printed text
+        # Print output with flush=True then sleep - timeout should capture the printed text
         if sys.platform == "win32":
             cmd = 'python -c "import sys; print(\'PARTIAL_BEFORE_TIMEOUT\', flush=True); import time; time.sleep(60)"'
         else:
@@ -161,7 +161,7 @@ class TestOutputTruncation:
 
 
 class TestCancellation:
-    """Test cancellation — verify subprocess terminated and cancelled status returned."""
+    """Test cancellation - verify subprocess terminated and cancelled status returned."""
 
     @pytest.mark.asyncio
     async def test_cancel_event_terminates_subprocess(self):
@@ -172,7 +172,7 @@ class TestCancellation:
             await asyncio.sleep(0.5)
             cancel_event.set()
 
-        # Use Python sleep — avoids Windows child process tree issues with ping
+        # Use Python sleep - avoids Windows child process tree issues with ping
         cmd = 'python -c "import time; time.sleep(60)"'
 
         cancel_task = asyncio.create_task(set_cancel_soon())
@@ -316,7 +316,7 @@ class TestPromptDetection:
         assert _match_prompt("Do you want to continue? [Y/n] ") == b"Y\n"
 
     def test_yn_bracket_lowercase(self):
-        # [y/N] now correctly matches the second pattern (case-sensitive) — responds y
+        # [y/N] now correctly matches the second pattern (case-sensitive) - responds y
         assert _match_prompt("Continue? [y/N] ") == b"y\n"
 
     def test_yn_paren(self):
@@ -411,7 +411,7 @@ class TestInteractiveAutoResponse:
     async def test_stall_detection_closes_stdin(self):
         """Verify that a stalled process gets stdin closed (EOF)."""
         host = HostSubprocess()
-        # This command reads from stdin with no prompt — should stall then get EOF.
+        # This command reads from stdin with no prompt - should stall then get EOF.
         # On Windows, closing stdin to cmd.exe may cause an error exit rather than
         # clean EOF, so we wrap in try/except and accept either outcome.
         if sys.platform == "win32":
@@ -426,7 +426,7 @@ class TestInteractiveAutoResponse:
         else:
             cmd = "python3 -c \"import sys; sys.stdin.read(); print('EOF_RECEIVED')\""
         result = await host.run(cmd, timeout_s=15)
-        # Stall monitor should close stdin after STALL_TIMEOUT_S — process should
+        # Stall monitor should close stdin after STALL_TIMEOUT_S - process should
         # finish well before the 15s timeout regardless of exit status.
         assert result["duration_ms"] < 12000, "Stall detection should unblock process before timeout"
         # On clean platforms, stdin.read() returns '' on EOF and process exits 0
@@ -449,7 +449,7 @@ class TestTempDirectoryEnforcement:
         """Subprocess CWD should be a temp directory, not the project tree."""
         import tempfile
         host = HostSubprocess()
-        # Use pwd — works in both bash and /bin/sh. On Windows cmd.exe
+        # Use pwd - works in both bash and /bin/sh. On Windows cmd.exe
         # fallback, cd prints CWD, but with bash as default we need pwd.
         cmd = "pwd"
         result = await host.run(cmd)
@@ -491,7 +491,7 @@ class TestTempDirectoryEnforcement:
 
 
 class TestDiscoverBash:
-    """Test _discover_bash() — Windows Git Bash auto-discovery with WSL guard."""
+    """Test _discover_bash() - Windows Git Bash auto-discovery with WSL guard."""
 
     def _reset_cache(self):
         """Reset the module-level discovery cache between tests."""

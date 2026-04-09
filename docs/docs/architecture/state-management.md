@@ -117,8 +117,8 @@ The Zustand store supports three reset levels:
 
 | Level | Method | Purpose |
 |-------|--------|---------|
-| **Soft** | `softReset()` | Disconnection recovery — clears transient state |
-| **Hard** | `hardReset()` | New server connection — clears execution state |
+| **Soft** | `softReset()` | Disconnection recovery - clears transient state |
+| **Hard** | `hardReset()` | New server connection - clears execution state |
 | **Full** | `resetStore()` | Complete reset, idempotent |
 
 ## Execution Thread Data Flow

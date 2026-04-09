@@ -4,7 +4,7 @@ sidebar_position: 7
 
 # Skill Tools
 
-Tools for managing and executing skills — modular capability extensions for the agent.
+Tools for managing and executing skills - modular capability extensions for the agent.
 
 ## `execute_skill`
 
@@ -86,11 +86,11 @@ graph LR
     Load --> Execute["execute_skill<br/>(run)"]
 ```
 
-1. **Discovery** — Skills are discovered in `~/.contop/skills/` at startup
-2. **Metadata loading** — Only name, description, version, type loaded initially
-3. **Enable** — User enables via settings or API
-4. **Full load** — Agent calls `load_skill` to get complete instructions
-5. **Execute** — Agent calls `execute_skill` to run the skill
+1. **Discovery** - Skills are discovered in `~/.contop/skills/` at startup
+2. **Metadata loading** - Only name, description, version, type loaded initially
+3. **Enable** - User enables via settings or API
+4. **Full load** - Agent calls `load_skill` to get complete instructions
+5. **Execute** - Agent calls `execute_skill` to run the skill
 
 ---
 

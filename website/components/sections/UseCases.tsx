@@ -103,12 +103,12 @@ function AnimDots() {
 }
 
 /* ================================================
-   Journey 1: Alex — Production Outage
+   Journey 1: Alex - Production Outage
    ================================================ */
 function AlexJourney() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
-      {/* LEFT — Visual mockups */}
+      {/* LEFT - Visual mockups */}
       <div className="flex flex-col gap-3 p-5 sm:p-6">
         <CardHeader label="Production Outage" sub="Voice → CLI" />
 
@@ -148,14 +148,14 @@ function AlexJourney() {
         </div>
       </div>
 
-      {/* RIGHT — Narrative */}
+      {/* RIGHT - Narrative */}
       <div className="flex flex-col justify-center gap-4 p-5 sm:p-6">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center h-8 w-8 rounded-full bg-accent/20 border border-accent/30 font-mono text-[11px] font-bold text-accent-light">
             A
           </div>
           <div>
-            <div className="text-[14px] font-semibold text-text-primary">Alex — Backend Engineer</div>
+            <div className="text-[14px] font-semibold text-text-primary">Alex - Backend Engineer</div>
             <div className="font-mono text-[10px] text-text-muted">On a train · PagerDuty alert firing</div>
           </div>
         </div>
@@ -163,7 +163,7 @@ function AlexJourney() {
         <p className="text-[13px] leading-relaxed text-text-secondary">
           PagerDuty fires while Alex is on the train. He opens Contop, speaks one command, and the
           agent checks the logs, finds the stalled container, and restarts it. Outage resolved in
-          under a minute — no laptop needed.
+          under a minute - no laptop needed.
         </p>
 
         <div className="flex flex-wrap gap-1.5">
@@ -178,12 +178,12 @@ function AlexJourney() {
 }
 
 /* ================================================
-   Journey 2: Sarah — Sandbox Safety
+   Journey 2: Sarah - Sandbox Safety
    ================================================ */
 function SarahJourney() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
-      {/* LEFT — Classification flow */}
+      {/* LEFT - Classification flow */}
       <div className="flex flex-col gap-3 p-5 sm:p-6">
         <CardHeader label="Security Boundary" sub="Command Gate" />
 
@@ -230,14 +230,14 @@ function SarahJourney() {
         </div>
       </div>
 
-      {/* RIGHT — Narrative */}
+      {/* RIGHT - Narrative */}
       <div className="flex flex-col justify-center gap-4 p-5 sm:p-6">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center h-8 w-8 rounded-full bg-purple/20 border border-purple/30 font-mono text-[11px] font-bold text-purple">
             S
           </div>
           <div>
-            <div className="text-[14px] font-semibold text-text-primary">Sarah — Motion Designer</div>
+            <div className="text-[14px] font-semibold text-text-primary">Sarah - Motion Designer</div>
             <div className="font-mono text-[10px] text-text-muted">Coffee shop · 4K render deadline</div>
           </div>
         </div>
@@ -260,12 +260,12 @@ function SarahJourney() {
 }
 
 /* ================================================
-   Journey 3: Marcus — GUI Automation
+   Journey 3: Marcus - GUI Automation
    ================================================ */
 function MarcusJourney() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
-      {/* LEFT — Desktop GUI overlay */}
+      {/* LEFT - Desktop GUI overlay */}
       <div className="flex flex-col gap-3 p-5 sm:p-6">
         <CardHeader label="GUI Automation" sub="Visual Navigation" />
 
@@ -291,7 +291,7 @@ function MarcusJourney() {
             {/* Error dialog overlay */}
             <div className="rounded border border-dashed border-accent-light/50 bg-accent/10 px-2 py-1.5 mt-1">
               <div className="text-red-400 font-semibold mb-0.5">GPU Memory Error</div>
-              <div className="text-text-muted/60">CUDA out of memory — tile size too large</div>
+              <div className="text-text-muted/60">CUDA out of memory - tile size too large</div>
               <div className="flex gap-1.5 mt-1">
                 <span className="rounded bg-white/[0.06] border border-white/[0.08] px-2 py-0.5 text-text-secondary">Retry</span>
                 <span className="rounded bg-white/[0.06] border border-white/[0.08] px-2 py-0.5 text-text-muted/40">Cancel</span>
@@ -316,14 +316,14 @@ function MarcusJourney() {
         </div>
       </div>
 
-      {/* RIGHT — Narrative */}
+      {/* RIGHT - Narrative */}
       <div className="flex flex-col justify-center gap-4 p-5 sm:p-6">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center h-8 w-8 rounded-full bg-cyan/20 border border-cyan/30 font-mono text-[11px] font-bold text-cyan">
             M
           </div>
           <div>
-            <div className="text-[14px] font-semibold text-text-primary">Marcus — 3D Artist</div>
+            <div className="text-[14px] font-semibold text-text-primary">Marcus - 3D Artist</div>
             <div className="font-mono text-[10px] text-text-muted">Dinner out · Blender render running at home</div>
           </div>
         </div>
@@ -331,7 +331,7 @@ function MarcusJourney() {
         <p className="text-[13px] leading-relaxed text-text-secondary">
           Marcus left a Blender render running on his workstation. At dinner, his phone
           shows a GPU memory error dialog blocking the process. He tells Contop to lower the tile
-          size and hit retry — the agent navigates Blender&apos;s UI visually, clicks through
+          size and hit retry - the agent navigates Blender&apos;s UI visually, clicks through
           the settings, and the render resumes.
         </p>
 
@@ -450,21 +450,21 @@ export default function UseCases() {
         role="img"
         aria-label="Three user journey stories: Alex resolves a production outage from his phone, Sarah's dangerous command is caught by the security gate, Marcus fixes a stalled Blender render via GUI automation."
       >
-        {/* Journey 1 — Alex */}
+        {/* Journey 1 - Alex */}
         <FadeUp visible={visible} delay={100} className="mb-3">
           <div className="arch-container">
             <AlexJourney />
           </div>
         </FadeUp>
 
-        {/* Journey 2 — Sarah */}
+        {/* Journey 2 - Sarah */}
         <FadeUp visible={visible} delay={250} className="mb-3">
           <div className="arch-container">
             <SarahJourney />
           </div>
         </FadeUp>
 
-        {/* Journey 3 — Marcus */}
+        {/* Journey 3 - Marcus */}
         <FadeUp visible={visible} delay={400} className="mb-3">
           <div className="arch-container">
             <MarcusJourney />

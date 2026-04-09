@@ -61,7 +61,7 @@ export default function ExecutionThread({ variant, entries: externalEntries }: P
     );
   }, [executionEntries]);
 
-  // Stable ref for pendingIntervention — avoids recreating onViewableItemsChanged
+  // Stable ref for pendingIntervention - avoids recreating onViewableItemsChanged
   // (FlatList warns when onViewableItemsChanged changes during its lifetime)
   const pendingInterventionRef = useRef(pendingIntervention);
   pendingInterventionRef.current = pendingIntervention;
@@ -142,7 +142,7 @@ export default function ExecutionThread({ variant, entries: externalEntries }: P
     (event: { nativeEvent: { contentOffset: { y: number }; layoutMeasurement: { height: number }; contentSize: { height: number } } }) => {
       const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
       const atBottom = contentOffset.y + layoutMeasurement.height >= contentSize.height - 50;
-      // Only update auto-scroll intent from user-initiated scrolls — programmatic
+      // Only update auto-scroll intent from user-initiated scrolls - programmatic
       // scrollToEnd fires intermediate onScroll events that would falsely disable auto-scroll
       if (!isAutoScrollingRef.current) {
         isAtBottomRef.current = atBottom;
@@ -154,7 +154,7 @@ export default function ExecutionThread({ variant, entries: externalEntries }: P
     [],
   );
 
-  // User starts dragging — any subsequent onScroll is user-initiated
+  // User starts dragging - any subsequent onScroll is user-initiated
   const handleScrollBeginDrag = useCallback(() => {
     isAutoScrollingRef.current = false;
   }, []);
@@ -220,7 +220,7 @@ export default function ExecutionThread({ variant, entries: externalEntries }: P
     };
 
     // Always render the container (never return null) so the parent View stays in
-    // the native hierarchy on Android — returning null causes the parent to be
+    // the native hierarchy on Android - returning null causes the parent to be
     // collapsed by the view optimizer, and re-expansion when entries appear can fail.
     if (recentItems.length === 0) {
       return <View testID="execution-thread-overlay" />;
@@ -256,7 +256,7 @@ export default function ExecutionThread({ variant, entries: externalEntries }: P
             </Pressable>
           ))}
         </ScrollView>
-        {/* Gradient fade at top — fixed overlay above scroll content */}
+        {/* Gradient fade at top - fixed overlay above scroll content */}
         <View style={styles.overlayFadeOverlay} pointerEvents="none">
           <View style={styles.execFadeStep1} />
           <View style={styles.execFadeStep2} />
@@ -279,7 +279,7 @@ export default function ExecutionThread({ variant, entries: externalEntries }: P
           accessibilityLabel="Intervention Pending. Tap to review."
         >
           <Ionicons name="warning" size={14} color="#000000" />
-          <Text style={styles.interventionBannerText}>Intervention Pending — Tap to Review</Text>
+          <Text style={styles.interventionBannerText}>Intervention Pending - Tap to Review</Text>
         </Pressable>
       )}
       <FlatList

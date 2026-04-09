@@ -1,5 +1,5 @@
 """
-Unit tests for OmniParser integration — client, element_id resolution,
+Unit tests for OmniParser integration - client, element_id resolution,
 and observe_screen enhancement.
 """
 import asyncio
@@ -192,7 +192,7 @@ class TestElementIdResolution:
 
         coords = {"element_id": 99}
         result = at._resolve_element_id(coords)
-        assert result == coords  # Unchanged — element not found
+        assert result == coords  # Unchanged - element not found
 
         at._latest_parse_result = None
 

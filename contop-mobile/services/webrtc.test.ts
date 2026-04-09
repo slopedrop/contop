@@ -55,16 +55,16 @@ describe('webrtc service', () => {
 
   describe('createPeerConnection', () => {
     test('[P1] 1.4-UNIT-013a: createPeerConnection(iceServers) returns configured RTCPeerConnection', () => {
-      // Given — a list of ICE servers from the pairing payload
+      // Given - a list of ICE servers from the pairing payload
       const iceServers = [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
       ];
 
-      // When — createPeerConnection is called with the ICE servers
+      // When - createPeerConnection is called with the ICE servers
       const pc = createPeerConnection(iceServers);
 
-      // Then — an RTCPeerConnection is created with the provided ICE servers
+      // Then - an RTCPeerConnection is created with the provided ICE servers
       expect(RTCPeerConnection).toHaveBeenCalledWith(
         expect.objectContaining({
           iceServers,
@@ -76,46 +76,46 @@ describe('webrtc service', () => {
 
   describe('createSignalingSocket', () => {
     test('[P1] 1.4-UNIT-013b: createSignalingSocket(host, port, token) returns WebSocket to correct URL', () => {
-      // Given — server connection details from the pairing payload
+      // Given - server connection details from the pairing payload
       const host = '192.168.1.100';
       const port = 8000;
       const token = 'abc-def-ghi-jkl';
 
-      // When — createSignalingSocket is called
+      // When - createSignalingSocket is called
       const ws = createSignalingSocket(host, port, token);
 
-      // Then — a WebSocket is created with the correct signaling URL
+      // Then - a WebSocket is created with the correct signaling URL
       const expectedUrl = `ws://${host}:${port}/ws/signaling?token=${token}`;
       expect(MockWebSocket).toHaveBeenCalledWith(expectedUrl);
       expect(ws).toBeDefined();
     });
 
     test('[P0] 1.7-UNIT-007a: createSignalingSocket uses signalingUrl when provided (AC4)', () => {
-      // Given — a tunnel-provided signaling URL from QR payload
+      // Given - a tunnel-provided signaling URL from QR payload
       const host = '192.168.1.100';
       const port = 8000;
       const token = 'abc-def-ghi-jkl';
       const signalingUrl = 'wss://my-tunnel.trycloudflare.com/ws/signaling';
 
-      // When — createSignalingSocket is called with signalingUrl
+      // When - createSignalingSocket is called with signalingUrl
       const ws = createSignalingSocket(host, port, token, signalingUrl);
 
-      // Then — WebSocket uses the signalingUrl directly (with token appended)
+      // Then - WebSocket uses the signalingUrl directly (with token appended)
       const expectedUrl = `${signalingUrl}?token=${token}`;
       expect(MockWebSocket).toHaveBeenCalledWith(expectedUrl);
       expect(ws).toBeDefined();
     });
 
     test('[P0] 1.7-UNIT-007b: createSignalingSocket falls back to ws://host:port when signalingUrl undefined (AC5)', () => {
-      // Given — no tunnel URL (signalingUrl is undefined)
+      // Given - no tunnel URL (signalingUrl is undefined)
       const host = '10.0.0.5';
       const port = 9000;
       const token = 'test-token-xyz';
 
-      // When — createSignalingSocket is called without signalingUrl
+      // When - createSignalingSocket is called without signalingUrl
       const ws = createSignalingSocket(host, port, token, undefined);
 
-      // Then — WebSocket falls back to constructed ws:// URL
+      // Then - WebSocket falls back to constructed ws:// URL
       const expectedUrl = `ws://${host}:${port}/ws/signaling?token=${token}`;
       expect(MockWebSocket).toHaveBeenCalledWith(expectedUrl);
       expect(ws).toBeDefined();
@@ -124,14 +124,14 @@ describe('webrtc service', () => {
 
   describe('createMessageEnvelope', () => {
     test('[P0] 1.4-UNIT-013c: createMessageEnvelope(type, payload) produces {type, id: uuid-v4, payload}', () => {
-      // Given — a message type and payload to wrap
+      // Given - a message type and payload to wrap
       const type = 'tool_call';
       const payload = { command: 'ls -la', workingDir: '/home/user' };
 
-      // When — createMessageEnvelope is called
+      // When - createMessageEnvelope is called
       const envelope = createMessageEnvelope(type, payload);
 
-      // Then — the envelope has the correct structure with a UUID v4 id
+      // Then - the envelope has the correct structure with a UUID v4 id
       expect(envelope).toEqual(
         expect.objectContaining({
           type: 'tool_call',

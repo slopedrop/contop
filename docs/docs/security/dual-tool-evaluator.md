@@ -20,28 +20,28 @@ If the user has explicitly approved a command via the UI confirmation modal, it 
 
 Each tool category is routed based on its nature:
 
-**Display-dependent tools** — always host (require physical display access):
+**Display-dependent tools** - always host (require physical display access):
 - `execute_gui`, `observe_screen`, `get_ui_context`, `execute_accessible`
 - `execute_browser`, `execute_computer_use`
 - `maximize_active_window`, `wait`, `get_action_history`
 
-**Skill tools** — always host:
+**Skill tools** - always host:
 - `execute_skill`, `load_skill`, `create_skill`, `edit_skill`
 - Dynamically registered skill Python tools
 
-**File tools** — host with restricted path checking:
+**File tools** - host with restricted path checking:
 - `read_file`, `edit_file`, `find_files`
 
-**Window & clipboard tools** — always host:
+**Window & clipboard tools** - always host:
 - `window_list`, `window_focus`, `resize_window`, `clipboard_read`, `clipboard_write`
 
-**Document tools** — always host:
+**Document tools** - always host:
 - `read_pdf`, `read_image`, `read_excel`, `write_excel`
 
-**System tools** — always host:
+**System tools** - always host:
 - `process_info`, `system_info`, `download_file`
 
-**Workflow tools** — always host:
+**Workflow tools** - always host:
 - `save_dialog`, `open_dialog`, `launch_app`, `close_app`, `app_menu`, `install_app`, `copy_between_apps`, `fill_form`, `extract_text`, `set_env_var`, `change_setting`, `find_and_replace_in_files`
 
 ### Step 3: Unknown Tool Names
@@ -54,7 +54,7 @@ Any tool name not recognized by the evaluator is routed to the sandbox as a defe
 
 For `execute_cli`, commands go through sub-checks in order:
 
-**4a. Forbidden commands** — Commands matching the `forbidden_commands` list are always sandboxed. Uses substring and word boundary matching.
+**4a. Forbidden commands** - Commands matching the `forbidden_commands` list are always sandboxed. Uses substring and word boundary matching.
 
 **Example forbidden commands:**
 - `rm -rf /`
@@ -64,7 +64,7 @@ For `execute_cli`, commands go through sub-checks in order:
 
 **Result:** `sandbox`
 
-**4b. Restricted paths** — Commands targeting paths in the `restricted_paths` list are sandboxed.
+**4b. Restricted paths** - Commands targeting paths in the `restricted_paths` list are sandboxed.
 
 - **Windows:** Case-insensitive path matching
 - **Unix:** Case-sensitive path matching
@@ -109,7 +109,7 @@ These always trigger the destructive confirmation flow regardless of user config
 
 ## Encoded PowerShell Detection
 
-The evaluator detects Base64-encoded PowerShell commands (`-EncodedCommand` flag) and blocks them from running on the host — a common technique for bypassing command-line pattern matching.
+The evaluator detects Base64-encoded PowerShell commands (`-EncodedCommand` flag) and blocks them from running on the host - a common technique for bypassing command-line pattern matching.
 
 ## Subshell Content Extraction
 
@@ -135,7 +135,7 @@ When a command is classified as destructive (`require_confirmation=True`):
 
 ## Performance
 
-The classification target is **under 100ms** per evaluation — the evaluator should never be the bottleneck in the execution pipeline.
+The classification target is **under 100ms** per evaluation - the evaluator should never be the bottleneck in the execution pipeline.
 
 ---
 

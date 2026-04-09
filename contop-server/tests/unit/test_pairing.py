@@ -83,7 +83,7 @@ class TestGetTailscaleIp:
             # Force re-import of psutil inside the function
             import importlib
             import core.pairing
-            # Call the function — it will import psutil from sys.modules
+            # Call the function - it will import psutil from sys.modules
             result = _get_tailscale_ip()
         assert result == "100.100.50.1"
 

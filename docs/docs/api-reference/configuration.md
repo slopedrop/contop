@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Configuration Reference
 
-Complete reference for `~/.contop/settings.json` — all configurable fields, defaults, and behavior.
+Complete reference for `~/.contop/settings.json` - all configurable fields, defaults, and behavior.
 
 ## Settings File Location
 
@@ -94,7 +94,7 @@ API keys are stored as plaintext in `settings.json`. On startup, the desktop app
 
 Providers: `gemini`, `anthropic`, `openai`. When `mode` is `"cli_proxy"`, the server routes LLM requests through the local CLI proxy instead of calling the API directly.
 
-**Vision limitation:** CLI tools accept text only — no base64 images. In subscription mode, the execution agent's LLM vision fallback (direct screenshot analysis) is unavailable. The agent uses local vision backends and falls back to `get_ui_context` when none process a frame.
+**Vision limitation:** CLI tools accept text only - no base64 images. In subscription mode, the execution agent's LLM vision fallback (direct screenshot analysis) is unavailable. The agent uses local vision backends and falls back to `get_ui_context` when none process a frame.
 
 ### System Prompts
 
@@ -137,7 +137,7 @@ The following keys must always be present: `version`, `restricted_paths`, `forbi
 
 ## Hot Reload
 
-Settings are reloaded automatically when the file's `st_mtime` (modification timestamp) changes. The `get_settings()` function checks the mtime on each call — no polling or restart required.
+Settings are reloaded automatically when the file's `st_mtime` (modification timestamp) changes. The `get_settings()` function checks the mtime on each call - no polling or restart required.
 
 ## Environment Variable Fallbacks
 

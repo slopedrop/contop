@@ -20,7 +20,7 @@ export async function upsertSessionMeta(meta: SessionMeta): Promise<void> {
   if (idx >= 0) {
     existing.splice(idx, 1); // remove from current position
   }
-  existing.unshift(meta); // always prepend — most recently updated first
+  existing.unshift(meta); // always prepend - most recently updated first
   await AsyncStorage.setItem(SESSION_INDEX_KEY, JSON.stringify(existing));
 }
 
@@ -36,7 +36,7 @@ export function isStorageFull(): boolean {
 
 export async function saveSessionEntries(sessionId: string, entries: ExecutionEntry[]): Promise<void> {
   if (_storageFull) return; // Skip writes until emergency cleanup runs
-  // Strip large base64 screenshot data before persisting — screenshots are
+  // Strip large base64 screenshot data before persisting - screenshots are
   // only needed for live display, not session history.  Without this,
   // multi-step tasks with many observe_screen calls fill up SQLite (~300-500 KB each).
   const stripped = entries.map((e) => {
@@ -56,7 +56,7 @@ export async function saveSessionEntries(sessionId: string, entries: ExecutionEn
     await AsyncStorage.setItem(sessionEntriesKey(sessionId), JSON.stringify(stripped));
   } catch (err) {
     if (String(err).includes('SQLITE_FULL') || String(err).includes('disk is full')) {
-      console.warn('[sessionStorage] Storage full — running emergency cleanup');
+      console.warn('[sessionStorage] Storage full - running emergency cleanup');
       _storageFull = true;
       await emergencyClearEntries();
       _storageFull = false;
@@ -64,7 +64,7 @@ export async function saveSessionEntries(sessionId: string, entries: ExecutionEn
       try {
         await AsyncStorage.setItem(sessionEntriesKey(sessionId), JSON.stringify(stripped));
       } catch {
-        // Give up silently — session data is expendable
+        // Give up silently - session data is expendable
       }
     }
   }
@@ -114,7 +114,7 @@ export async function pruneOldSessions(): Promise<void> {
       toRemove.map((s) => AsyncStorage.removeItem(sessionEntriesKey(s.id))),
     );
   } catch {
-    // Non-critical — don't crash the app if pruning fails
+    // Non-critical - don't crash the app if pruning fails
   }
 }
 

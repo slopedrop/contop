@@ -1,5 +1,5 @@
 """
-Unit tests for Smart Vision Routing — observe_screen mode/intent params.
+Unit tests for Smart Vision Routing - observe_screen mode/intent params.
 
 Covers all ACs from tech-spec-smart-vision-routing.md:
 - AC1: Backward compatibility (no args → grounding with zone annotations)
@@ -16,7 +16,7 @@ import pytest
 
 
 # ---------------------------------------------------------------------------
-# AC1: Backward compatibility — no args
+# AC1: Backward compatibility - no args
 # ---------------------------------------------------------------------------
 
 class TestAC1_BackwardCompatibility:

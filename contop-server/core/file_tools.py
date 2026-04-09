@@ -1,5 +1,5 @@
 """
-File tools — structured file operations for the execution agent.
+File tools - structured file operations for the execution agent.
 
 Provides read_file, edit_file, and find_files as ADK FunctionTools.
 These replace ad-hoc CLI workarounds (type, dir /s, sed) with reliable,
@@ -156,7 +156,7 @@ async def edit_file(
                 "status": "error",
                 "description": "old_string and new_string are identical.",
                 "duration_ms": int((_time.monotonic() - start) * 1000),
-                "voice_message": "The old and new text are the same — nothing to change.",
+                "voice_message": "The old and new text are the same - nothing to change.",
             }
 
         content = await asyncio.to_thread(p.read_text, "utf-8", "replace")
@@ -291,7 +291,7 @@ async def find_files(
                     continue
 
                 if compiled_re:
-                    # Content search — skip binary files
+                    # Content search - skip binary files
                     try:
                         text = fp.read_text("utf-8", errors="ignore")
                         for line_num, line in enumerate(text.splitlines(), 1):

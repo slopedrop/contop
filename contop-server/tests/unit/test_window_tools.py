@@ -1,5 +1,5 @@
 """
-Unit tests for core/window_tools.py — Window and clipboard tools.
+Unit tests for core/window_tools.py - Window and clipboard tools.
 
 Tests window_list, window_focus, resize_window, clipboard_read, clipboard_write
 with a mocked platform adapter.

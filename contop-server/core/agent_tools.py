@@ -43,7 +43,7 @@ from tools.ui_automation import UIAutomation
 
 logger = logging.getLogger(__name__)
 
-# Known Windows GUI applications — if the agent tries to run one of these
+# Known Windows GUI applications - if the agent tries to run one of these
 # directly, we auto-wrap to detach the process so the subprocess returns
 # immediately instead of blocking.  Uses ``&`` (Git Bash) or ``start ""`` (cmd.exe fallback).
 _GUI_APPS = (
@@ -116,7 +116,7 @@ _action_history_ref: Callable[[int], tuple[list[dict], int]] | None = None
 
 # Session-scoped working directory for execute_cli.  Files created in one
 # tool call persist for subsequent calls within the same session.
-# Managed by ExecutionAgent — set on session start, cleared on reset.
+# Managed by ExecutionAgent - set on session start, cleared on reset.
 _session_cwd: str | None = None
 
 # Session-scoped CU client so history persists across execute_computer_use calls.
@@ -145,7 +145,7 @@ _VISION_PROMPT_UNDERSTANDING = (
     "is visible, the current state of the UI (dialogs, notifications, confirmations, "
     "error messages), and any text you can read. "
     "IMPORTANT: If the user's question mentions things that are NOT visible in the "
-    "screenshot, say so explicitly — do NOT confirm or elaborate on content you cannot see. "
+    "screenshot, say so explicitly - do NOT confirm or elaborate on content you cannot see. "
     "Never hallucinate or invent content. Only describe what IS on screen."
 )
 
@@ -213,7 +213,7 @@ def _capture_screen_sync() -> tuple[str, int, int, int, int]:
     shot = sct.grab(monitor)
     img = Image.frombytes("RGB", (shot.width, shot.height), shot.rgb)
 
-    # grab() always returns physical pixels — this is the true native resolution
+    # grab() always returns physical pixels - this is the true native resolution
     native_w = shot.width
     native_h = shot.height
 
@@ -379,10 +379,10 @@ def _resolve_element_id(coordinates: dict) -> dict:
     try:
         element_id_int = int(element_id)
     except (ValueError, TypeError):
-        logger.warning("Invalid element_id '%s' — must be numeric", element_id)
+        logger.warning("Invalid element_id '%s' - must be numeric", element_id)
         return {
             **coordinates,
-            "error": f"Invalid element_id '{element_id}' — must be a numeric ID from observe_screen results",
+            "error": f"Invalid element_id '{element_id}' - must be a numeric ID from observe_screen results",
         }
 
     element = parse_result.get_element(element_id_int)
@@ -436,16 +436,16 @@ async def observe_screen(
     """Capture the screen and analyze it via a vision backend.
 
     Args:
-        mode: Vision mode — "grounding" returns UI element coordinates for
+        mode: Vision mode - "grounding" returns UI element coordinates for
             execute_gui; "understanding" returns a natural language description
             for verification and decision-making.
-        intent: What you want to know — e.g. "find the submit button" (grounding)
+        intent: What you want to know - e.g. "find the submit button" (grounding)
             or "check if the PDF was sent" (understanding). When empty, a default
             instruction is used based on the mode.
 
     The screenshot is sent to the active vision backend (UI-TARS, Kimi, Qwen,
     OmniParser, etc.) which processes the image and returns text descriptions.
-    The execution LLM receives only text — the image is NOT re-sent to it.
+    The execution LLM receives only text - the image is NOT re-sent to it.
 
     As a last resort, if no vision backend is available, the raw screenshot is
     included so the execution LLM can interpret it directly (needs_llm_vision).
@@ -497,7 +497,7 @@ async def observe_screen(
 
     # --- Vision backend: send screenshot once, get text back ---
     # Try OpenRouter vision models (UI-TARS, Kimi, Qwen, Phi, Molmo, etc.)
-    # "accessibility" is a mode, not a vision model — fall back to UI-TARS for vision
+    # "accessibility" is a mode, not a vision model - fall back to UI-TARS for vision
     from core.settings import get_openrouter_api_key
     from tools.vision_client import VisionClient, VISION_BACKEND_MODELS
     openrouter_key = get_openrouter_api_key()
@@ -518,12 +518,12 @@ async def observe_screen(
             )
             if tars_result and tars_result.get("description"):
                 full_desc = tars_result["description"]
-                logger.info("%s %s succeeded — full response (%d chars):\n%s", _active_vision_backend, mode, len(full_desc), full_desc)
+                logger.info("%s %s succeeded - full response (%d chars):\n%s", _active_vision_backend, mode, len(full_desc), full_desc)
                 with _parse_lock:
                     _latest_parse_result = None
                 return {
                     "status": "success",
-                    # image_b64 for mobile display only — stripped before LLM sees it
+                    # image_b64 for mobile display only - stripped before LLM sees it
                     "image_b64": jpeg_b64,
                     "ui_elements": tars_result["description"],
                     "actual_backend": effective_backend,
@@ -542,10 +542,10 @@ async def observe_screen(
     # Try OmniParser (only for 'omniparser' backend)
     if _active_vision_backend == "omniparser":
         if is_understanding:
-            # OmniParser can't answer understanding questions — LLM fallback
+            # OmniParser can't answer understanding questions - LLM fallback
             with _parse_lock:
                 _latest_parse_result = None
-            logger.info("Understanding mode + omniparser — sending to LLM")
+            logger.info("Understanding mode + omniparser - sending to LLM")
             return {
                 "status": "success",
                 "image_b64": jpeg_b64,
@@ -574,7 +574,7 @@ async def observe_screen(
                 _latest_parse_result = parse_result
             return {
                 "status": "success",
-                # Raw screenshot for mobile display — stripped before LLM sees it
+                # Raw screenshot for mobile display - stripped before LLM sees it
                 "image_b64": jpeg_b64,
                 "ui_elements": parse_result.describe_elements(),
                 "actual_backend": "omniparser",
@@ -584,7 +584,7 @@ async def observe_screen(
     # Send the raw screenshot to the execution LLM as a fallback.
     with _parse_lock:
         _latest_parse_result = None
-    logger.warning("No vision backend available — sending raw screenshot to LLM")
+    logger.warning("No vision backend available - sending raw screenshot to LLM")
     if _status_callback:
         try:
             _status_callback("agent_status", {
@@ -636,7 +636,7 @@ async def get_ui_context(max_depth: int = 8, window_title: Optional[str] = None)
         max_depth: Maximum tree depth to walk (default 8). Increase for deeply
                    nested dialogs (Save As, Open, etc.). Decrease for faster
                    scans of simple windows.
-        window_title: Optional — scan this window instead of the foreground window.
+        window_title: Optional - scan this window instead of the foreground window.
                       Pass the expected dialog/window title (e.g. "Save As", "Open")
                       when the target window may not yet be in the foreground.
 
@@ -661,7 +661,7 @@ async def get_ui_context(max_depth: int = 8, window_title: Optional[str] = None)
 async def maximize_active_window() -> dict:
     """Ensure the foreground window is maximized (fills the entire screen).
 
-    Checks the current window state first — if already maximized this is a
+    Checks the current window state first - if already maximized this is a
     no-op. Never closes or minimizes any window. Use this after launching or
     focusing an app to keep the screen clutter-free for observe_screen.
 
@@ -682,7 +682,7 @@ async def maximize_active_window() -> dict:
             return {
                 "status": "success",
                 "was_maximized": True,
-                "description": "Window was already maximized — no action taken.",
+                "description": "Window was already maximized - no action taken.",
                 "duration_ms": duration_ms,
                 "voice_message": "The window is already maximized.",
             }
@@ -702,7 +702,7 @@ async def maximize_active_window() -> dict:
         return {
             "status": "error",
             "was_maximized": False,
-            "description": "Could not maximize the window — platform API unavailable or failed.",
+            "description": "Could not maximize the window - platform API unavailable or failed.",
             "duration_ms": duration_ms,
             "voice_message": "I wasn't able to maximize the window. Should I try a different approach?",
         }
@@ -827,7 +827,7 @@ async def execute_computer_use(instruction: str) -> dict:
                         "duration_ms": duration_ms,
                     }
 
-            # Plan step — Gemini CU returns mapped actions, no execution
+            # Plan step - Gemini CU returns mapped actions, no execution
             if _cu_progress_callback:
                 _cu_progress_callback(
                     f"CU step {step + 1}/{MAX_CU_STEPS}: planning actions...",
@@ -933,12 +933,12 @@ async def execute_browser(action: str, url: str, params: dict) -> dict:
 
     global _browser_client, _active_tab_id
 
-    # Redact params for logging — fill actions may contain sensitive values
+    # Redact params for logging - fill actions may contain sensitive values
     safe_params = {k: ("***" if k == "value" else v) for k, v in params.items()} if params else {}
     logger.info("execute_browser called: action=%s url=%s params=%s", action, url, safe_params)
     start = _time.monotonic()
 
-    # URL scheme validation — only allow http/https to prevent SSRF
+    # URL scheme validation - only allow http/https to prevent SSRF
     if url and action in ("navigate", "open_tab"):
         from urllib.parse import urlparse
         parsed = urlparse(url)
@@ -958,7 +958,7 @@ async def execute_browser(action: str, url: str, params: dict) -> dict:
 
     client = _browser_client
 
-    # Ensure PinchTab is running — auto-starts the binary
+    # Ensure PinchTab is running - auto-starts the binary
     if not await client.ensure_running():
         duration_ms = int((_time.monotonic() - start) * 1000)
         return {
@@ -984,7 +984,7 @@ async def execute_browser(action: str, url: str, params: dict) -> dict:
                 "voice_message": "I couldn't start a browser instance.",
             }
 
-        # Handle open_tab / navigate — both need a tab
+        # Handle open_tab / navigate - both need a tab
         if action == "open_tab" or (action == "navigate" and _active_tab_id is None):
             tab_id = await client.open_tab(instance_id, url or "about:blank")
             if tab_id:
@@ -1112,7 +1112,7 @@ async def execute_browser(action: str, url: str, params: dict) -> dict:
 
     except Exception as exc:
         logger.exception("execute_browser failed for action: %s", action)
-        # Invalidate cached instance ID — PinchTab may have restarted
+        # Invalidate cached instance ID - PinchTab may have restarted
         if client:
             client.invalidate_instance()
         duration_ms = int((_time.monotonic() - start) * 1000)
@@ -1147,14 +1147,14 @@ async def execute_accessible(
     to observe_screen + execute_gui.
 
     Args:
-        action: Action to perform — 'click', 'set_value', 'toggle', 'select',
+        action: Action to perform - 'click', 'set_value', 'toggle', 'select',
                 'expand', 'collapse', 'focus'.
         target: Human description of the UI element (for logging/voice).
         element_name: Element's visible name/label (fuzzy matched).
         automation_id: Element's automation ID (exact match, most reliable).
         control_type: Element's control type (e.g. 'Button', 'Edit').
         value: Text value for 'set_value' action.
-        window_title: Optional — focus this window before finding the element.
+        window_title: Optional - focus this window before finding the element.
 
     Returns:
         dict with status, found, element_name, element_type, action_performed,
@@ -1201,7 +1201,7 @@ async def execute_accessible(
         result["duration_ms"] = int((_time.monotonic() - start) * 1000)
 
         # If element not found, enrich error with available elements
-        # Uses get_rich_tree() for enabled/visible state — helps the LLM
+        # Uses get_rich_tree() for enabled/visible state - helps the LLM
         # understand why an element may not be interactable.
         if not result.get("found", False):
             available = await ui.get_rich_tree()
@@ -1248,7 +1248,7 @@ async def process_info(name: str = "") -> dict:
         import subprocess
 
         if _platform.system() == "Windows":
-            # tasklist IMAGENAME filter doesn't support wildcards — filter client-side
+            # tasklist IMAGENAME filter doesn't support wildcards - filter client-side
             cmd = ["tasklist", "/FO", "CSV", "/NH"]
         else:
             cmd = ["ps", "aux", "--sort=-pcpu"]

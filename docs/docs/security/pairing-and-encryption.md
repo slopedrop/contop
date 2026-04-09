@@ -30,7 +30,7 @@ The QR code contains a compact JSON payload with short keys for ~40% smaller QR 
 | `s` | signaling_url | No | Signaling URL (temp connections only) |
 | `pa` | provider_auth | No | Compact subscription flags (`pa.g`, `pa.a`, `pa.o` = `"sub"`) |
 
-Pairing requires at least one API key **or** at least one provider configured in subscription mode. When a provider is in subscription mode, its API key is omitted from the QR payload (the mobile app doesn't need it — requests route through the desktop's CLI proxy instead). This means subscription-only users can pair without configuring any API keys.
+Pairing requires at least one API key **or** at least one provider configured in subscription mode. When a provider is in subscription mode, its API key is omitted from the QR payload (the mobile app doesn't need it - requests route through the desktop's CLI proxy instead). This means subscription-only users can pair without configuring any API keys.
 
 ### DTLS Certificate
 
@@ -50,17 +50,17 @@ Pairing requires at least one API key **or** at least one provider configured in
 
 ### Token Lifecycle
 
-1. **Generation** — `POST /api/pair` creates a token with metadata
-2. **Validation** — Token verified on every WebRTC signaling connection
-3. **Renewal** — Permanent tokens reused if still valid (QR regenerated with fresh network info)
-4. **Revocation** — `DELETE /api/pair` or per-device `DELETE /api/pair?device_id=...`
-5. **Single active per device** — Auto-revokes old token when same `device_id` re-pairs
-6. **Per-device revoke** — `DELETE /api/pair?device_id=...` revokes a specific device's token and force-disconnects the session
+1. **Generation** - `POST /api/pair` creates a token with metadata
+2. **Validation** - Token verified on every WebRTC signaling connection
+3. **Renewal** - Permanent tokens reused if still valid (QR regenerated with fresh network info)
+4. **Revocation** - `DELETE /api/pair` or per-device `DELETE /api/pair?device_id=...`
+5. **Single active per device** - Auto-revokes old token when same `device_id` re-pairs
+6. **Per-device revoke** - `DELETE /api/pair?device_id=...` revokes a specific device's token and force-disconnects the session
 
 ### Token Storage
 
 - **Server**: `~/.contop/tokens.json` with `0o600` permissions (owner-only read/write)
-- **Mobile**: OS secure enclave via `expo-secure-store` (Keychain on iOS, Keystore on Android) — **never** in AsyncStorage
+- **Mobile**: OS secure enclave via `expo-secure-store` (Keychain on iOS, Keystore on Android) - **never** in AsyncStorage
 
 ## WebRTC Encryption
 
@@ -79,20 +79,20 @@ During the WebRTC handshake, the mobile app verifies that the server's DTLS cert
 
 The server detects available network paths for the QR code:
 
-1. **LAN IP** — Socket-based detection of local network address
-2. **Tailscale IP** — `tailscale ip -4` CLI or 100.x.y.z interface scan
-3. **Tunnel URL** — Cloudflare Tunnel URL (started on demand)
+1. **LAN IP** - Socket-based detection of local network address
+2. **Tailscale IP** - `tailscale ip -4` CLI or 100.x.y.z interface scan
+3. **Tunnel URL** - Cloudflare Tunnel URL (started on demand)
 
 The mobile app uses `connectSignalingWithFallback()` to try LAN → Tailscale → Tunnel in order.
 
 ## Mobile Device Metadata
 
 The mobile app sends device metadata during pairing:
-- **Device name** — From `expo-device` (e.g., "iPhone 15 Pro")
-- **Location** — GPS from `expo-location` (if permission granted)
+- **Device name** - From `expo-device` (e.g., "iPhone 15 Pro")
+- **Location** - GPS from `expo-location` (if permission granted)
 
 This metadata is stored alongside the token and displayed in the desktop's device management panel.
 
 ---
 
-**Related:** [Connection Methods](/user-guide/connection-methods) · [Device Management](/user-guide/device-management) · [REST API — Pairing](/api-reference/rest-api)
+**Related:** [Connection Methods](/user-guide/connection-methods) · [Device Management](/user-guide/device-management) · [REST API - Pairing](/api-reference/rest-api)

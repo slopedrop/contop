@@ -49,7 +49,7 @@ function CardHeader({ label, sub }: { label: string; sub: string }) {
 }
 
 /* ------------------------------------------------
-   Row 1 Card 1 — LAN Connection
+   Row 1 Card 1 - LAN Connection
    ------------------------------------------------ */
 function LANCard() {
   return (
@@ -87,7 +87,7 @@ function LANCard() {
 }
 
 /* ------------------------------------------------
-   Row 1 Card 2 — Tailscale VPN Mesh
+   Row 1 Card 2 - Tailscale VPN Mesh
    ------------------------------------------------ */
 function TailscaleCard() {
   return (
@@ -124,7 +124,7 @@ function TailscaleCard() {
 }
 
 /* ------------------------------------------------
-   Row 1 Card 3 — Cloudflare Tunnel
+   Row 1 Card 3 - Cloudflare Tunnel
    ------------------------------------------------ */
 function CloudflareCard() {
   return (
@@ -161,7 +161,7 @@ function CloudflareCard() {
 }
 
 /* ------------------------------------------------
-   Row 2 Card 1 — Peer-to-Peer Connection
+   Row 2 Card 1 - Peer-to-Peer Connection
    ------------------------------------------------ */
 function P2PCard() {
   return (
@@ -172,7 +172,7 @@ function P2PCard() {
         Once a signaling path is found, a direct WebRTC connection is established between your phone and desktop.
       </p>
 
-      {/* Connection flow — user-friendly */}
+      {/* Connection flow - user-friendly */}
       <div className="flex flex-col gap-1">
         {[
           { step: "Scan QR code", icon: "1" },
@@ -203,7 +203,7 @@ function P2PCard() {
 }
 
 /* ------------------------------------------------
-   Row 2 Card 2 — Pairing & Security
+   Row 2 Card 2 - Pairing & Security
    ------------------------------------------------ */
 function PairingCard() {
   return (
@@ -211,7 +211,7 @@ function PairingCard() {
       <CardHeader label="Pairing" sub="QR Code · Biometric" />
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Two pairing modes to fit your workflow — quick one-time sessions or persistent always-on setups.
+        Two pairing modes to fit your workflow - quick one-time sessions or persistent always-on setups.
       </p>
 
       {/* Temp vs Permanent */}
@@ -259,19 +259,19 @@ const descriptions = [
     icon: <SignalIcon />,
     category: "CONNECTIVITY",
     title: "Automatic Path Discovery",
-    desc: "Contop tries the fastest path first and falls back automatically. If your connection drops, it reconnects with smart backoff — no manual intervention needed.",
+    desc: "Contop tries the fastest path first and falls back automatically. If your connection drops, it reconnects with smart backoff - no manual intervention needed.",
   },
   {
     icon: <ShieldIcon />,
     category: "ENCRYPTION",
     title: "End-to-End Encrypted",
-    desc: "All data flows directly between your phone and desktop — encrypted with DTLS and verified with certificate fingerprints. Nothing passes through third-party servers.",
+    desc: "All data flows directly between your phone and desktop - encrypted with DTLS and verified with certificate fingerprints. Nothing passes through third-party servers.",
   },
   {
     icon: <KeyIcon />,
     category: "AUTHENTICATION",
     title: "Flexible Pairing",
-    desc: "Quick sessions for one-time use, persistent connections for your daily setup. Each device gets one active token — re-pairing automatically revokes the old one.",
+    desc: "Quick sessions for one-time use, persistent connections for your daily setup. Each device gets one active token - re-pairing automatically revokes the old one.",
   },
 ];
 
@@ -323,16 +323,16 @@ export function ConnectionMethods() {
 
       <FadeUp visible={visible} delay={50} className="mb-14 text-center">
         <p className="mx-auto max-w-2xl text-[15px] leading-relaxed text-text-secondary">
-          Three connection paths, one seamless experience — your phone always finds the fastest route to your desktop.
+          Three connection paths, one seamless experience - your phone always finds the fastest route to your desktop.
         </p>
       </FadeUp>
 
-      {/* Diagram rows — role="img" scoped to visual-only content */}
+      {/* Diagram rows - role="img" scoped to visual-only content */}
       <div
         role="img"
         aria-label="Connection methods: Row 1 shows three connection paths (LAN, Tailscale, Cloudflare Tunnel) with increasing reach. Row 2 shows the peer-to-peer connection flow and pairing options."
       >
-        {/* Row 1: Connection Paths — 3 cards */}
+        {/* Row 1: Connection Paths - 3 cards */}
         <FadeUp visible={visible} delay={100} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
@@ -343,7 +343,7 @@ export function ConnectionMethods() {
           </div>
         </FadeUp>
 
-        {/* Row 2: P2P + Pairing — 2 cards */}
+        {/* Row 2: P2P + Pairing - 2 cards */}
         <FadeUp visible={visible} delay={250} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
@@ -354,7 +354,7 @@ export function ConnectionMethods() {
         </FadeUp>
       </div>
 
-      {/* Description cards — outside role="img" for screen reader access */}
+      {/* Description cards - outside role="img" for screen reader access */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {descriptions.map((d, i) => (
           <FadeUp key={i} visible={visible} delay={400 + i * 80}>

@@ -26,7 +26,7 @@ export default function RemoteScreen({
   fillViewport = false,
   compact = false,
 }: RemoteScreenProps): React.JSX.Element {
-  // Use onLayout to measure actual container dimensions — supports split view where
+  // Use onLayout to measure actual container dimensions - supports split view where
   // useWindowDimensions() would return the full window, causing wrong aspect ratio
   const [containerWidth, setContainerWidth] = useState(1);
   const [containerHeight, setContainerHeight] = useState(1);

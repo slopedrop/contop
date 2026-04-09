@@ -1,5 +1,5 @@
 """
-Advanced workflow tools — delegators to core workflow_tools.py.
+Advanced workflow tools - delegators to core workflow_tools.py.
 
 These are registered as agent FunctionTools when the skill is enabled.
 Each wraps the original implementation to preserve signatures and docstrings.

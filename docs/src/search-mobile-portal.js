@@ -1,5 +1,5 @@
 /**
- * Mobile search portal — moves search bar to document.body on focus
+ * Mobile search portal - moves search bar to document.body on focus
  * so that fixed positioning works regardless of ancestor CSS properties.
  * Listens via MutationObserver since the search plugin renders asynchronously.
  */

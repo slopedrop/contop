@@ -5,7 +5,7 @@ Tests get_foreground_window_name(), get_focused_element(), get_interactive_eleme
 interact_element(), get_element_tree() for each platform adapter + execute_accessible tool.
 Mocks platform-specific libraries to avoid requiring actual display/accessibility access.
 
-[Source: tech-spec-accessibility-tree-backend.md — Tasks 18-20]
+[Source: tech-spec-accessibility-tree-backend.md - Tasks 18-20]
 """
 import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch, PropertyMock
@@ -285,7 +285,7 @@ class TestFindWindowByTitle:
         """System windows (Taskbar, Status, empty) are never searched for embedded dialogs."""
         taskbar = MagicMock()
         taskbar.window_text.return_value = "Taskbar"
-        # If searched, this would match — but it should be skipped
+        # If searched, this would match - but it should be skipped
         taskbar_child = MagicMock()
         taskbar_child.element_info.name = "Save As"
         taskbar.children.return_value = [taskbar_child]
@@ -407,7 +407,7 @@ class TestWindowsAdapterInteraction:
     @patch("platform_adapters.windows._HAS_PYWINAUTO", True)
     @patch("platform_adapters.windows._get_top_window")
     def test_click_by_name(self, mock_top_win):
-        """Click element found by name — invoke() used for deterministic click."""
+        """Click element found by name - invoke() used for deterministic click."""
         mock_element = self._make_element("Submit", "Button")
         mock_win = MagicMock()
         mock_win.children.return_value = [mock_element]
@@ -425,7 +425,7 @@ class TestWindowsAdapterInteraction:
     @patch("platform_adapters.windows._HAS_PYWINAUTO", True)
     @patch("platform_adapters.windows._get_top_window")
     def test_click_by_automation_id(self, mock_top_win):
-        """Click element found by automation_id — exact match."""
+        """Click element found by automation_id - exact match."""
         mock_element = self._make_element("OK", "Button", "okBtn")
         mock_win = MagicMock()
         mock_win.children.return_value = [mock_element]
@@ -441,7 +441,7 @@ class TestWindowsAdapterInteraction:
     @patch("platform_adapters.windows._HAS_PYWINAUTO", True)
     @patch("platform_adapters.windows._get_top_window")
     def test_set_value_clipboard_paste(self, mock_top_win):
-        """set_value uses clipboard paste (Ctrl+A + Ctrl+V) — fast and preserves newlines."""
+        """set_value uses clipboard paste (Ctrl+A + Ctrl+V) - fast and preserves newlines."""
         mock_element = self._make_element("Search", "Edit")
         mock_win = MagicMock()
         mock_win.children.return_value = [mock_element]
@@ -465,7 +465,7 @@ class TestWindowsAdapterInteraction:
         assert result["found"] is True
         assert result["action_performed"] == "set_value"
         mock_element.set_focus.assert_called_once()
-        # The raw value (with real \n) should be copied to clipboard — not
+        # The raw value (with real \n) should be copied to clipboard - not
         # stripped or escaped, so newlines survive.
         fake_pyperclip.copy.assert_any_call("line one\nline two")
         # type_keys should only be used for the Ctrl+A / Ctrl+V hotkeys,

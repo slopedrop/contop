@@ -1,7 +1,7 @@
 """
 Settings persistence module for Contop.
 
-Manages ~/.contop/settings.json — security restrictions (restricted paths,
+Manages ~/.contop/settings.json - security restrictions (restricted paths,
 forbidden commands) with hot-reload via file mtime caching.
 """
 

@@ -1,5 +1,5 @@
 """
-ATDD - Story 1.4: WebRTC P2P Session Tunnel — Peer Connection Manager Tests
+ATDD - Story 1.4: WebRTC P2P Session Tunnel - Peer Connection Manager Tests
 Unit Tests for WebRTC peer connection lifecycle, data channel, message envelope, and keepalive
 
 These tests validate acceptance criteria:
@@ -56,7 +56,7 @@ class TestPeerConnectionCreation:
 
             manager = WebRTCPeerManager(stun_config=SAMPLE_STUN_CONFIG)
 
-        # Then — RTCPeerConnection must have been created with the ICE servers
+        # Then - RTCPeerConnection must have been created with the ICE servers
         MockRTCPC.assert_called_once()
         create_call_kwargs = MockRTCPC.call_args
         # The configuration should include the ICE servers from stun_config
@@ -121,7 +121,7 @@ class TestPeerConnectionCreation:
         )
 
     async def test_data_channel_initially_none_awaiting_remote(self):
-        """[P0] Data channel starts as None — received via datachannel event from mobile.
+        """[P0] Data channel starts as None - received via datachannel event from mobile.
 
         Given: A WebRTCPeerManager with an active peer connection
         When:  The peer connection is created
@@ -285,7 +285,7 @@ class TestKeepalive:
             manager = WebRTCPeerManager(stun_config=SAMPLE_STUN_CONFIG)
             manager._data_channel = mock_channel
 
-            # When — directly invoke the keepalive send method
+            # When - directly invoke the keepalive send method
             manager.send_keepalive()
 
         # Then

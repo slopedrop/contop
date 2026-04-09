@@ -58,7 +58,7 @@ export default function HistoryScreen(): React.JSX.Element {
     return ['all', ...Array.from(results).sort()];
   }, [selectedEntries]);
 
-  // Filter entries — only agent_progress entries are filtered; others always shown
+  // Filter entries - only agent_progress entries are filtered; others always shown
   const filteredEntries = useMemo(() => {
     if (toolFilter === 'all' && resultFilter === 'all') return selectedEntries;
     return selectedEntries.filter((e) => {
@@ -97,7 +97,7 @@ export default function HistoryScreen(): React.JSX.Element {
         setSelectedSession(updated);
       }
     } catch {
-      // Storage error — UI remains consistent with previous state
+      // Storage error - UI remains consistent with previous state
     }
   }
 
@@ -110,7 +110,7 @@ export default function HistoryScreen(): React.JSX.Element {
         setSelectedEntries([]);
       }
     } catch {
-      // Storage error — session remains in list
+      // Storage error - session remains in list
     }
   }
 
@@ -135,7 +135,7 @@ export default function HistoryScreen(): React.JSX.Element {
           <Text style={{ color: '#9CA3AF', textAlign: 'center', padding: 32 }}>No entries in this session</Text>
         ) : (
           <>
-            {/* Filter bar — Tool and Result filters */}
+            {/* Filter bar - Tool and Result filters */}
             {(toolOptions.length > 1 || resultOptions.length > 1) && (
               <View testID="history-filter-bar" style={historyStyles.filterBar}>
                 {toolOptions.length > 1 && (

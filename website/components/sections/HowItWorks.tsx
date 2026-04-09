@@ -35,7 +35,7 @@ function FadeUp({
 }
 
 /* ------------------------------------------------
-   Card 1 — Speak or Type
+   Card 1 - Speak or Type
    ------------------------------------------------ */
 function InputCard() {
   return (
@@ -68,14 +68,14 @@ function InputCard() {
       </div>
 
       <p className="text-[10px] text-text-muted leading-relaxed">
-        Speak naturally or type — your phone understands what you want to do on your desktop.
+        Speak naturally or type - your phone understands what you want to do on your desktop.
       </p>
     </div>
   );
 }
 
 /* ------------------------------------------------
-   Card 2 — AI Understands Your Intent
+   Card 2 - AI Understands Your Intent
    ------------------------------------------------ */
 function IntentCard() {
   return (
@@ -104,14 +104,14 @@ function IntentCard() {
       </div>
 
       <p className="text-[10px] text-text-muted leading-relaxed">
-        Simple questions are answered instantly on the phone — only desktop tasks get sent over.
+        Simple questions are answered instantly on the phone - only desktop tasks get sent over.
       </p>
     </div>
   );
 }
 
 /* ------------------------------------------------
-   Card 3 — Encrypted Connection
+   Card 3 - Encrypted Connection
    ------------------------------------------------ */
 function TunnelCard() {
   return (
@@ -153,7 +153,7 @@ function TunnelCard() {
 }
 
 /* ------------------------------------------------
-   Card 4 — Safety Check
+   Card 4 - Safety Check
    ------------------------------------------------ */
 function SecurityCard() {
   return (
@@ -174,11 +174,10 @@ function SecurityCard() {
         ].map((r, i) => (
           <div key={i} className="flex items-center gap-2 rounded-md bg-white/[0.02] border border-white/[0.04] px-3 py-1.5">
             <span className="text-[11px] text-text-secondary flex-1">{r.action}</span>
-            <span className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[9px] font-bold ${
-              r.color === "green" ? "bg-green-500/10 text-green-400/80" :
-              r.color === "red" ? "bg-red-500/10 text-red-400/80" :
-              "bg-amber-500/10 text-amber-400/80"
-            }`}>
+            <span className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[9px] font-bold ${r.color === "green" ? "bg-green-500/10 text-green-400/80" :
+                r.color === "red" ? "bg-red-500/10 text-red-400/80" :
+                  "bg-amber-500/10 text-amber-400/80"
+              }`}>
               {r.route}
             </span>
           </div>
@@ -188,7 +187,7 @@ function SecurityCard() {
       {/* Sandbox note */}
       <div className="rounded-lg bg-amber-500/[0.04] border border-amber-500/10 p-3">
         <p className="text-[11px] text-text-secondary leading-relaxed">
-          Risky commands run in an isolated sandbox — no access to your files, network, or system.
+          Risky commands run in an isolated sandbox - no access to your files, network, or system.
         </p>
       </div>
     </div>
@@ -196,7 +195,7 @@ function SecurityCard() {
 }
 
 /* ------------------------------------------------
-   Card 5 — AI Agent Executes
+   Card 5 - AI Agent Executes
    ------------------------------------------------ */
 function AgentCard() {
   return (
@@ -234,7 +233,7 @@ function AgentCard() {
 }
 
 /* ------------------------------------------------
-   Card 6 — Your Desktop
+   Card 6 - Your Desktop
    ------------------------------------------------ */
 function HostCard() {
   return (
@@ -301,7 +300,7 @@ const descriptions = [
     icon: <CpuIcon />,
     category: "Your Desktop",
     title: "AI does the work for you",
-    desc: "An autonomous agent takes over your desktop — opening apps, clicking buttons, running commands — while keeping you updated every step of the way.",
+    desc: "An autonomous agent takes over your desktop - opening apps, clicking buttons, running commands - while keeping you updated every step of the way.",
   },
 ];
 
@@ -353,16 +352,16 @@ export function HowItWorks() {
 
       <FadeUp visible={visible} delay={50} className="mb-14 text-center">
         <p className="mx-auto max-w-lg text-[15px] leading-relaxed text-text-secondary">
-          You speak, your phone understands, your desktop executes — all in one seamless flow.
+          You speak, your phone understands, your desktop executes - all in one seamless flow.
         </p>
       </FadeUp>
 
-      {/* Architecture diagram — role="img" scoped to visual-only content */}
+      {/* Architecture diagram - role="img" scoped to visual-only content */}
       <div
         role="img"
         aria-label="How Contop works: Your phone captures voice or text input, AI classifies your intent, an encrypted tunnel sends commands to your desktop, a safety check reviews every action, an AI agent executes tasks autonomously, and your desktop carries out the work."
       >
-        {/* Row 1: Phone side — 3 cards */}
+        {/* Row 1: Phone side - 3 cards */}
         <FadeUp visible={visible} delay={100} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
@@ -373,7 +372,7 @@ export function HowItWorks() {
           </div>
         </FadeUp>
 
-        {/* Row 2: Desktop side — 3 cards */}
+        {/* Row 2: Desktop side - 3 cards */}
         <FadeUp visible={visible} delay={250} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
@@ -385,7 +384,7 @@ export function HowItWorks() {
         </FadeUp>
       </div>
 
-      {/* Description cards — outside role="img" so text is screen-reader accessible */}
+      {/* Description cards - outside role="img" so text is screen-reader accessible */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {descriptions.map((d, i) => (
           <FadeUp key={i} visible={visible} delay={400 + i * 80}>
@@ -414,7 +413,7 @@ export function HowItWorks() {
           className="inline-flex items-center gap-2 text-sm text-text-secondary transition-colors duration-200 hover:text-accent-light"
         >
           See the animated explainer
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
         </a>
       </FadeUp>
     </div>

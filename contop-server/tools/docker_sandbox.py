@@ -1,5 +1,5 @@
 """
-Docker sandbox execution — the "dangerous route" for CLI commands.
+Docker sandbox execution - the "dangerous route" for CLI commands.
 
 Executes shell commands classified as "sandbox" by the DualToolEvaluator
 inside ephemeral, hardened Docker containers. When Docker is unavailable,
@@ -8,8 +8,8 @@ falls back to a restricted HostSubprocess execution with reduced timeout.
 Auto-starts Docker Desktop if installed but not running (transparent to user,
 with status messages sent to mobile).
 
-[Source: architecture.md — Execution Routing Decision, tools/docker_sandbox.py is FR17]
-[Source: project-context.md — Mandatory Dual-Tool Gate, Error Handling]
+[Source: architecture.md - Execution Routing Decision, tools/docker_sandbox.py is FR17]
+[Source: project-context.md - Mandatory Dual-Tool Gate, Error Handling]
 """
 import asyncio
 import logging
@@ -91,7 +91,7 @@ def _start_docker_desktop(path: str) -> bool:
             )
             return True
         elif path == "systemctl":
-            # Try without sudo first — works if user is in the docker group
+            # Try without sudo first - works if user is in the docker group
             # or has polkit permissions. Avoids silent sudo failures (no TTY).
             result = subprocess.run(
                 ["systemctl", "start", "docker"],
@@ -101,7 +101,7 @@ def _start_docker_desktop(path: str) -> bool:
             )
             if result.returncode == 0:
                 return True
-            logger.info("systemctl start docker failed (rc=%d) — requires sudo or docker group", result.returncode)
+            logger.info("systemctl start docker failed (rc=%d) - requires sudo or docker group", result.returncode)
             return False
     except Exception as exc:
         logger.warning("Failed to start Docker Desktop: %s", exc)
@@ -159,7 +159,7 @@ class DockerSandbox:
             try:
                 import docker as docker_mod
             except ImportError:
-                logger.warning("Docker SDK not installed — sandbox will use fallback")
+                logger.warning("Docker SDK not installed - sandbox will use fallback")
                 cls._docker_available = False
                 return False
 
@@ -172,17 +172,17 @@ class DockerSandbox:
                 logger.info("Docker Engine is available")
                 return True
             except Exception as exc:
-                logger.info("Docker daemon not responding: %s — checking if we can auto-start", exc)
+                logger.info("Docker daemon not responding: %s - checking if we can auto-start", exc)
 
             # Attempt 2: Auto-start Docker Desktop if installed
             desktop_path = _find_docker_desktop()
             if desktop_path is None:
-                logger.warning("Docker not installed — sandbox will use fallback")
+                logger.warning("Docker not installed - sandbox will use fallback")
                 cls._notify("Docker is not installed. Running command in restricted mode on the host.")
                 cls._docker_available = False
                 return False
 
-            logger.info("Docker Desktop found at %s — attempting auto-start", desktop_path)
+            logger.info("Docker Desktop found at %s - attempting auto-start", desktop_path)
             cls._notify("Starting Docker for sandbox isolation... this may take a moment.")
 
             if not _start_docker_desktop(desktop_path):
@@ -290,7 +290,7 @@ class DockerSandbox:
                 result = await asyncio.to_thread(container.wait, timeout=timeout_s)
                 exit_code = result["StatusCode"]
             except Exception:
-                # Timeout or other error — stop the container
+                # Timeout or other error - stop the container
                 timed_out = True
                 exit_code = -1
                 try:
@@ -356,7 +356,7 @@ class DockerSandbox:
             if "connection" in exc_str or "refused" in exc_str or "not found" in exc_str:
                 self.__class__._docker_available = None
                 self.__class__._client = None
-                logger.warning("Docker connection error — cache invalidated for retry on next call")
+                logger.warning("Docker connection error - cache invalidated for retry on next call")
 
             return {
                 "status": "error",
@@ -385,7 +385,7 @@ class DockerSandbox:
         from tools.host_subprocess import HostSubprocess
 
         logger.warning(
-            "Docker unavailable — executing in restricted host subprocess (NO sandbox isolation): %s",
+            "Docker unavailable - executing in restricted host subprocess (NO sandbox isolation): %s",
             command[:80],
         )
         if self._status_callback:

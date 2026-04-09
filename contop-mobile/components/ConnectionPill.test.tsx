@@ -14,7 +14,7 @@ describe('ConnectionPill', () => {
   it('shows dash for latency when disconnected', () => {
     render(<ConnectionPill status="disconnected" />);
 
-    expect(screen.getByText('—')).toBeTruthy();
+    expect(screen.getByText('-')).toBeTruthy();
   });
 
   it('sets accessibility label with status and latency', () => {

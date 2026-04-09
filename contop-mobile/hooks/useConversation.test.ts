@@ -364,7 +364,7 @@ describe('useConversation', () => {
 
   test('[P1] 2.5-UNIT-013: processing timeout resets to idle after 120s', async () => {
     // Make generateContent hang indefinitely (never resolves during this test)
-    mockGenerateContent.mockReturnValue(new Promise(() => {}));
+    mockGenerateContent.mockReturnValue(new Promise(() => { }));
 
     const { result } = renderHook(() => useConversation());
 
@@ -372,7 +372,7 @@ describe('useConversation', () => {
       await result.current.connect();
     });
 
-    // Start a request (won't resolve — generateContent hangs)
+    // Start a request (won't resolve - generateContent hangs)
     await act(async () => {
       result.current.sendTextMessage('test');
       // Let the ensureProvider() promise resolve
@@ -440,7 +440,7 @@ describe('useConversation', () => {
 
   test('[P1] 2.5-UNIT-016: concurrent sendTextMessage calls are rejected', async () => {
     // First call hangs forever
-    mockGenerateContent.mockReturnValue(new Promise(() => {}));
+    mockGenerateContent.mockReturnValue(new Promise(() => { }));
 
     const { result } = renderHook(() => useConversation());
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
@@ -493,7 +493,7 @@ describe('useConversation', () => {
       result.current.close();
     });
 
-    // Re-connect and send — old callbacks should NOT fire
+    // Re-connect and send - old callbacks should NOT fire
     await act(async () => {
       await result.current.connect();
     });
@@ -754,7 +754,7 @@ describe('useConversation', () => {
       await result.current.sendUserIntent('what is on screen?');
     });
 
-    // Screen capture is handled server-side via observe_screen tool — no frame_b64 in payload
+    // Screen capture is handled server-side via observe_screen tool - no frame_b64 in payload
     expect(mockSendDC).toHaveBeenCalledWith('user_intent', expect.objectContaining({
       text: 'what is on screen?',
       execution_model: 'gemini-2.5-flash',
@@ -778,7 +778,7 @@ describe('useConversation', () => {
       result.current.setOnTextResponse(mockTextHandler);
     });
 
-    // connectionStatus defaults to 'disconnected' — no DC message fn set
+    // connectionStatus defaults to 'disconnected' - no DC message fn set
     expect(useAIStore.getState().connectionStatus).toBe('disconnected');
 
     await act(async () => {
@@ -896,7 +896,7 @@ describe('useConversation', () => {
       await result.current.sendUserIntent('open the browser instead');
     });
 
-    // Should NOT auto-approve — this isn't an override phrase
+    // Should NOT auto-approve - this isn't an override phrase
     // It should be processed normally (either by Gemini or sent to server)
     const entry = useAIStore.getState().executionEntries.find(
       (e) => e.id === 'confirm-voice-2',

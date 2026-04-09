@@ -18,10 +18,10 @@ const REMOTE_ACCESS_OPTIONS: Array<{
   label: string;
   description: string;
 }> = [
-  { value: 'tailscale', label: 'Tailscale', description: 'Stable, one-time setup' },
-  { value: 'cloudflare', label: 'Cloudflare', description: 'Zero setup, limited reconnection' },
-  { value: 'none', label: 'None', description: 'LAN only' },
-];
+    { value: 'tailscale', label: 'Tailscale', description: 'Stable, one-time setup' },
+    { value: 'cloudflare', label: 'Cloudflare', description: 'Zero setup, limited reconnection' },
+    { value: 'none', label: 'None', description: 'LAN only' },
+  ];
 
 export default function SettingsScreen(): React.JSX.Element {
   const router = useRouter();
@@ -130,8 +130,8 @@ export default function SettingsScreen(): React.JSX.Element {
               for (const base of hosts) {
                 try {
                   await fetch(`${base}/api/pair`, { method: 'DELETE' });
-                  break; // Success — no need to try other hosts
-                } catch { /* Host unreachable — try next */ }
+                  break; // Success - no need to try other hosts
+                } catch { /* Host unreachable - try next */ }
               }
             }
             await clearPairingToken();
@@ -331,7 +331,7 @@ export default function SettingsScreen(): React.JSX.Element {
           </Pressable>
         </View>
 
-        {/* Connection Section — only shown if a stored token exists */}
+        {/* Connection Section - only shown if a stored token exists */}
         {storedPayload && (
           <View style={styles.section}>
             <Text style={styles.sectionLabel}>CONNECTION</Text>

@@ -1,5 +1,5 @@
 """
-Unit tests for OmniParserLocal — in-process OmniParser V2.
+Unit tests for OmniParserLocal - in-process OmniParser V2.
 
 Tests verify model loading, the parse pipeline, deduplication logic,
 annotation drawing, and the OmniParserRouter fallback behavior.

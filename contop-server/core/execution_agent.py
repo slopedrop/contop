@@ -1,5 +1,5 @@
 """
-ADK Execution Agent — autonomous multi-step task runner.
+ADK Execution Agent - autonomous multi-step task runner.
 
 Wraps a google.adk LlmAgent with before/after tool callbacks that enforce
 the Dual-Tool Evaluator security gate and stream progress to the mobile client.
@@ -7,8 +7,8 @@ the Dual-Tool Evaluator security gate and stream progress to the mobile client.
 All execution paths are routed through DualToolEvaluator.classify() via the
 before_tool_callback. Direct tool invocation outside this module is FORBIDDEN.
 
-[Source: project-context.md — Mandatory Dual-Tool Gate]
-[Source: architecture.md — Split-Agent Architecture]
+[Source: project-context.md - Mandatory Dual-Tool Gate]
+[Source: architecture.md - Split-Agent Architecture]
 """
 import asyncio
 import json
@@ -55,7 +55,7 @@ def _resolve_model(model_name: str, **kwargs):
     """Return LiteLlm wrapper for non-Gemini models, plain string for Gemini."""
     if any(model_name.startswith(p) for p in _LITELLM_PREFIXES):
         return LiteLlm(model=model_name, **kwargs)
-    return model_name  # Gemini — ADK handles natively
+    return model_name  # Gemini - ADK handles natively
 from core.agent_tools import execute_accessible, execute_browser, execute_cli, execute_cli_sandboxed, execute_computer_use, execute_gui, get_action_history, get_ui_context, maximize_active_window, observe_screen, wait, set_status_callback, set_action_history_ref, set_session_cwd, reset_cu_client, set_cu_progress_callback, set_browser_client, set_vision_backend, process_info, system_info, download_file
 from core.audit_logger import audit_logger
 from core.dual_tool_evaluator import DualToolEvaluator
@@ -239,7 +239,7 @@ async def generate_plan(task_description: str) -> dict:
             after_num = re.sub(r"^\d+\.\s*", "", line)
             tool_name_parsed = ""
             description = after_num
-            tool_match = re.search(r"\s*[—–-]\s*tool:\s*(\S+)", after_num)
+            tool_match = re.search(r"\s*[-–-]\s*tool:\s*(\S+)", after_num)
             if tool_match:
                 tool_name_parsed = tool_match.group(1)
                 description = after_num[:tool_match.start()].strip()
@@ -337,7 +337,7 @@ class ExecutionAgent:
         self._thinking_enabled = False  # Updated per-request based on mobile settings
         self._is_cli_proxy = False  # True when model routes through CLI proxy (sub mode)
 
-        # Persistent session storage — survives server restarts.
+        # Persistent session storage - survives server restarts.
         # Planning sub-agent uses InMemorySessionService (ephemeral one-shot).
         os.makedirs(os.path.dirname(_SESSIONS_DB_PATH), exist_ok=True)
         self._session_service = DatabaseSessionService(db_url=f"sqlite+aiosqlite:///{_SESSIONS_DB_PATH}")
@@ -553,10 +553,10 @@ class ExecutionAgent:
             }
 
         if result.route == "host":
-            # Safe — proceed with tool execution
+            # Safe - proceed with tool execution
             return None
 
-        # Sandbox route — request confirmation from user
+        # Sandbox route - request confirmation from user
         approved = await self._await_user_confirmation(
             tool_name, args, result.reason, result.voice_message,
         )
@@ -564,7 +564,7 @@ class ExecutionAgent:
             self._last_confirmation_outcome = "timeout"
             return {"status": "timeout", "output": "User confirmation timed out. Skipping this command."}
         if approved:
-            # User approved — execute in sandbox (NOT on host)
+            # User approved - execute in sandbox (NOT on host)
             self._last_confirmation_outcome = "sandboxed"
             command = args.get("command", str(args))
             sandbox_result = await execute_cli_sandboxed(command)
@@ -581,7 +581,7 @@ class ExecutionAgent:
                     "sandboxed": True,
                 }
                 self._action_history.append(entry)
-            return sandbox_result  # Return result directly — skips normal tool execution
+            return sandbox_result  # Return result directly - skips normal tool execution
         # User rejected
         self._last_confirmation_outcome = "user_cancelled"
         return {
@@ -777,11 +777,11 @@ class ExecutionAgent:
         raw screenshot injected as an inline image Part for the LLM to interpret
         directly. This should be rare.
 
-        For non-Gemini models (LiteLlm), skip image injection entirely — LiteLlm
+        For non-Gemini models (LiteLlm), skip image injection entirely - LiteLlm
         handles image content via its own content format.
         """
         # ── LLM Logger: flush previous output, log this call's input ──
-        # Skip when routing through CLI proxy — the proxy-side llm-sub log
+        # Skip when routing through CLI proxy - the proxy-side llm-sub log
         # captures the actual model I/O (spawn command, raw prompt, raw response).
         if not self._is_cli_proxy:
             self._flush_llm_output()
@@ -836,7 +836,7 @@ class ExecutionAgent:
                 )
         except Exception:
             logger.debug("LLM input logging failed", exc_info=True)
-        # Non-Gemini models use LiteLlm — apply token limits, thinking config,
+        # Non-Gemini models use LiteLlm - apply token limits, thinking config,
         # and (for CLI proxy only) prompt sanitization and image stripping.
         if isinstance(self._agent.model, LiteLlm):
             from core.memory_processors import ToolCallFilter, TokenLimiter
@@ -844,7 +844,7 @@ class ExecutionAgent:
             llm_request.contents = TokenLimiter().process(llm_request.contents)
 
             if self._is_cli_proxy:
-                # CLI proxies cannot receive base64 images — strip image data
+                # CLI proxies cannot receive base64 images - strip image data
                 # from observe_screen responses and replace with a text notice
                 # so the LLM knows vision fallback is unavailable.
                 for content in (llm_request.contents or []):
@@ -883,19 +883,19 @@ class ExecutionAgent:
                         "The system uses a two-agent architecture:",
                     )
                     si = si.replace(
-                        "- **You (desktop agent)** — run on the host machine. You execute commands, interact with the GUI, and capture the screen.",
-                        "- **Desktop agent** — runs on the host machine. Executes commands, interacts with the GUI, and captures the screen.",
+                        "- **You (desktop agent)** - run on the host machine. You execute commands, interact with the GUI, and capture the screen.",
+                        "- **Desktop agent** - runs on the host machine. Executes commands, interacts with the GUI, and captures the screen.",
                     )
                     si = si.replace(
-                        "- **Mobile agent** — runs on the user's phone. It handles conversation and routing. It decides when to dispatch tasks to you. Your output is displayed directly to the user on their phone.",
-                        "- **Mobile agent** — handles conversation and routing. Decides when to dispatch tasks to the desktop agent.",
+                        "- **Mobile agent** - runs on the user's phone. It handles conversation and routing. It decides when to dispatch tasks to you. Your output is displayed directly to the user on their phone.",
+                        "- **Mobile agent** - handles conversation and routing. Decides when to dispatch tasks to the desktop agent.",
                     )
                     # Section B: Blind execution framing → neutral
                     si = si.replace(
-                        "You receive a text message describing the task, you execute it, and you return a concise summary of what you did. Your output goes straight to the user — be clear, factual, and well-structured.",
+                        "You receive a text message describing the task, you execute it, and you return a concise summary of what you did. Your output goes straight to the user - be clear, factual, and well-structured.",
                         "The desktop agent receives task descriptions, executes them, and returns a concise summary. Output should be clear, factual, and well-structured.",
                     )
-                    # Section C: Strip "## Conversation Context" section entirely —
+                    # Section C: Strip "## Conversation Context" section entirely -
                     # it instructs the model to parse embedded structured instructions
                     # inside user messages, which looks like prompt injection to CLIs.
                     si = re.sub(
@@ -906,7 +906,7 @@ class ExecutionAgent:
                     )
                     llm_request.config.system_instruction = si
 
-            # Apply thinking for LiteLlm — BuiltInPlanner only works for native
+            # Apply thinking for LiteLlm - BuiltInPlanner only works for native
             # Gemini, so we inject the thinking config directly on the request.
             if self._thinking_enabled:
                 llm_request.config.thinking_config = genai_types.ThinkingConfig(
@@ -938,7 +938,7 @@ class ExecutionAgent:
 
                 filtered_parts.append(part)
 
-                # Strip image_b64 from observe_screen responses — LLM doesn't need it
+                # Strip image_b64 from observe_screen responses - LLM doesn't need it
                 # unless needs_llm_vision is set (no vision backend available)
                 if (
                     part.function_response
@@ -951,7 +951,7 @@ class ExecutionAgent:
                     resp.pop("raw_image_b64", None)
 
                     if needs_fallback and image_b64:
-                        # No vision backend processed this — LLM must see the image
+                        # No vision backend processed this - LLM must see the image
                         intent_text = resp.pop("intent", "")
                         resp["image_b64"] = "[screenshot attached as image below]"
                         if intent_text:
@@ -959,8 +959,8 @@ class ExecutionAgent:
                         fallback_image_b64 = image_b64
                         fallback_content_idx = ci
                     elif image_b64:
-                        # Vision backend already processed it — LLM has the text
-                        resp["image_b64"] = "[processed by vision backend — see ui_elements]"
+                        # Vision backend already processed it - LLM has the text
+                        resp["image_b64"] = "[processed by vision backend - see ui_elements]"
 
             content.parts = filtered_parts
 
@@ -979,7 +979,7 @@ class ExecutionAgent:
             except Exception:
                 logger.exception("Failed to decode fallback screenshot")
 
-        # Memory processors — strip verbose fields and limit tokens
+        # Memory processors - strip verbose fields and limit tokens
         from core.memory_processors import ToolCallFilter, TokenLimiter
         llm_request.contents = ToolCallFilter().process(llm_request.contents)
         llm_request.contents = TokenLimiter().process(llm_request.contents)
@@ -1003,7 +1003,7 @@ class ExecutionAgent:
         self._cancelled = True
         for request_id, future in list(self._confirmation_futures.items()):
             if not future.done():
-                future.set_result(False)  # Reject — execution is being cancelled
+                future.set_result(False)  # Reject - execution is being cancelled
             self._confirmation_futures.pop(request_id, None)
 
     def reset_session(self) -> None:
@@ -1075,7 +1075,7 @@ class ExecutionAgent:
         The agent uses observe_screen tool to capture the screen when needed.
         """
         if self._running:
-            logger.warning("run_intent called while already running — cancelling previous")
+            logger.warning("run_intent called while already running - cancelling previous")
             self._cancelled = True
             # Wait for the previous run to release the lock instead of a blind sleep
             async with self._run_lock:
@@ -1103,7 +1103,7 @@ class ExecutionAgent:
                 litellm_kwargs: dict = {}
 
                 # Mobile tells us whether to use subscription (CLI proxy) mode.
-                # Both modes are always available — the mobile user picks which
+                # Both modes are always available - the mobile user picks which
                 # to use per request based on their preference and availability.
                 if use_subscription:
                     if model.startswith("anthropic/"):
@@ -1119,7 +1119,7 @@ class ExecutionAgent:
                             "api_key": "sk-proxy-placeholder",
                         }
                     elif not model.startswith(("openai/", "anthropic/", "openrouter/")):
-                        # Gemini models (no prefix) — route via LiteLLM's OpenAI handler
+                        # Gemini models (no prefix) - route via LiteLLM's OpenAI handler
                         resolved_model = "openai/" + model
                         litellm_kwargs = {
                             "api_base": get_proxy_url("gemini").rstrip("/") + "/v1",
@@ -1154,7 +1154,7 @@ class ExecutionAgent:
             # Dynamically adjust tool list based on computer use backend.
             # When Gemini CU is selected, it handles screenshots + actions internally,
             # so the agent should NOT also have observe_screen / execute_gui (which
-            # would cause duplicate actions — e.g. opening two Chrome tabs).
+            # would cause duplicate actions - e.g. opening two Chrome tabs).
             #
             # When the backend changes mid-session, the ADK session must be reset
             # because the LLM's conversation history references tools that may no
@@ -1162,7 +1162,7 @@ class ExecutionAgent:
             # causing "Function X is not found in the tools_dict" errors.
             if computer_use_backend != self._computer_use_backend:
                 logger.info(
-                    "CU backend changed %s → %s — resetting ADK session",
+                    "CU backend changed %s → %s - resetting ADK session",
                     self._computer_use_backend, computer_use_backend,
                 )
                 self._session_id = None
@@ -1190,7 +1190,7 @@ class ExecutionAgent:
                         for fn in py_tools:
                             if fn.__name__ in _registered_tool_names:
                                 logger.warning(
-                                    "Skill '%s' defines tool '%s' which conflicts with an existing tool — skipping",
+                                    "Skill '%s' defines tool '%s' which conflicts with an existing tool - skipping",
                                     skill.name, fn.__name__,
                                 )
                                 continue
@@ -1204,14 +1204,14 @@ class ExecutionAgent:
 
             if computer_use_backend == "gemini_computer_use":
                 self._agent.tools = [execute_computer_use, execute_cli, execute_browser, wait, get_action_history] + _common_tools
-                logger.info("Gemini Computer Use backend — agent has %d tools", len(self._agent.tools))
+                logger.info("Gemini Computer Use backend - agent has %d tools", len(self._agent.tools))
             elif computer_use_backend == "accessibility":
                 # Hybrid: accessibility tree + vision fallback (observe_screen uses UI-TARS, not OmniParser)
                 self._agent.tools = [execute_cli, execute_accessible, execute_gui, execute_browser, observe_screen, get_ui_context, maximize_active_window, wait, get_action_history] + _common_tools
-                logger.info("Accessibility backend — agent has %d tools", len(self._agent.tools))
+                logger.info("Accessibility backend - agent has %d tools", len(self._agent.tools))
             else:
                 self._agent.tools = [execute_cli, execute_accessible, execute_gui, execute_browser, observe_screen, get_ui_context, maximize_active_window, wait, get_action_history] + _common_tools
-                logger.info("Backend %s — agent has %d tools", computer_use_backend, len(self._agent.tools))
+                logger.info("Backend %s - agent has %d tools", computer_use_backend, len(self._agent.tools))
             self._computer_use_backend = computer_use_backend
 
             # Apply thinking config via BuiltInPlanner (ADK requires this path)
@@ -1233,7 +1233,7 @@ class ExecutionAgent:
             if flushed:
                 logger.info("Flushed %d queued messages on new intent", flushed)
 
-            # Build user message — include mobile conversation context so the desktop
+            # Build user message - include mobile conversation context so the desktop
             # agent knows about turns handled locally (e.g. user's name, prior discussion).
             if conversation_context:
                 full_text = (
@@ -1269,7 +1269,7 @@ class ExecutionAgent:
                         session_id=self._session_id,
                         model=self._get_model_display_name(),
                     )
-                # Audit: session start — only on new session (Task 4.1)
+                # Audit: session start - only on new session (Task 4.1)
                 await audit_logger.log_session_start(session_id=self._session_id)
 
             # Set planning context so generate_plan tool can access agent state
@@ -1302,7 +1302,7 @@ class ExecutionAgent:
                         elapsed = time.time() - self._start_time
                         if elapsed > MAX_EXECUTION_TIME:
                             logger.warning(
-                                "Total execution time exceeded %ds — aborting",
+                                "Total execution time exceeded %ds - aborting",
                                 MAX_EXECUTION_TIME,
                             )
                             try:
@@ -1311,7 +1311,7 @@ class ExecutionAgent:
                                 pass
                             duration_ms = int(elapsed * 1000)
                             self._send_agent_result({
-                                "answer": f"Execution stopped — reached the {MAX_EXECUTION_TIME // 60}-minute time limit. The task may be partially complete.",
+                                "answer": f"Execution stopped - reached the {MAX_EXECUTION_TIME // 60}-minute time limit. The task may be partially complete.",
                                 "steps_taken": self._step_counter,
                                 "duration_ms": duration_ms,
                                 "error_code": "timeout",
@@ -1332,7 +1332,7 @@ class ExecutionAgent:
                             break
                         except asyncio.TimeoutError:
                             logger.warning(
-                                "LLM call timed out after %ds — aborting execution",
+                                "LLM call timed out after %ds - aborting execution",
                                 LLM_CALL_TIMEOUT,
                             )
                             # Clean up the async generator to avoid resource leaks

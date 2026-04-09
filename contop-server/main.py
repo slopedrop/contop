@@ -7,7 +7,7 @@ Provides health check endpoint and initializes the FastAPI server.
 #   aiortc -> aioice -> ifaddr._shared -> platform.system() -> WMI -> hangs
 # Pre-populate the uname cache with known values so the WMI path is never hit.
 # IMPORTANT: platform.node() and platform.machine() also route through WMI in 3.12+,
-# so we must avoid calling ANY platform functions — use socket/os/sys only.
+# so we must avoid calling ANY platform functions - use socket/os/sys only.
 import platform as _platform
 import sys as _sys
 if _sys.platform == "win32" and not _platform._uname_cache:
@@ -79,7 +79,7 @@ async def _preload_omniparser_background():
         logging.getLogger(__name__).info("OmniParser models preloaded successfully")
     except Exception:
         logging.getLogger(__name__).warning(
-            "OmniParser preload failed — models will load on first use",
+            "OmniParser preload failed - models will load on first use",
             exc_info=True,
         )
 
@@ -108,7 +108,7 @@ async def _away_mode_watchdog():
             is_away = status.get("away_mode", False)
 
             if was_away and not is_away and consecutive_failures == 0:
-                # Normal disengage — user unlocked via PIN or phone
+                # Normal disengage - user unlocked via PIN or phone
                 was_away = False
                 continue
 
@@ -117,9 +117,9 @@ async def _away_mode_watchdog():
         except Exception:
             consecutive_failures += 1
             if was_away and consecutive_failures >= 2:
-                # Tauri overlay likely killed — send security alert to phone
+                # Tauri overlay likely killed - send security alert to phone
                 logger.warning(
-                    "Tauri health check failed %d times while Away Mode was active — overlay may have been killed",
+                    "Tauri health check failed %d times while Away Mode was active - overlay may have been killed",
                     consecutive_failures,
                 )
                 # Send alert to all connected peers
@@ -147,7 +147,7 @@ async def _setup_pinchtab_background():
         path = await ensure_pinchtab_installed()
         if not path:
             logging.getLogger(__name__).warning(
-                "PinchTab not available — execute_browser will fall back to GUI"
+                "PinchTab not available - execute_browser will fall back to GUI"
             )
             return
 
@@ -159,18 +159,18 @@ async def _setup_pinchtab_background():
             logging.getLogger(__name__).info("PinchTab running and ready: %s", path)
         else:
             logging.getLogger(__name__).warning(
-                "PinchTab binary found but failed to start — will retry on first use"
+                "PinchTab binary found but failed to start - will retry on first use"
             )
     except Exception:
         logging.getLogger(__name__).warning(
-            "PinchTab setup failed — execute_browser will fall back to GUI",
+            "PinchTab setup failed - execute_browser will fall back to GUI",
             exc_info=True,
         )
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Manage server lifecycle — load settings, stop tunnel on shutdown."""
+    """Manage server lifecycle - load settings, stop tunnel on shutdown."""
     # Task 2.1: Ensure settings file exists on startup (creates defaults if missing)
     settings_path = settings.get_settings_path()
     already_existed = settings_path.exists()
@@ -191,7 +191,7 @@ async def lifespan(app: FastAPI):
     else:
         logger.info("No persisted pairing tokens found")
 
-    # Tunnel is NOT started at boot — it starts on-demand when the desktop
+    # Tunnel is NOT started at boot - it starts on-demand when the desktop
     # generates a temp QR code via POST /api/tunnel/start.
     print("\n  Tunnel: on-demand (starts when temp QR is generated)")
 

@@ -92,13 +92,13 @@ const useAIStore = create<AIStore>((set, get) => ({
       executionEntries: state.executionEntries.map((e) =>
         e.id === id
           ? {
-              ...e,
-              ...updates,
-              metadata:
-                updates.metadata !== undefined
-                  ? { ...(e.metadata ?? {}), ...updates.metadata }
-                  : e.metadata,
-            }
+            ...e,
+            ...updates,
+            metadata:
+              updates.metadata !== undefined
+                ? { ...(e.metadata ?? {}), ...updates.metadata }
+                : e.metadata,
+          }
           : e,
       ),
     })),
@@ -117,7 +117,7 @@ const useAIStore = create<AIStore>((set, get) => ({
     if (enabled) {
       set({ isManualMode: true, manualModeActive: true, aiState: 'manual', suggestedActions: [] });
     } else {
-      // Don't force idle if the agent is mid-execution — let the server state_update resolve it
+      // Don't force idle if the agent is mid-execution - let the server state_update resolve it
       const current = get().aiState;
       const restoreState = (current === 'manual') ? 'idle' : current;
       set({ isManualMode: false, manualModeActive: true, aiState: restoreState });
@@ -132,7 +132,7 @@ const useAIStore = create<AIStore>((set, get) => ({
   setMobileAuthPreference: (provider, mode) => {
     set((state) => {
       const updated = { ...state.mobileAuthPreference, [provider]: mode };
-      AsyncStorage.setItem(MOBILE_AUTH_PREF_KEY, JSON.stringify(updated)).catch(() => {});
+      AsyncStorage.setItem(MOBILE_AUTH_PREF_KEY, JSON.stringify(updated)).catch(() => { });
       return { mobileAuthPreference: updated };
     });
   },
@@ -165,7 +165,7 @@ const useAIStore = create<AIStore>((set, get) => ({
       manualModeActive: true,
       isAwayMode: false,
       suggestedActions: [],
-      // isHostKeepAwake intentionally NOT reset — it's a global server setting
+      // isHostKeepAwake intentionally NOT reset - it's a global server setting
       sendConfirmationResponse: null,
     }),
   hardReset: () =>
@@ -179,7 +179,7 @@ const useAIStore = create<AIStore>((set, get) => ({
       layoutMode: 'split-view',
       orientation: 'portrait',
       activeSession: null,
-      isHostKeepAwake: false, // reset — may connect to a different server
+      isHostKeepAwake: false, // reset - may connect to a different server
       isManualMode: false,
       manualModeActive: true,
       isAwayMode: false,

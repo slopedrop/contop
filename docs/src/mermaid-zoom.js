@@ -1,5 +1,5 @@
 /**
- * Mermaid diagram zoom — click to expand fullscreen, click/Esc to close.
+ * Mermaid diagram zoom - click to expand fullscreen, click/Esc to close.
  * Uses MutationObserver because mermaid renders asynchronously after route change.
  */
 

@@ -64,12 +64,12 @@ export default function ManualControlOverlay({
       style={styles.container}
       pointerEvents="box-none"
     >
-      {/* Joystick — bottom left */}
+      {/* Joystick - bottom left */}
       <View style={styles.joystickArea}>
         <Joystick sendFastMessage={sendFastMessage} />
       </View>
 
-      {/* Right side — 2x2 grid: [L][▲] / [R][▼] */}
+      {/* Right side - 2x2 grid: [L][▲] / [R][▼] */}
       <View style={styles.buttonGrid}>
         <View style={styles.buttonGridRow}>
           <LeftClickButton sendMessage={sendMessage} />
@@ -87,7 +87,7 @@ export default function ManualControlOverlay({
         </View>
       </View>
 
-      {/* Key shortcuts — bottom center strip */}
+      {/* Key shortcuts - bottom center strip */}
       <View style={styles.keysArea}>
         <ScrollView
           horizontal
@@ -111,7 +111,7 @@ export default function ManualControlOverlay({
   );
 }
 
-// ── Left click button — uses RNGH Manual gesture for simultaneous touch with joystick ──
+// ── Left click button - uses RNGH Manual gesture for simultaneous touch with joystick ──
 
 function LeftClickButton({
   sendMessage,
@@ -150,7 +150,7 @@ function LeftClickButton({
   );
 }
 
-// ── Scroll button — tap fires once, long-press repeats ──────────────────
+// ── Scroll button - tap fires once, long-press repeats ──────────────────
 
 const SCROLL_HOLD_DELAY_MS = 250; // delay before continuous repeat starts
 
@@ -167,7 +167,7 @@ function ScrollButton({
 
   const fireScroll = useCallback(() => {
     sendMessage('manual_control', { action: 'scroll', direction, amount: SCROLL_AMOUNT });
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
   }, [sendMessage, direction]);
 
   const stopRepeat = useCallback(() => {
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     zIndex: 50,
   },
 
-  // Joystick — bottom left
+  // Joystick - bottom left
   joystickArea: {
     position: 'absolute',
     bottom: 12,
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
 
-  // L button — large, supports hold-to-drag
+  // L button - large, supports hold-to-drag
   lBtn: {
     width: BTN_W,
     height: BTN_H,
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(217,119,6,0.8)',
   },
 
-  // R button — same size as L
+  // R button - same size as L
   rBtn: {
     width: BTN_W,
     height: BTN_H,
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(59,130,246,0.7)',
   },
 
-  // Keys — between joystick and buttons, above pill
+  // Keys - between joystick and buttons, above pill
   keysArea: {
     position: 'absolute',
     bottom: 56,

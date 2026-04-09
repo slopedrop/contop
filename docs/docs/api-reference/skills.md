@@ -40,9 +40,9 @@ Instructions for the agent on how to use this skill...
 
 | Type | Description | Contains |
 |------|-------------|----------|
-| **prompt** | Instructions only — extends agent knowledge | Just SKILL.md with text instructions |
-| **workflow** | Deterministic YAML workflows | `scripts/*.yaml` — keyboard sequences, menu navigation, form filling |
-| **python** | Custom FunctionTools | `scripts/*.py` — must export FunctionTool-compatible functions |
+| **prompt** | Instructions only - extends agent knowledge | Just SKILL.md with text instructions |
+| **workflow** | Deterministic YAML workflows | `scripts/*.yaml` - keyboard sequences, menu navigation, form filling |
+| **python** | Custom FunctionTools | `scripts/*.py` - must export FunctionTool-compatible functions |
 | **mixed** | All of the above | SKILL.md + YAML workflows + Python tools |
 
 ## Directory Structure
@@ -79,16 +79,16 @@ Contop ships with 6 built-in skills (installed to `~/.contop/skills/` on first r
 
 Skills use a two-phase loading strategy to keep the agent's context lean:
 
-1. **Startup** — Only metadata (name, description, version, type) is loaded
-2. **Activation** — When the agent needs the skill, it calls `load_skill` to inject the full SKILL.md instructions
+1. **Startup** - Only metadata (name, description, version, type) is loaded
+2. **Activation** - When the agent needs the skill, it calls `load_skill` to inject the full SKILL.md instructions
 
 This prevents unused skill instructions from consuming context window tokens.
 
 ## Conflict Detection
 
 When enabling a skill, the system checks for:
-- **Duplicate skill names** — Two skills with the same name
-- **Tool name conflicts** — A skill registering a tool that conflicts with an existing tool
+- **Duplicate skill names** - Two skills with the same name
+- **Tool name conflicts** - A skill registering a tool that conflicts with an existing tool
 
 Conflicts return an HTTP 409 error and block the skill from being enabled until resolved.
 
@@ -102,4 +102,4 @@ Conflicts return an HTTP 409 error and block the skill from being enabled until 
 
 ---
 
-**Related:** [REST API — Skills](/api-reference/rest-api) · [Tool Layers](/architecture/tool-layers) · [Skill Tools](/api-reference/tools/skill-tools)
+**Related:** [REST API - Skills](/api-reference/rest-api) · [Tool Layers](/architecture/tool-layers) · [Skill Tools](/api-reference/tools/skill-tools)

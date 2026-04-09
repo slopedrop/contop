@@ -4,19 +4,19 @@ import type { ProviderConfig } from './base.js';
 /**
  * Gemini CLI provider configuration.
  *
- * Mode: per-request with stdin pipe — NO resume chaining.
+ * Mode: per-request with stdin pipe - NO resume chaining.
  *
  * Resume is disabled because lastProviderSessionId is a single shared variable
  * overwritten by ANY request (classification, execution, or chat). Since resume
  * only fires on tool-free requests (plain chat), it almost always resumes the
  * wrong session (e.g. a classification session with a different system prompt).
- * We handle context ourselves via toCliMessage() — full history is always in
+ * We handle context ourselves via toCliMessage() - full history is always in
  * the prompt.
  *
  * Actual Gemini stream-json events (discovered via testing):
- *   - "init"    — session init with session_id, model
- *   - "message" — role:"user" (echo, skip) and role:"assistant" (response)
- *   - "result"  — completion with status and stats
+ *   - "init"    - session init with session_id, model
+ *   - "message" - role:"user" (echo, skip) and role:"assistant" (response)
+ *   - "result"  - completion with status and stats
  */
 export const geminiProvider: ProviderConfig = {
   binary: 'gemini',
@@ -63,7 +63,7 @@ export const geminiProvider: ProviderConfig = {
 
   extractTextContent(event: NdjsonEvent): string {
     const e = event as Record<string, unknown>;
-    // Skip user message echo — only extract assistant responses
+    // Skip user message echo - only extract assistant responses
     if ((e.role as string) === 'user') return '';
     return (e.content as string) || (e.text as string) || '';
   },

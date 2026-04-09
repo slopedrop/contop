@@ -1,5 +1,5 @@
 """
-Unit tests for core/skill_executor.py — Workflow execution and Python tool loading.
+Unit tests for core/skill_executor.py - Workflow execution and Python tool loading.
 """
 import json
 import pytest

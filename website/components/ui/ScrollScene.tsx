@@ -21,7 +21,7 @@ export function ScrollScene({ children }: { children: ReactNode }) {
   const [lenis, setLenis] = useState<Lenis | null>(null);
 
   useEffect(() => {
-    // F3: Override native smooth scroll — conflicts with Lenis
+    // F3: Override native smooth scroll - conflicts with Lenis
     const html = document.documentElement;
     html.style.scrollBehavior = "auto";
 

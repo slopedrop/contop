@@ -355,7 +355,7 @@ class TestAC3CleanShutdown:
 
 # ──────────────────────────────────────────────
 # AC4 & AC5: Mobile signaling URL selection
-# (Tested in mobile tests — server-side tests here verify QR payload)
+# (Tested in mobile tests - server-side tests here verify QR payload)
 # ──────────────────────────────────────────────
 
 
@@ -530,7 +530,7 @@ class TestGracefulDegradation:
             result = await start_tunnel(8000)
 
         assert result is None
-        # Server should still be functional — no exceptions raised
+        # Server should still be functional - no exceptions raised
 
     @pytest.mark.asyncio
     async def test_no_crash_when_subprocess_fails(self):

@@ -12,7 +12,7 @@ const mono = Platform.OS === 'ios' ? 'Menlo' : 'monospace';
 
 /**
  * Renders markdown-formatted text with dark-theme styling.
- * Falls back gracefully — plain text renders identically to a normal Text component.
+ * Falls back gracefully - plain text renders identically to a normal Text component.
  */
 export default function MarkdownContent({ children, fontSize = 15, color = '#D1D5DB' }: Props) {
   const styles = useMemo(
@@ -86,7 +86,7 @@ export default function MarkdownContent({ children, fontSize = 15, color = '#D1D
 
   const handleLinkPress = useCallback((url: string) => {
     if (/^https?:\/\//i.test(url)) {
-      Linking.openURL(url).catch(() => {});
+      Linking.openURL(url).catch(() => { });
     }
     return false;
   }, []);

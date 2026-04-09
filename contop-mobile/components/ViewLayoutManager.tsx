@@ -19,7 +19,7 @@ type ViewLayoutManagerProps = {
 
 /**
  * Sole layout controller (FR24). Renders all 5 layout modes.
- * Components (video + thread) are NEVER unmounted — only repositioned via style changes.
+ * Components (video + thread) are NEVER unmounted - only repositioned via style changes.
  */
 export default function ViewLayoutManager({
   videoContent,
@@ -55,7 +55,7 @@ export default function ViewLayoutManager({
       case 'split-view':
         splitRatio.value = 0.45;
         if (fromOverlay) {
-          // Snap immediately — thread content is mounting; animation causes layout bugs
+          // Snap immediately - thread content is mounting; animation causes layout bugs
           videoFlex.value = 0.45;
           threadFlex.value = 0.55;
         } else {
@@ -85,7 +85,7 @@ export default function ViewLayoutManager({
     }
   }, [layoutMode, videoFlex, threadFlex, splitRatio]);
 
-  // SplitSeparator drag handler — updates flex values in real-time (no withTiming during drag)
+  // SplitSeparator drag handler - updates flex values in real-time (no withTiming during drag)
   function handleSeparatorDrag(delta: number) {
     const size = orientation === 'portrait'
       ? containerSizeRef.current.height
@@ -121,7 +121,7 @@ export default function ViewLayoutManager({
       ]}
       onLayout={handleRootLayout}
     >
-      {/* Video container — ALWAYS mounted, style changes per layout */}
+      {/* Video container - ALWAYS mounted, style changes per layout */}
       <Animated.View
         testID="video-container"
         style={[
@@ -140,7 +140,7 @@ export default function ViewLayoutManager({
         />
       )}
 
-      {/* Thread container — ALWAYS mounted, style changes per layout */}
+      {/* Thread container - ALWAYS mounted, style changes per layout */}
       <Animated.View
         testID="thread-container"
         style={[

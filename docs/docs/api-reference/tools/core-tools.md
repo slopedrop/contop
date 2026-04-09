@@ -14,7 +14,7 @@ Execute a CLI command on the host machine.
 |-----------|------|-------------|
 | `command` | `string` | Shell command to execute |
 
-**Classification:** Evaluator decides (depends on command content — may be host, sandbox, or confirmation-required)
+**Classification:** Evaluator decides (depends on command content - may be host, sandbox, or confirmation-required)
 
 **Return shape:**
 ```json
@@ -59,7 +59,7 @@ Perform a GUI automation action on the desktop.
 - Coordinates are in screenshot-space (1280px max width) and automatically scaled to native screen coordinates via `_scale()`
 - Non-ASCII text uses clipboard paste (pyautogui.write() breaks on Unicode)
 - Windows scroll uses direct `ctypes.windll.user32.mouse_event()` (pyautogui.scroll() is broken on Windows)
-- `FAILSAFE = True` — moving mouse to corner aborts
+- `FAILSAFE = True` - moving mouse to corner aborts
 
 ## `observe_screen`
 
@@ -132,10 +132,10 @@ Delegate to Gemini Computer Use API for autonomous screen interaction.
 |-----------|------|-------------|
 | `instruction` | `string` | What to accomplish on screen |
 
-**Classification:** Always host (conditional — only registered when model supports CU)
+**Classification:** Always host (conditional - only registered when model supports CU)
 
 **Notes:**
-- Planning only — maps Gemini CU function calls to `gui_automation` vocabulary, does not execute directly
+- Planning only - maps Gemini CU function calls to `gui_automation` vocabulary, does not execute directly
 - Blocked key combos: `Win+R`, `Super+R`, `Ctrl+Alt+Del`, `Ctrl+Alt+Delete`, `Alt+F4`
 - History management: Smart trimming to 30 entries
 

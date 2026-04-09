@@ -35,8 +35,8 @@ Generate a new pairing token and return QR code as PNG image.
 | `connection_type` | `string` | `"permanent"` | `"permanent"` (30-day) or `"temp"` (4-hour) |
 
 **Response:** PNG image bytes with headers:
-- `x-pairing-token` — The generated token string
-- `x-pairing-expires-at` — ISO 8601 expiration timestamp
+- `x-pairing-token` - The generated token string
+- `x-pairing-expires-at` - ISO 8601 expiration timestamp
 
 **Notes:** For permanent connections, reuses an existing valid token if one exists. The QR code is always regenerated to reflect current network configuration.
 
@@ -90,7 +90,7 @@ Return all paired devices with connection status and recent events.
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `since` | `string` | `null` | ISO timestamp — return events since this time |
+| `since` | `string` | `null` | ISO timestamp - return events since this time |
 
 **Response:**
 ```json
@@ -255,7 +255,7 @@ Disable a skill.
 
 ### `WS /ws/signaling`
 
-WebSocket endpoint for WebRTC SDP/ICE exchange. Used only during initial connection setup — the WebSocket is closed once the P2P connection is established.
+WebSocket endpoint for WebRTC SDP/ICE exchange. Used only during initial connection setup - the WebSocket is closed once the P2P connection is established.
 
 ## CLI Proxy
 

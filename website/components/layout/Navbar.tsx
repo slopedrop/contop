@@ -96,7 +96,7 @@ export function Navbar() {
           e.preventDefault();
           target.scrollIntoView({ behavior: "smooth" });
         } else if (window.location.pathname !== "/") {
-          // On a sub-page — navigate to homepage + hash
+          // On a sub-page - navigate to homepage + hash
           e.preventDefault();
           window.location.href = `/${href}`;
         }
@@ -116,10 +116,10 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-1.5 text-xl font-bold text-text-primary tracking-tight">
             <svg viewBox="0 0 512 512" className="h-8 w-8 text-accent" fill="none" aria-hidden="true">
-              <rect x="106" y="106" width="150" height="300" rx="14" stroke="currentColor" strokeWidth="36" fill="#000"/>
-              <rect x="166" y="256" width="240" height="150" rx="12" stroke="currentColor" strokeWidth="36" fill="#000"/>
-              <polyline points="226,298 270,331 226,364" stroke="currentColor" strokeWidth="28" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-              <line x1="288" y1="364" x2="356" y2="364" stroke="currentColor" strokeWidth="28" strokeLinecap="round"/>
+              <rect x="106" y="106" width="150" height="300" rx="14" stroke="currentColor" strokeWidth="36" fill="#000" />
+              <rect x="166" y="256" width="240" height="150" rx="12" stroke="currentColor" strokeWidth="36" fill="#000" />
+              <polyline points="226,298 270,331 226,364" stroke="currentColor" strokeWidth="28" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              <line x1="288" y1="364" x2="356" y2="364" stroke="currentColor" strokeWidth="28" strokeLinecap="round" />
             </svg>
             Contop
           </Link>

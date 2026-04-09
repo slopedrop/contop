@@ -64,6 +64,8 @@ playwright-report/
 
 # Notes
 pending.txt
+post.md
+launch/
 
 # Local-only scripts
 sync-public.sh

@@ -30,7 +30,7 @@ class TestWindowsAdapterMaximize:
         mock_ctypes.windll.user32.GetForegroundWindow.return_value = 12345
 
         def fake_get_placement(hwnd, wp_ptr):
-            # ctypes.byref returns a pointer — we set showCmd via side_effect
+            # ctypes.byref returns a pointer - we set showCmd via side_effect
             pass
 
         mock_ctypes.windll.user32.GetWindowPlacement.side_effect = fake_get_placement

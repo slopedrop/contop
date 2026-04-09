@@ -35,13 +35,13 @@ const REFRESH_BUFFER_MS = 5 * 60 * 1000;
  *
  * The endpoint requires:
  * - stream: true (always)
- * - store: false (always — endpoint rejects store:true)
- * - instructions: string (system prompt — separate from input, never duplicated)
+ * - store: false (always - endpoint rejects store:true)
+ * - instructions: string (system prompt - separate from input, never duplicated)
  * - input: array of user/assistant messages only
  * - previous_response_id: NOT supported on this endpoint
  *
  * Conversation history is maintained client-side in this.history.
- * System prompt stays in `instructions` field — sent once per call, never
+ * System prompt stays in `instructions` field - sent once per call, never
  * accumulates in the input array. This is how Codex CLI itself works internally.
  */
 export class CodexDirectSession implements ISession {
@@ -73,7 +73,7 @@ export class CodexDirectSession implements ISession {
       provider: 'Codex (Direct API)',
       model: this.model,
     });
-    console.log('[codex-direct] Ready — chatgpt.com/backend-api/codex/responses');
+    console.log('[codex-direct] Ready - chatgpt.com/backend-api/codex/responses');
   }
 
   isAlive(): boolean { return this._alive; }
@@ -104,7 +104,7 @@ export class CodexDirectSession implements ISession {
   // ── ISession messaging ──────────────────────────────────────────
 
   async sendMessage(messages: OpenAIMessage[]): Promise<CliResponse> {
-    return this.callApi(messages, false, () => {});
+    return this.callApi(messages, false, () => { });
   }
 
   async sendMessageStreaming(
@@ -137,7 +137,7 @@ export class CodexDirectSession implements ISession {
     this.history.push({ role: 'user', text: latestUser.content });
 
     // Build input array: full history, user+assistant only, no system
-    // System prompt is in `instructions` — never touches input[]
+    // System prompt is in `instructions` - never touches input[]
     const input = this.history.map((h) => ({
       type: 'message',
       role: h.role,

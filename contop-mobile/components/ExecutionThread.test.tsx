@@ -88,7 +88,7 @@ describe('ExecutionThread', () => {
       const { rerender } = render(<ExecutionThread variant="full" />);
 
       const flatList = screen.getByTestId('execution-flatlist');
-      // Simulate being at bottom (default state — isAtBottomRef starts true)
+      // Simulate being at bottom (default state - isAtBottomRef starts true)
       // scrollToEnd should be called when a new entry is added
       const scrollToEndSpy = jest.fn();
       // FlatList ref is internal, so we verify indirectly: add a new entry and check no crash
@@ -117,7 +117,7 @@ describe('ExecutionThread', () => {
       // FAB should appear (user is not at bottom)
       expect(screen.getByTestId('jump-to-bottom-fab')).toBeTruthy();
 
-      // Add new entry — should not crash and FAB should remain
+      // Add new entry - should not crash and FAB should remain
       useAIStore.getState().addExecutionEntry(mockEntry({ id: 'e2', content: 'Second' }));
       expect(screen.getByTestId('jump-to-bottom-fab')).toBeTruthy();
     });
@@ -221,7 +221,7 @@ describe('ExecutionThread', () => {
         useAIStore.getState().addExecutionEntry(mockEntry({ id: `e${i}`, content: `Message ${i}` }));
       }
       render(<ExecutionThread variant="full" />);
-      // The banner visibility depends on onViewableItemsChanged — in JSDOM the FlatList
+      // The banner visibility depends on onViewableItemsChanged - in JSDOM the FlatList
       // doesn't fire viewability callbacks, so interventionVisible stays true (default).
       // The banner should NOT show when the card is visible (default state).
       // This verifies the banner doesn't false-positive.

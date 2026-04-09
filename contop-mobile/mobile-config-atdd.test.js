@@ -6,7 +6,7 @@
  *   AC1: Mobile client initialized with Expo bare workflow + NativeWind
  *   AC3: Both environments build and run locally without errors
  *
- * These are pure filesystem checks — no Expo runtime needed.
+ * These are pure filesystem checks - no Expo runtime needed.
  */
 
 const fs = require('fs');

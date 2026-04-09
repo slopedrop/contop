@@ -78,7 +78,7 @@ function PhoneLandscape({ children }: { children: React.ReactNode }) {
 }
 
 /* ------------------------------------------------
-   Row 1 Card 1 — Split View
+   Row 1 Card 1 - Split View
    ------------------------------------------------ */
 function SplitViewCard() {
   return (
@@ -108,7 +108,7 @@ function SplitViewCard() {
       </PhonePortrait>
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        See your desktop screen and conversation side by side. Drag the separator to resize — anywhere from 30% to 70%.
+        See your desktop screen and conversation side by side. Drag the separator to resize - anywhere from 30% to 70%.
       </p>
 
       <div className="flex items-center gap-2">
@@ -122,7 +122,7 @@ function SplitViewCard() {
 }
 
 /* ------------------------------------------------
-   Row 1 Card 2 — Video Focus
+   Row 1 Card 2 - Video Focus
    ------------------------------------------------ */
 function VideoFocusCard() {
   return (
@@ -145,7 +145,7 @@ function VideoFocusCard() {
       </PhonePortrait>
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Maximize your desktop view. The chat floats on top as a transparent overlay — tap through it to keep watching.
+        Maximize your desktop view. The chat floats on top as a transparent overlay - tap through it to keep watching.
       </p>
 
       <div className="flex items-center gap-2">
@@ -159,7 +159,7 @@ function VideoFocusCard() {
 }
 
 /* ------------------------------------------------
-   Row 1 Card 3 — Thread Focus
+   Row 1 Card 3 - Thread Focus
    ------------------------------------------------ */
 function ThreadFocusCard() {
   return (
@@ -196,7 +196,7 @@ function ThreadFocusCard() {
 }
 
 /* ------------------------------------------------
-   Row 2 Card 1 — Side-by-Side
+   Row 2 Card 1 - Side-by-Side
    ------------------------------------------------ */
 function SideBySideCard() {
   return (
@@ -226,7 +226,7 @@ function SideBySideCard() {
       </PhoneLandscape>
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Rotate your phone and get a widescreen view. Desktop screen on the left, conversation on the right — plus a fullscreen video option for dedicated monitoring.
+        Rotate your phone and get a widescreen view. Desktop screen on the left, conversation on the right - plus a fullscreen video option for dedicated monitoring.
       </p>
 
       <div className="flex items-center gap-2">
@@ -240,7 +240,7 @@ function SideBySideCard() {
 }
 
 /* ------------------------------------------------
-   Row 2 Card 2 — Fullscreen Video
+   Row 2 Card 2 - Fullscreen Video
    ------------------------------------------------ */
 function FullscreenVideoCard() {
   return (
@@ -289,7 +289,7 @@ const descriptions = [
     icon: <RotateIcon />,
     category: "ORIENTATION",
     title: "Smart Rotation",
-    desc: "Rotate your phone and the layout adapts instantly. Set your preferred mode for portrait and landscape — Contop remembers your choices across sessions.",
+    desc: "Rotate your phone and the layout adapts instantly. Set your preferred mode for portrait and landscape - Contop remembers your choices across sessions.",
   },
   {
     icon: <GestureIcon />,
@@ -300,7 +300,7 @@ const descriptions = [
 ];
 
 /* ================================================
-   Story 3.2 — Model & Backend Selection cards
+   Story 3.2 - Model & Backend Selection cards
    ================================================ */
 
 function RolePicker({
@@ -323,11 +323,10 @@ function RolePicker({
         {desc}
       </div>
       <div
-        className={`flex items-center justify-between rounded px-1.5 py-1 text-[7px] font-mono border ${
-          active
+        className={`flex items-center justify-between rounded px-1.5 py-1 text-[7px] font-mono border ${active
             ? "bg-accent/10 border-accent-light/30 text-accent-light/80"
             : "bg-white/[0.03] border-white/[0.08] text-text-secondary/70"
-        }`}
+          }`}
       >
         <span>{value}</span>
         <span className="text-[6px] text-text-muted/50">▾</span>
@@ -356,7 +355,7 @@ function AIRolesCard() {
       </div>
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Configure each AI role independently from your phone — no server
+        Configure each AI role independently from your phone - no server
         restart needed
       </p>
 
@@ -425,7 +424,7 @@ function ComputerUseBackendsCard() {
       </div>
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Nine vision backends from local to cloud — choose by privacy,
+        Nine vision backends from local to cloud - choose by privacy,
         speed, or model preference
       </p>
 
@@ -450,11 +449,10 @@ function ProviderRow({
 }) {
   return (
     <div
-      className={`rounded-md px-3 py-2 border ${
-        highlight
+      className={`rounded-md px-3 py-2 border ${highlight
           ? "bg-accent/10 border-accent-light/30"
           : "bg-white/[0.03] border-white/[0.08]"
-      }`}
+        }`}
     >
       <div className="flex items-center gap-1.5 mb-0.5">
         <span className="font-mono text-[10px] font-medium text-text-primary/90">
@@ -498,7 +496,7 @@ function ModelSelectionCard() {
       </div>
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Bring your own API keys — use any provider for conversation or execution
+        Bring your own API keys - use any provider for conversation or execution
       </p>
 
       <div className="flex items-center gap-2">
@@ -512,7 +510,7 @@ function ModelSelectionCard() {
 }
 
 /* ================================================
-   Story 3.3 — Chat UI, Sessions & Device Control cards
+   Story 3.3 - Chat UI, Sessions & Device Control cards
    ================================================ */
 
 function LiveExecutionThreadCard() {
@@ -556,7 +554,7 @@ function LiveExecutionThreadCard() {
       </PhonePortrait>
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        See every step the agent takes in real time — messages, tool calls, and
+        See every step the agent takes in real time - messages, tool calls, and
         results stream into a live thread
       </p>
 
@@ -630,7 +628,7 @@ function SessionHistoryCard() {
       </PhonePortrait>
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Pick up where you left off — sessions persist across app restarts with
+        Pick up where you left off - sessions persist across app restarts with
         full conversation history
       </p>
 
@@ -670,7 +668,7 @@ function CustomInstructionsCard() {
       </PhonePortrait>
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Tell the agent how you want it to behave — set language, project paths,
+        Tell the agent how you want it to behave - set language, project paths,
         or preferred tools
       </p>
 
@@ -726,7 +724,7 @@ function DeviceControlCard() {
       </div>
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Lock your screen or keep it awake during long tasks — all from your
+        Lock your screen or keep it awake during long tasks - all from your
         phone
       </p>
 
@@ -805,7 +803,7 @@ function VoiceInputCard() {
       </PhonePortrait>
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Speak or type — your intent becomes the command. Record voice, review,
+        Speak or type - your intent becomes the command. Record voice, review,
         and send, or type directly for quick instructions
       </p>
 
@@ -832,14 +830,14 @@ function ManualControlCard() {
             <path d="M1 1L1 13L4.5 9.5L8 16L10 15L6.5 8.5L11 8L1 1Z" fill="rgba(255,255,255,0.85)" stroke="rgba(0,0,0,0.5)" strokeWidth="1" />
           </svg>
 
-          {/* Joystick — bottom left */}
+          {/* Joystick - bottom left */}
           <div className="absolute bottom-1.5 left-2">
             <div className="w-[28px] h-[28px] rounded-full border border-white/[0.20] bg-black/[0.30] flex items-center justify-center">
               <div className="w-[12px] h-[12px] rounded-full bg-white/[0.25] border border-white/[0.35]" />
             </div>
           </div>
 
-          {/* L / R buttons + scroll — bottom right */}
+          {/* L / R buttons + scroll - bottom right */}
           <div className="absolute bottom-1.5 right-2 flex gap-[3px]">
             <div className="flex flex-col gap-[2px]">
               <div className="w-[22px] h-[13px] rounded-[3px] bg-black/[0.40] border border-white/[0.15] flex items-center justify-center">
@@ -863,7 +861,7 @@ function ManualControlCard() {
             </div>
           </div>
 
-          {/* Key shortcut pills — center strip */}
+          {/* Key shortcut pills - center strip */}
           <div className="absolute bottom-1 left-[40px] right-[48px] flex gap-[2px] justify-center">
             {["Esc", "Tab", "Del", "Ctrl"].map((k) => (
               <span
@@ -878,7 +876,7 @@ function ManualControlCard() {
       </PhoneLandscape>
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Take direct control — move the cursor with a joystick, click, scroll,
+        Take direct control - move the cursor with a joystick, click, scroll,
         and send key combos from your phone
       </p>
 
@@ -893,38 +891,38 @@ function ManualControlCard() {
 }
 
 /* ------------------------------------------------
-   Story 3.2 — Description cards data
+   Story 3.2 - Description cards data
    ------------------------------------------------ */
 const modelDescriptions = [
   {
     icon: <SlidersIcon />,
     category: "CONFIGURATION",
     title: "Per-Role Model Selection",
-    desc: "Three independent AI roles — conversation, execution, and screen interaction — each configurable with 25+ models from Gemini, OpenAI, Anthropic, or OpenRouter. Change from your phone anytime.",
+    desc: "Three independent AI roles - conversation, execution, and screen interaction - each configurable with 25+ models from Gemini, OpenAI, Anthropic, or OpenRouter. Change from your phone anytime.",
   },
   {
     icon: <GridSwitchIcon />,
     category: "BACKENDS",
     title: "Nine Screen Strategies",
-    desc: "Nine ways for the agent to see your screen — from local OmniParser to six cloud vision models, Google's native vision, or keyboard-first with no screenshots.",
+    desc: "Nine ways for the agent to see your screen - from local OmniParser to six cloud vision models, Google's native vision, or keyboard-first with no screenshots.",
   },
   {
     icon: <ZapIcon />,
     category: "RUNTIME",
     title: "Switch Without Restarting",
-    desc: "Change models and backends on the fly from mobile settings. The desktop agent picks up your new configuration on the next command — zero downtime.",
+    desc: "Change models and backends on the fly from mobile settings. The desktop agent picks up your new configuration on the next command - zero downtime.",
   },
 ];
 
 /* ------------------------------------------------
-   Story 3.3 — Description cards data
+   Story 3.3 - Description cards data
    ------------------------------------------------ */
 const experienceDescriptions = [
   {
     icon: <ThreadIcon />,
     category: "EXECUTION",
     title: "See Every Step in Real Time",
-    desc: "Watch the agent work through your request step by step. User messages, AI responses, tool calls, and results stream into a live thread — with progress indicators and expandable details.",
+    desc: "Watch the agent work through your request step by step. User messages, AI responses, tool calls, and results stream into a live thread - with progress indicators and expandable details.",
   },
   {
     icon: <HistoryIcon />,
@@ -989,19 +987,19 @@ export function Features() {
         </p>
       </FadeUp>
 
-      {/* Sub-heading for layout showcase (extensible — 3.2/3.3 add below) */}
+      {/* Sub-heading for layout showcase (extensible - 3.2/3.3 add below) */}
       <FadeUp visible={visible} delay={75} className="mb-6">
         <h3 className="text-xl font-semibold tracking-[-0.01em] text-text-primary">
           Adaptive Layouts
         </h3>
       </FadeUp>
 
-      {/* Diagram rows — role="img" scoped to visual-only content */}
+      {/* Diagram rows - role="img" scoped to visual-only content */}
       <div
         role="img"
         aria-label="Layout modes: Row 1 shows three portrait modes (Split View, Video Focus, Thread Focus) with phone mockups. Row 2 shows two landscape modes (Side-by-Side and Fullscreen Video)."
       >
-        {/* Row 1: Portrait Modes — 3 cards */}
+        {/* Row 1: Portrait Modes - 3 cards */}
         <FadeUp visible={visible} delay={100} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
@@ -1012,7 +1010,7 @@ export function Features() {
           </div>
         </FadeUp>
 
-        {/* Row 2: Landscape + Orientation — 2 cards */}
+        {/* Row 2: Landscape + Orientation - 2 cards */}
         <FadeUp visible={visible} delay={250} className="mb-3">
           <div className="arch-container">
             <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
@@ -1023,7 +1021,7 @@ export function Features() {
         </FadeUp>
       </div>
 
-      {/* Description cards — outside role="img" for screen reader access */}
+      {/* Description cards - outside role="img" for screen reader access */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {descriptions.map((d, i) => (
           <FadeUp key={i} visible={visible} delay={400 + i * 80}>
@@ -1054,7 +1052,7 @@ export function Features() {
         </h3>
       </FadeUp>
 
-      {/* Illustration row — 3-col grid */}
+      {/* Illustration row - 3-col grid */}
       <FadeUp visible={visible} delay={700}>
         <div
           role="img"
@@ -1100,7 +1098,7 @@ export function Features() {
         </h3>
       </FadeUp>
 
-      {/* Illustration rows — role="img" scoped to visual-only content */}
+      {/* Illustration rows - role="img" scoped to visual-only content */}
       <div
         role="img"
         aria-label="Everyday experience: Row 1 shows Live Execution Thread with chat bubbles and progress indicators, Session History with resumable past sessions, and Custom Instructions for personalizing the agent. Row 2 shows Device Control toggles for lock and keep-awake, Voice Input with waveform visualization, and Manual Control with a joystick overlay for direct cursor, click, scroll, and keyboard control."
@@ -1128,7 +1126,7 @@ export function Features() {
         </FadeUp>
       </div>
 
-      {/* Description cards — outside role="img" for screen reader access */}
+      {/* Description cards - outside role="img" for screen reader access */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {experienceDescriptions.map((d, i) => (
           <FadeUp key={i} visible={visible} delay={1600 + i * 80}>

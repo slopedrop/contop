@@ -21,7 +21,7 @@ describe('SplashContent', () => {
   it('displays correct branding text', () => {
     const { getByText } = render(<SplashContent />);
 
-    // ContopIcon replaced the old [>_] text — verify tagline only
+    // ContopIcon replaced the old [>_] text - verify tagline only
     expect(getByText('Remote Compute Agent')).toBeTruthy();
   });
 });

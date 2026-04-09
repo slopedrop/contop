@@ -9,16 +9,16 @@
   ; Set venv location to ~/.contop/server-venv (survives app updates)
   System::Call 'kernel32::SetEnvironmentVariable(t "UV_PROJECT_ENVIRONMENT", t "$PROFILE\.contop\server-venv")i'
 
-  ; Detect NVIDIA GPU — disable WoW64 filesystem redirection first because
+  ; Detect NVIDIA GPU - disable WoW64 filesystem redirection first because
   ; NSIS is 32-bit and System32 silently redirects to SysWOW64 otherwise.
   ${DisableX64FSRedirection}
   ${If} ${FileExists} "$WINDIR\System32\nvidia-smi.exe"
-    ; NVIDIA GPU found — install with CUDA support
+    ; NVIDIA GPU found - install with CUDA support
     DetailPrint "NVIDIA GPU detected. Installing with CUDA support..."
     DetailPrint "Downloading PyTorch with CUDA (~2.5 GB). Please wait..."
     nsExec::ExecToLog '"$INSTDIR\resources\uv.exe" sync --extra omniparser --extra cu126 --directory "$INSTDIR\resources\contop-server" --python-preference managed'
   ${Else}
-    ; No NVIDIA GPU — install CPU-only
+    ; No NVIDIA GPU - install CPU-only
     DetailPrint "No NVIDIA GPU detected. Installing CPU-only dependencies..."
     nsExec::ExecToLog '"$INSTDIR\resources\uv.exe" sync --extra omniparser --extra cpu --directory "$INSTDIR\resources\contop-server" --python-preference managed'
   ${EndIf}

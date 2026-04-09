@@ -233,7 +233,7 @@ const { useRouter: useRouterMock } = jest.requireMock('expo-router') as {
   useRouter: jest.Mock;
 };
 
-// CI runners (Ubuntu, 2-core) are slower — give hooks and tests more headroom
+// CI runners (Ubuntu, 2-core) are slower - give hooks and tests more headroom
 jest.setTimeout(15000);
 
 describe('SessionScreen', () => {
@@ -315,23 +315,23 @@ describe('SessionScreen', () => {
 
   describe('connection status display', () => {
     test('[P1] 1.4-UNIT-015a: session screen renders connection status from Zustand store', () => {
-      // Given — the Zustand store has connectionStatus 'connected'
+      // Given - the Zustand store has connectionStatus 'connected'
       useAIStoreMock.default.mockReturnValue({
         connectionStatus: 'connected',
         setConnectionStatus: jest.fn(),
       });
 
-      // When — the session screen is rendered
+      // When - the session screen is rendered
       render(<SessionScreen />);
 
-      // Then — the connection status is displayed on screen (multiple elements possible: pill + overlay)
+      // Then - the connection status is displayed on screen (multiple elements possible: pill + overlay)
       expect(screen.getAllByTestId('connection-status').length).toBeGreaterThan(0);
     });
   });
 
   describe('disconnect functionality', () => {
     test('[P2] 1.4-UNIT-015b: disconnect button triggers disconnect and navigates back', async () => {
-      // Given — the session screen is rendered with an active connection
+      // Given - the session screen is rendered with an active connection
       useAIStoreMock.default.mockReturnValue({
         connectionStatus: 'connected',
         setConnectionStatus: jest.fn(),
@@ -339,11 +339,11 @@ describe('SessionScreen', () => {
 
       render(<SessionScreen />);
 
-      // When — the disconnect button is pressed
+      // When - the disconnect button is pressed
       const disconnectButton = screen.getByTestId('disconnect-button');
       fireEvent.press(disconnectButton);
 
-      // Then — disconnect() is called and navigation goes back to pairing
+      // Then - disconnect() is called and navigation goes back to pairing
       await waitFor(() => {
         expect(mockDisconnect).toHaveBeenCalled();
       });
@@ -352,58 +352,58 @@ describe('SessionScreen', () => {
   });
 
   describe('reconnection UI (Story 1.5)', () => {
-    test('[P0] 1.5-UNIT-010: silent window — no UI change during first 2s of reconnecting', () => {
-      // Given — the connection status is 'reconnecting' (just entered)
+    test('[P0] 1.5-UNIT-010: silent window - no UI change during first 2s of reconnecting', () => {
+      // Given - the connection status is 'reconnecting' (just entered)
       useAIStoreMock.default.mockReturnValue({
         connectionStatus: 'reconnecting',
         setConnectionStatus: jest.fn(),
         aiState: 'idle',
       });
 
-      // When — the session screen is rendered (immediately within the 2s silent window)
+      // When - the session screen is rendered (immediately within the 2s silent window)
       render(<SessionScreen />);
 
-      // Then — no reconnecting banner is shown and the previous connection status text persists
+      // Then - no reconnecting banner is shown and the previous connection status text persists
       expect(screen.queryByTestId('reconnecting-banner')).toBeNull();
       // The status text should still show "Connected" (not "Reconnecting") during silent window
       expect(screen.queryByText(/reconnecting/i)).toBeNull();
     });
 
     test('[P0] 1.5-UNIT-011: reconnecting banner shown after silent window expires', async () => {
-      // Given — the connection status is 'reconnecting'
+      // Given - the connection status is 'reconnecting'
       useAIStoreMock.default.mockReturnValue({
         connectionStatus: 'reconnecting',
         setConnectionStatus: jest.fn(),
         aiState: 'idle',
       });
 
-      // When — the session screen is rendered and 2s silent window expires (real timers)
+      // When - the session screen is rendered and 2s silent window expires (real timers)
       render(<SessionScreen />);
 
-      // Then — the reconnecting banner appears after the 2s silent window
+      // Then - the reconnecting banner appears after the 2s silent window
       await waitFor(() => {
         expect(screen.getByTestId('reconnecting-banner')).toBeTruthy();
       }, { timeout: 5000 });
     });
 
     test('[P1] 1.5-UNIT-012: "Connection Lost" shows offline banner with Retry button (chat-only mode)', () => {
-      // Given — the connection status is 'disconnected' after failed reconnection
+      // Given - the connection status is 'disconnected' after failed reconnection
       useAIStoreMock.default.mockReturnValue({
         connectionStatus: 'disconnected',
         setConnectionStatus: jest.fn(),
         aiState: 'idle', // Reset to idle for chat-only mode
       });
 
-      // When — the session screen is rendered
+      // When - the session screen is rendered
       render(<SessionScreen />);
 
-      // Then — an offline banner and Retry button are displayed (chat-only mode)
+      // Then - an offline banner and Retry button are displayed (chat-only mode)
       expect(screen.getByTestId('disconnected-banner')).toBeTruthy();
       expect(screen.getByTestId('retry-button')).toBeTruthy();
     });
 
     test('[P1] 1.5-UNIT-013: disconnect during reconnection shows confirmation and navigates to pairing', async () => {
-      // Given — the connection status is 'reconnecting' and silent window has expired
+      // Given - the connection status is 'reconnecting' and silent window has expired
       useAIStoreMock.default.mockReturnValue({
         connectionStatus: 'reconnecting',
         setConnectionStatus: jest.fn(),
@@ -417,10 +417,10 @@ describe('SessionScreen', () => {
         expect(screen.getByTestId('cancel-reconnection-button')).toBeTruthy();
       }, { timeout: 5000 });
 
-      // When — the cancel-reconnection button is pressed during active reconnection
+      // When - the cancel-reconnection button is pressed during active reconnection
       fireEvent.press(screen.getByTestId('cancel-reconnection-button'));
 
-      // Then — disconnect is called and user navigates back to pairing screen
+      // Then - disconnect is called and user navigates back to pairing screen
       // handleLeaveSession is synchronous when activeSession is null (default mock),
       // so disconnect() is called immediately during fireEvent.press.
       expect(mockDisconnect).toHaveBeenCalled();
@@ -537,7 +537,7 @@ describe('SessionScreen', () => {
       });
 
       render(<SessionScreen />);
-      // Input bar is visible during reconnecting — user can chat with conversational model
+      // Input bar is visible during reconnecting - user can chat with conversational model
       expect(screen.getByTestId('chat-input-bar')).toBeTruthy();
       expect(screen.getByTestId('mic-button')).toBeTruthy();
     });
@@ -590,7 +590,7 @@ describe('SessionScreen', () => {
       });
 
       render(<SessionScreen />);
-      // Voice capture should NOT auto-start — user must tap the voice button
+      // Voice capture should NOT auto-start - user must tap the voice button
       expect(mockStartCapture).not.toHaveBeenCalled();
     });
 
@@ -619,7 +619,7 @@ describe('SessionScreen', () => {
 
       render(<SessionScreen />);
 
-      // Initially in text mode — no voice input bar
+      // Initially in text mode - no voice input bar
       expect(screen.getByTestId('chat-input-bar')).toBeTruthy();
       expect(screen.queryByTestId('voice-input-bar')).toBeNull();
 
@@ -627,7 +627,7 @@ describe('SessionScreen', () => {
       fireEvent.press(screen.getByTestId('mic-button'));
       expect(mockStartCapture).toHaveBeenCalledTimes(1);
 
-      // Voice mode active — voice input bar shown, text input bar hidden
+      // Voice mode active - voice input bar shown, text input bar hidden
       expect(screen.getByTestId('voice-input-bar')).toBeTruthy();
       expect(screen.queryByTestId('chat-input-bar')).toBeNull();
 
@@ -669,7 +669,7 @@ describe('SessionScreen', () => {
       fireEvent.press(screen.getByTestId('mic-button'));
       expect(mockStartCapture).toHaveBeenCalledTimes(1);
 
-      // Tap send — stops capture and returns to text mode (async handler)
+      // Tap send - stops capture and returns to text mode (async handler)
       await act(async () => {
         fireEvent.press(screen.getByTestId('voice-send-button'));
       });
@@ -803,7 +803,7 @@ describe('SessionScreen', () => {
         executionEntries: [],
         activeSession: null,
         setActiveSession: jest.fn(),
-      setSendConfirmationResponse: jest.fn(),
+        setSendConfirmationResponse: jest.fn(),
       });
 
       useAIStoreMock.default.mockReturnValue({
@@ -888,7 +888,7 @@ describe('SessionScreen', () => {
         executionEntries: [],
         activeSession: null,
         setActiveSession: jest.fn(),
-      setSendConfirmationResponse: jest.fn(),
+        setSendConfirmationResponse: jest.fn(),
       });
 
       let dataChannelHandler: ((msg: any) => void) | null = null;
@@ -943,7 +943,7 @@ describe('SessionScreen', () => {
         executionEntries: [],
         activeSession: null,
         setActiveSession: jest.fn(),
-      setSendConfirmationResponse: jest.fn(),
+        setSendConfirmationResponse: jest.fn(),
       });
 
       useAIStoreMock.default.mockReturnValue({
@@ -1017,7 +1017,7 @@ describe('SessionScreen', () => {
         executionEntries: [],
         activeSession: null,
         setActiveSession: jest.fn(),
-      setSendConfirmationResponse: jest.fn(),
+        setSendConfirmationResponse: jest.fn(),
       });
 
       useAIStoreMock.default.mockReturnValue({
@@ -1046,7 +1046,7 @@ describe('SessionScreen', () => {
         executionEntries: [],
         activeSession: null,
         setActiveSession: jest.fn(),
-      setSendConfirmationResponse: jest.fn(),
+        setSendConfirmationResponse: jest.fn(),
       });
 
       useAIStoreMock.default.mockReturnValue({
@@ -1171,7 +1171,7 @@ describe('SessionScreen', () => {
         executionEntries: [{ id: 'e1', type: 'user_message', content: 'hi', timestamp: 1 }],
         activeSession: existingSession,
         setActiveSession: mockSetActiveSession,
-      setSendConfirmationResponse: jest.fn(),
+        setSendConfirmationResponse: jest.fn(),
       });
       (useAIStoreMock.default as jest.Mock & { subscribe: jest.Mock }).subscribe = jest.fn(() => jest.fn());
 
@@ -1183,7 +1183,7 @@ describe('SessionScreen', () => {
 
       render(<SessionScreen />);
 
-      // Existing session should NOT be finalized — it's kept for restore/continue flow
+      // Existing session should NOT be finalized - it's kept for restore/continue flow
       expect(sessionStorage.finalizeSession).not.toHaveBeenCalled();
       expect(mockSetActiveSession).not.toHaveBeenCalled();
       expect(sessionStorage.upsertSessionMeta).not.toHaveBeenCalled();
@@ -1208,7 +1208,7 @@ describe('SessionScreen', () => {
         executionEntries: [{ id: 'e1', type: 'user_message', content: 'hi', timestamp: 1 }],
         activeSession: activeSession,
         setActiveSession: mockSetActiveSession,
-      setSendConfirmationResponse: jest.fn(),
+        setSendConfirmationResponse: jest.fn(),
       });
       (useAIStoreMock.default as jest.Mock & { subscribe: jest.Mock }).subscribe = jest.fn(() => jest.fn());
 
@@ -1248,7 +1248,7 @@ describe('SessionScreen', () => {
         executionEntries: [],
         activeSession: activeSession,
         setActiveSession: mockSetActiveSession,
-      setSendConfirmationResponse: jest.fn(),
+        setSendConfirmationResponse: jest.fn(),
       });
       (useAIStoreMock.default as jest.Mock & { subscribe: jest.Mock }).subscribe = jest.fn(() => jest.fn());
 
@@ -1286,7 +1286,7 @@ describe('SessionScreen', () => {
         executionEntries: [],
         activeSession: activeSession,
         setActiveSession: mockSetActiveSession,
-      setSendConfirmationResponse: jest.fn(),
+        setSendConfirmationResponse: jest.fn(),
       });
       (useAIStoreMock.default as jest.Mock & { subscribe: jest.Mock }).subscribe = jest.fn(() => jest.fn());
 
@@ -1343,7 +1343,7 @@ describe('SessionScreen', () => {
         executionEntries: [{ id: 'e1', type: 'user_message', content: 'hi', timestamp: 1 }],
         activeSession: activeSession,
         setActiveSession: mockSetActiveSession,
-      setSendConfirmationResponse: jest.fn(),
+        setSendConfirmationResponse: jest.fn(),
       });
       (useAIStoreMock.default as jest.Mock & { subscribe: jest.Mock }).subscribe = jest.fn(() => jest.fn());
 
@@ -1398,7 +1398,7 @@ describe('SessionScreen', () => {
         executionEntries: [],
         activeSession: activeSession,
         setActiveSession: mockSetActiveSession,
-      setSendConfirmationResponse: jest.fn(),
+        setSendConfirmationResponse: jest.fn(),
       });
       (useAIStoreMock.default as jest.Mock & { subscribe: jest.Mock }).subscribe = jest.fn(() => jest.fn());
 
@@ -1531,7 +1531,7 @@ describe('SessionScreen', () => {
       fireEvent.press(screen.getByTestId('mic-button'));
       expect(screen.getByTestId('voice-input-bar')).toBeTruthy();
 
-      // Press send with empty buffer — should exit voice mode immediately
+      // Press send with empty buffer - should exit voice mode immediately
       await act(async () => {
         fireEvent.press(screen.getByTestId('voice-send-button'));
       });
@@ -1553,7 +1553,7 @@ describe('SessionScreen', () => {
         executionEntries: [],
         activeSession: null,
         setActiveSession: jest.fn(),
-      setSendConfirmationResponse: jest.fn(),
+        setSendConfirmationResponse: jest.fn(),
       });
 
       let dataChannelHandler: ((msg: any) => void) | null = null;
@@ -1601,7 +1601,7 @@ describe('SessionScreen', () => {
         executionEntries: [],
         activeSession: null,
         setActiveSession: jest.fn(),
-      setSendConfirmationResponse: jest.fn(),
+        setSendConfirmationResponse: jest.fn(),
       });
 
       let dataChannelHandler: ((msg: any) => void) | null = null;
@@ -1688,7 +1688,7 @@ describe('SessionScreen', () => {
       fireEvent.press(screen.getByTestId('mic-button'));
       expect(screen.getByTestId('voice-input-bar')).toBeTruthy();
 
-      // Press send — starts transcription, voice mode stays active
+      // Press send - starts transcription, voice mode stays active
       let sendPromise: Promise<void>;
       await act(async () => {
         sendPromise = (async () => {

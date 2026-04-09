@@ -7,7 +7,7 @@ sidebar_position: 7
 Away Mode locks your desktop screen when you're physically away, preventing unauthorized access while still allowing remote control from your phone.
 
 :::info
-Away Mode is supported on **Windows** (full), **macOS** (full), and **Linux/X11** (partial). Linux/Wayland has limited support — no low-level keyboard grab or idle detection.
+Away Mode is supported on **Windows** (full), **macOS** (full), and **Linux/X11** (partial). Linux/Wayland has limited support - no low-level keyboard grab or idle detection.
 :::
 
 ## What It Does
@@ -43,8 +43,8 @@ Auto-engage is not available on Linux/Wayland due to missing idle-time APIs.
 
 You can engage Away Mode in two ways:
 
-1. **From phone** — Send an `away_mode_engage` command from the mobile app
-2. **Auto-engage** — Triggers automatically after the configured idle timeout
+1. **From phone** - Send an `away_mode_engage` command from the mobile app
+2. **Auto-engage** - Triggers automatically after the configured idle timeout
 
 `[SCREENSHOT: Away Mode lock screen]`
 
@@ -68,7 +68,7 @@ Away Mode uses multiple protection layers to ensure the lock screen cannot be by
 
 - On Windows and macOS, the overlay is excluded from screen capture software, preventing remote viewing tools from seeing past the lock. Linux does not currently support capture exclusion.
 - A low-level keyboard hook blocks most key combinations (Alt+F4, Alt+Tab, etc.). On macOS, Dock, menu bar, and process switching are also disabled. On Linux/Wayland, the overlay relies on fullscreen focus rather than a keyboard hook.
-- The PIN is hashed with bcrypt (cost 10) — not stored in plaintext
+- The PIN is hashed with bcrypt (cost 10) - not stored in plaintext
 - Your phone receives a security alert if the protection is disrupted
 
 ---

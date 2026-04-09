@@ -95,9 +95,9 @@ function buildConversationContext(history: Message[]): string {
     const text = typeof turn.content === 'string'
       ? turn.content
       : turn.content
-          .filter((p) => p.type === 'text')
-          .map((p) => (p as { type: 'text'; text: string }).text)
-          .join(' ');
+        .filter((p) => p.type === 'text')
+        .map((p) => (p as { type: 'text'; text: string }).text)
+        .join(' ');
     if (text) lines.push(`${role}: ${text}`);
   }
   return lines.join('\n');
@@ -166,7 +166,7 @@ async function getApiKeyForProvider(provider: string): Promise<string | null> {
 function classifyProxyError(errMsg: string): string {
   const msg = errMsg.toLowerCase();
   if (msg.includes('readtimeout') || msg.includes('read timeout'))
-    return 'Subscription proxy timed out. The provider may be slow or unreachable — try again.';
+    return 'Subscription proxy timed out. The provider may be slow or unreachable - try again.';
   if (msg.includes('connecttimeout') || msg.includes('connect timeout') || msg.includes('connection refused'))
     return 'Could not reach the subscription proxy. Make sure the proxy is running on desktop.';
   if (msg.includes('401') || msg.includes('unauthorized') || msg.includes('auth'))
@@ -182,17 +182,17 @@ function classifyProxyError(errMsg: string): string {
 function classifyMobileApiError(err: unknown): string {
   const msg = err instanceof Error ? err.message.toLowerCase() : String(err).toLowerCase();
   if (msg.includes('network request failed') || msg.includes('fetch failed') || msg.includes('connection'))
-    return 'Network error — could not reach the AI service. Check your internet connection.';
+    return 'Network error - could not reach the AI service. Check your internet connection.';
   if (msg.includes('rate') && msg.includes('limit') || msg.includes('429'))
-    return 'Rate limited — please wait a moment and try again.';
+    return 'Rate limited - please wait a moment and try again.';
   if (msg.includes('401') || msg.includes('403') || msg.includes('api key') || msg.includes('unauthorized'))
-    return 'API key error — please check your API key in settings.';
+    return 'API key error - please check your API key in settings.';
   if (msg.includes('404') || msg.includes('model not found'))
-    return 'Model not found — please check your model selection in settings.';
+    return 'Model not found - please check your model selection in settings.';
   if (msg.includes('timeout') || msg.includes('timed out'))
     return 'The request timed out. Please try again.';
   if (msg.includes('quota') || msg.includes('billing'))
-    return 'API quota exceeded — please check your usage limits.';
+    return 'API quota exceeded - please check your usage limits.';
   return 'Something went wrong. Please try again.';
 }
 
@@ -265,7 +265,7 @@ export function useConversation() {
         }
         lastError = err;
         console.warn(`[Conversation] Rate limited (429). Retrying in ${delayMs}ms (attempt ${attempt + 1}/${MAX_RATE_LIMIT_RETRIES})`);
-        onErrorRef.current?.(`Rate limited — retrying in ${Math.ceil(delayMs / 1000)}s…`);
+        onErrorRef.current?.(`Rate limited - retrying in ${Math.ceil(delayMs / 1000)}s…`);
         await sleep(delayMs);
       }
     }
@@ -278,7 +278,7 @@ export function useConversation() {
     processingTimerRef.current = setTimeout(() => {
       const { aiState } = useAIStore.getState();
       if (aiState === 'processing') {
-        console.warn('[Conversation] Processing timeout — resetting to idle');
+        console.warn('[Conversation] Processing timeout - resetting to idle');
         useAIStore.getState().setAIState('idle');
       }
     }, PROCESSING_TIMEOUT_MS);
@@ -297,7 +297,7 @@ export function useConversation() {
     const model = modelOverride ?? settings.conversationModel;
     const providerName = getProviderForModel(model);
 
-    // Subscription mode: no API key needed — sendTextMessage routes via data channel.
+    // Subscription mode: no API key needed - sendTextMessage routes via data channel.
     if (useAIStore.getState().isSubscriptionActive(providerName)) {
       providerRef.current = null;
       currentProviderNameRef.current = providerName;
@@ -320,7 +320,7 @@ export function useConversation() {
   const connect = useCallback(async () => {
     closedRef.current = false;
     await initProvider();
-    // Always set idle — subscription mode works without a provider instance.
+    // Always set idle - subscription mode works without a provider instance.
     useAIStore.getState().setAIState('idle');
   }, [initProvider]);
 
@@ -335,7 +335,7 @@ export function useConversation() {
     // Only wipe chat history when the provider name actually changed (e.g.
     // user switched from Gemini to Anthropic).  In subscription mode
     // providerRef is always null by design, so the early-return above never
-    // fires — but the provider name stays the same, so we must NOT clear
+    // fires - but the provider name stays the same, so we must NOT clear
     // history on every call or multi-turn context is lost.
     if (currentProviderNameRef.current !== null && currentProviderNameRef.current !== neededProvider) {
       console.log(`[Conversation] Provider changed: ${currentProviderNameRef.current} → ${neededProvider}`);
@@ -581,7 +581,7 @@ export function useConversation() {
         isSendingRef.current = false;
         clearProcessingTimeout();
         // CLI proxies may wrap responses in {"tool_call":null,"response":"..."}
-        // JSON format — extract the actual response text if present.
+        // JSON format - extract the actual response text if present.
         if (text) {
           const trimmed = text.trim();
           if (trimmed.startsWith('{"tool_call":')) {
@@ -590,7 +590,7 @@ export function useConversation() {
               if (parsed.tool_call === null && parsed.response) {
                 text = parsed.response;
               }
-            } catch { /* not valid JSON — use raw text */ }
+            } catch { /* not valid JSON - use raw text */ }
           }
           chatHistoryRef.current.push({ role: 'assistant', content: text });
           trimHistory();
@@ -631,7 +631,7 @@ export function useConversation() {
           // Text-only response (conversation or classification with no tools needed)
           const text = payload.text as string;
           if (pending && !text) {
-            // Classification returned empty — fall back to execution
+            // Classification returned empty - fall back to execution
             chatHistoryRef.current.pop();
             const conversationContext = buildConversationContext(chatHistoryRef.current.slice(lastExecutionSyncIndexRef.current));
             const thinking = isThinkingEnabled(pending.settings.executionModel, pending.settings.thinkingEnabled);
@@ -747,7 +747,7 @@ export function useConversation() {
 
   /**
    * Process a server-side agent_result. The execution agent's output is
-   * displayed directly to the user — no extra summarization API call needed.
+   * displayed directly to the user - no extra summarization API call needed.
    * History is synced so future conversation turns have context.
    */
   const processAgentResult = useCallback(async (userText: string, agentAnswer: string, _stepsTaken: number, _durationMs: number, toolSummary?: string[]) => {
@@ -764,7 +764,7 @@ export function useConversation() {
     chatHistoryRef.current.push({ role: 'assistant', content: toolInfo + agentAnswer });
     trimHistory();
 
-    // Advance the sync offset — ADK now has everything up to this point.
+    // Advance the sync offset - ADK now has everything up to this point.
     lastExecutionSyncIndexRef.current = chatHistoryRef.current.length;
 
     if (gen !== sessionGenRef.current) return;
@@ -830,7 +830,7 @@ export function useConversation() {
         return;
       }
 
-      // No subscription available — fall back to sending directly to execution agent
+      // No subscription available - fall back to sending directly to execution agent
       if (!sendDCMessageRef.current) return;
       useAIStore.getState().setAIState('processing');
       const thinking = isThinkingEnabled(settings.executionModel, settings.thinkingEnabled);
@@ -906,7 +906,7 @@ export function useConversation() {
       // Show the error to the user
       onErrorRef.current?.(classifyMobileApiError(err));
       if (chatHistoryRef.current.length > 0 &&
-          chatHistoryRef.current[chatHistoryRef.current.length - 1].role === 'user') {
+        chatHistoryRef.current[chatHistoryRef.current.length - 1].role === 'user') {
         chatHistoryRef.current.pop();
       }
       const conversationContext = buildConversationContext(chatHistoryRef.current.slice(lastExecutionSyncIndexRef.current));

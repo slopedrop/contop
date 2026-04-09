@@ -1,4 +1,4 @@
-"""ATDD RED phase tests for Story 1.8 — QR image storage and retrieval."""
+"""ATDD RED phase tests for Story 1.8 - QR image storage and retrieval."""
 
 import pytest
 

@@ -59,7 +59,7 @@ export const MODEL_REGISTRY: ProviderGroup[] = [
   },
   {
     provider: 'openrouter',
-    label: 'OpenRouter — Agentic',
+    label: 'OpenRouter - Agentic',
     models: [
       { value: 'openrouter/x-ai/grok-4.20-beta', label: 'Grok 4.20 Beta', provider: 'openrouter', thinking: 'none', supportsTools: true, supportsVision: true },
       { value: 'openrouter/xiaomi/mimo-v2-pro', label: 'MiMo V2 Pro', provider: 'openrouter', thinking: 'none', supportsTools: true, supportsVision: false },
@@ -70,7 +70,7 @@ export const MODEL_REGISTRY: ProviderGroup[] = [
   },
   {
     provider: 'openrouter',
-    label: 'OpenRouter — Small / Free',
+    label: 'OpenRouter - Small / Free',
     models: [
       { value: 'openrouter/mistralai/devstral-small-2505', label: 'Devstral Small 2 (24B)', provider: 'openrouter', thinking: 'none', supportsTools: true, supportsVision: false },
       { value: 'openrouter/qwen/qwen3.5-9b', label: 'Qwen 3.5 9B', provider: 'openrouter', thinking: 'none', supportsTools: true, supportsVision: true },

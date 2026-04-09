@@ -36,7 +36,7 @@ class TestHandleOfferScreenCapture:
     """5.1: Test that handle_offer creates ScreenCaptureTrack (without adding to PC).
 
     The track is NOT added to the peer connection because the mobile SDP offer
-    only contains a data channel m-line — no video m-line. Adding a video track
+    only contains a data channel m-line - no video m-line. Adding a video track
     crashes aiortc's setLocalDescription with ValueError when there is no
     matching offer direction. Frames are sent via the JPEG relay on the data
     channel instead.

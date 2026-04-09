@@ -1,5 +1,5 @@
 """
-Unit tests for core/skill_loader.py — Skill discovery, parsing, and prompt building.
+Unit tests for core/skill_loader.py - Skill discovery, parsing, and prompt building.
 """
 import pytest
 from pathlib import Path
@@ -143,7 +143,7 @@ class TestDiscoverSkills:
         assert skills == []
 
     def test_discover_skills_with_enabled(self, tmp_path):
-        """3 skills, 2 enabled — enabled flags set correctly."""
+        """3 skills, 2 enabled - enabled flags set correctly."""
         _write_skill(tmp_path / "alpha", "name: alpha\ndescription: Alpha skill")
         _write_skill(tmp_path / "beta", "name: beta\ndescription: Beta skill")
         _write_skill(tmp_path / "gamma", "name: gamma\ndescription: Gamma skill")
@@ -167,7 +167,7 @@ class TestDiscoverSkills:
         assert skills[0].name == "good"
 
     def test_discover_skills_deduplicates_by_name(self, tmp_path):
-        """Two directories with the same skill name — first wins, second skipped."""
+        """Two directories with the same skill name - first wins, second skipped."""
         # Directories are iterated in sorted order: aaa-tool comes before zzz-tool
         _write_skill(tmp_path / "aaa-tool", "name: my-tool\ndescription: First")
         _write_skill(tmp_path / "zzz-tool", "name: my-tool\ndescription: Duplicate")

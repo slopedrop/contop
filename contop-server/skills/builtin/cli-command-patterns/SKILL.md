@@ -10,10 +10,10 @@ All platforms use bash. On Windows, commands run in Git Bash by default. Use for
 
 ## Windows Notes
 
-- **GUI apps block** — always append `&` to background: `notepad.exe &`
-- **`.exe` suffix** — optional in Git Bash (`notepad` and `notepad.exe` both work)
-- **PowerShell** — use `powershell -c "command"` for Windows-only operations (registry, services, COM)
-- **Windows-only tools** — `tasklist`, `taskkill`, `netstat`, `systeminfo` work from bash
+- **GUI apps block** - always append `&` to background: `notepad.exe &`
+- **`.exe` suffix** - optional in Git Bash (`notepad` and `notepad.exe` both work)
+- **PowerShell** - use `powershell -c "command"` for Windows-only operations (registry, services, COM)
+- **Windows-only tools** - `tasklist`, `taskkill`, `netstat`, `systeminfo` work from bash
 
 ---
 
@@ -61,7 +61,7 @@ wc -l file.txt                              # line count
 
 ## Defensive Construction
 
-### Quoting — #1 source of agent bugs
+### Quoting - #1 source of agent bugs
 
 ```bash
 cat "/Users/john/My Documents/file.txt"     # ALWAYS quote paths
@@ -71,7 +71,7 @@ grep -F "$user_input" file.txt              # -F = literal (safe)
 ### Paths
 
 ```bash
-# Always use absolute paths — relative paths depend on CWD
+# Always use absolute paths - relative paths depend on CWD
 cat /home/user/file.txt                     # good
 cat file.txt                                # bad
 
@@ -215,18 +215,18 @@ powershell -c "Expand-Archive -Path 'archive.zip' -DestinationPath 'output'"
 ## Agent Principles
 
 ```bash
-# Idempotent — safe to re-run
+# Idempotent - safe to re-run
 mkdir -p /path
 cp -n src dst
 grep -q "line" file || echo "line" >> file
 
-# Atomic — write to temp, then move
+# Atomic - write to temp, then move
 echo "content" > /tmp/tempfile && mv /tmp/tempfile /final/path
 
 # Verify result
 curl -o file.zip URL && test -s file.zip && echo "ok"
 
-# Minimal output — reduce token cost
+# Minimal output - reduce token cost
 command > /dev/null 2>&1                    # silence
 command | head -50                          # limit
 git log --oneline -10                       # compact

@@ -90,7 +90,7 @@ function OpenRouterLogo() {
 }
 
 /* ------------------------------------------------
-   Card 1 — Providers
+   Card 1 - Providers
    ------------------------------------------------ */
 function ProvidersCard() {
   const providers = [
@@ -107,12 +107,12 @@ function ProvidersCard() {
     {
       logo: <AnthropicLogo />,
       name: "Anthropic",
-      desc: "Claude Opus, Sonnet, and Haiku — with optional extended thinking for deeper reasoning.",
+      desc: "Claude Opus, Sonnet, and Haiku - with optional extended thinking for deeper reasoning.",
     },
     {
       logo: <OpenRouterLogo />,
       name: "OpenRouter",
-      desc: "Universal gateway to 300+ models — Grok, Qwen, Mistral, Nemotron, and more via one API key.",
+      desc: "Universal gateway to 300+ models - Grok, Qwen, Mistral, Nemotron, and more via one API key.",
     },
   ];
 
@@ -121,7 +121,7 @@ function ProvidersCard() {
       <CardHeader label="Providers" sub="Keys or Subscriptions" />
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Choose from 4 providers and 20+ models. Use any combination for different tasks — switch anytime from your phone.
+        Choose from 4 providers and 20+ models. Use any combination for different tasks - switch anytime from your phone.
       </p>
 
       <div className="flex flex-col gap-2">
@@ -140,7 +140,7 @@ function ProvidersCard() {
 }
 
 /* ------------------------------------------------
-   Card 2 — Three AI Roles
+   Card 2 - Three AI Roles
    ------------------------------------------------ */
 function RolesCard() {
   return (
@@ -148,7 +148,7 @@ function RolesCard() {
       <CardHeader label="Three AI Roles" sub="Mix & Match" />
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        The app uses three independent AI roles — assign any provider to any role, and change them at runtime from mobile settings.
+        The app uses three independent AI roles - assign any provider to any role, and change them at runtime from mobile settings.
       </p>
 
       <div className="flex flex-col gap-1.5">
@@ -167,7 +167,7 @@ function RolesCard() {
           },
           {
             role: "Vision",
-            desc: "Picks how the AI reads your screen — multiple backends available",
+            desc: "Picks how the AI reads your screen - multiple backends available",
             color: "bg-purple/20",
             textColor: "text-purple",
           },
@@ -186,7 +186,7 @@ function RolesCard() {
 
       <div className="rounded-md bg-accent-light/[0.04] border border-accent-light/10 px-3 py-2">
         <p className="text-[11px] text-text-secondary leading-relaxed">
-          Any provider can fill any role — use Gemini for conversation and Claude for execution, or any other combination.
+          Any provider can fill any role - use Gemini for conversation and Claude for execution, or any other combination.
         </p>
       </div>
     </div>
@@ -194,7 +194,7 @@ function RolesCard() {
 }
 
 /* ------------------------------------------------
-   Card 3 — Key Distribution
+   Card 3 - Key Distribution
    ------------------------------------------------ */
 function KeyDistributionCard() {
   return (
@@ -202,7 +202,7 @@ function KeyDistributionCard() {
       <CardHeader label="Authentication" sub="QR Pairing" />
 
       <p className="text-[12px] text-text-secondary leading-relaxed">
-        Set up API keys or enable subscription mode on the desktop app. Configuration travels to your phone securely through QR pairing — no manual copying.
+        Set up API keys or enable subscription mode on the desktop app. Configuration travels to your phone securely through QR pairing - no manual copying.
       </p>
 
       {/* Flow steps */}
@@ -289,7 +289,7 @@ const descriptions = [
     icon: <LayersIcon />,
     category: "CHOICE",
     title: "Pick the best model for the job",
-    desc: "Different tasks benefit from different models. Use a fast model for quick actions and a powerful one for complex reasoning — all from the same app.",
+    desc: "Different tasks benefit from different models. Use a fast model for quick actions and a powerful one for complex reasoning - all from the same app.",
   },
   {
     icon: <SlidersIcon />,
@@ -350,7 +350,7 @@ export default function ModelProviders() {
 
       <FadeUp visible={visible} delay={50} className="mb-14 text-center">
         <p className="mx-auto max-w-lg text-[15px] leading-relaxed text-text-secondary">
-          Use API keys or your existing subscriptions — choose from 4 providers and 20+ models, and configure any combination for any task.
+          Use API keys or your existing subscriptions - choose from 4 providers and 20+ models, and configure any combination for any task.
         </p>
       </FadeUp>
 

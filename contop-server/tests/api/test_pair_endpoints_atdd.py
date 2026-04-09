@@ -276,7 +276,7 @@ class TestPostPairGeminiApiKey:
         When:  A client sends POST /api/pair
         Then:  The server must respond with HTTP 500 and a descriptive error body
         """
-        # Given — isolate settings so all key getters fall through to env vars
+        # Given - isolate settings so all key getters fall through to env vars
         settings_file = tmp_path / ".contop" / "settings.json"
         monkeypatch.setattr("core.settings._resolve_settings_path", lambda: settings_file)
         monkeypatch.setattr("core.settings._cached_settings", None)

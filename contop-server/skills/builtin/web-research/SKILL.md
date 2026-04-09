@@ -36,7 +36,7 @@ Electron apps are desktop applications built with web technologies. To interact 
 
 If the app is ALREADY running (user launched it normally), you CANNOT attach CDP. Use `execute_accessible` or `observe_screen` + `execute_gui` instead.
 
-## Browser Security — Intent-Based
+## Browser Security - Intent-Based
 
 Before calling execute_browser for potentially risky operations, evaluate the intent:
 

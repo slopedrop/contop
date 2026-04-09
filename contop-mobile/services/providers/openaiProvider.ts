@@ -59,7 +59,7 @@ export class OpenAIProvider implements LLMProvider {
             contentParts.push({ type: 'text', text: part.text });
             break;
           case 'image':
-            // OpenAI vision format — keep in same message with text parts
+            // OpenAI vision format - keep in same message with text parts
             contentParts.push({
               type: 'image_url',
               image_url: { url: `data:${part.mimeType};base64,${part.data}` },

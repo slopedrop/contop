@@ -8,10 +8,10 @@ Contop follows a **defense-in-depth** approach with multiple security layers. Th
 
 ## Security Philosophy
 
-- **Defense-in-depth** — Multiple independent security layers, so a failure in one doesn't compromise the system
-- **Zero trust** — Every command is classified before execution, regardless of source
-- **Local-first** — Data stays on your devices; no cloud intermediary for execution
-- **Transparent** — Every action is logged and visible to the user in real time
+- **Defense-in-depth** - Multiple independent security layers, so a failure in one doesn't compromise the system
+- **Zero trust** - Every command is classified before execution, regardless of source
+- **Local-first** - Data stays on your devices; no cloud intermediary for execution
+- **Transparent** - Every action is logged and visible to the user in real time
 
 ## Trust Boundaries
 

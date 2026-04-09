@@ -11,7 +11,7 @@ import { Card, CardGrid } from '@site/src/components/Card';
 # Contop
 
 <p className="tagline">
-Remote AI agent that sees your screen and operates your computer. Speak a command or type a message — an autonomous agent observes your screen, runs commands, clicks buttons, fills forms, and reports back in real time.
+Remote AI agent that sees your screen and operates your computer. Speak a command or type a message - an autonomous agent observes your screen, runs commands, clicks buttons, fills forms, and reports back in real time.
 </p>
 
 </div>
@@ -26,9 +26,9 @@ graph LR
     Server <-->|Local APIs| Desktop["💻 Desktop Host"]
 ```
 
-1. **Mobile Client** (React Native / Expo) — Voice and text input, execution thread UI, live remote screen feed
-2. **Contop Server** (Python / FastAPI) — ADK execution agent, 30+ tools, security evaluation, WebRTC signaling
-3. **Desktop Host** (Tauri v2 / Rust) — Native app shell, server lifecycle management, Away Mode protection
+1. **Mobile Client** (React Native / Expo) - Voice and text input, execution thread UI, live remote screen feed
+2. **Contop Server** (Python / FastAPI) - ADK execution agent, 30+ tools, security evaluation, WebRTC signaling
+3. **Desktop Host** (Tauri v2 / Rust) - Native app shell, server lifecycle management, Away Mode protection
 
 <p className="section-heading">Explore the Docs</p>
 
@@ -47,7 +47,7 @@ graph LR
   <Card title="Multimodal AI Agent" description="Voice commands via configurable STT (Google STT default), screen understanding via 9 vision backends, autonomous multi-step execution with the Google ADK." />
   <Card title="Security-First Design" description="Every command classified by the Dual-Tool Evaluator. Dangerous commands sandboxed in Docker. Destructive actions require explicit approval." />
   <Card title="Zero-Config Networking" description="QR code pairing, automatic Cloudflare Tunnel fallback, WebRTC peer-to-peer with DTLS encryption. No port forwarding or VPN required." />
-  <Card title="Multi-Provider LLM" description="Gemini, OpenAI, Anthropic, Groq, Mistral, Together AI, DeepSeek, and more — switch models without code changes." />
+  <Card title="Multi-Provider LLM" description="Gemini, OpenAI, Anthropic, Groq, Mistral, Together AI, DeepSeek, and more - switch models without code changes." />
   <Card title="Hybrid Control" description="Seamlessly switch between AI execution and manual remote control with virtual joystick, tap-to-click, and keyboard grid overlay." />
   <Card title="Away Mode" description="Lock your desktop when unattended with PIN protection, keyboard blocking, and a secure overlay window (Windows)." />
 </CardGrid>

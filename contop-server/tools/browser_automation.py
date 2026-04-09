@@ -1,15 +1,15 @@
 """
-PinchTab browser automation client — async HTTP wrapper for the PinchTab REST API.
+PinchTab browser automation client - async HTTP wrapper for the PinchTab REST API.
 
 PinchTab is a Go binary that provides programmatic browser control via CDP.
 It exposes a REST API on localhost:9867 for launching browser instances,
 managing tabs, taking DOM snapshots, and performing actions (click, fill, etc.).
 
 This client isolates all PinchTab HTTP calls so API changes only affect this file.
-It also manages the PinchTab process lifecycle — downloading a pinned release at
+It also manages the PinchTab process lifecycle - downloading a pinned release at
 server startup if needed, auto-starting the binary, and terminating it on close.
 
-[Source: tech-spec-smart-file-search-browser-tool.md — Task 4]
+[Source: tech-spec-smart-file-search-browser-tool.md - Task 4]
 """
 import asyncio
 import logging
@@ -33,7 +33,7 @@ PINCHTAB_STARTUP_TIMEOUT_S = 10.0
 PINCHTAB_HEALTH_POLL_INTERVAL_S = 0.5
 PINCHTAB_DOWNLOAD_TIMEOUT_S = 120.0
 
-# Pinned to a tested release — never pull "latest" at runtime to avoid breakage.
+# Pinned to a tested release - never pull "latest" at runtime to avoid breakage.
 # Bump this version explicitly after testing a new PinchTab release.
 PINCHTAB_PINNED_VERSION = "v0.8.2"
 PINCHTAB_GITHUB_REPO = "pinchtab/pinchtab"
@@ -99,7 +99,7 @@ def _get_platform_asset_name() -> str | None:
 async def _download_pinchtab_binary() -> str | None:
     """Download the pinned PinchTab release from GitHub.
 
-    Uses PINCHTAB_PINNED_VERSION — never queries /releases/latest.
+    Uses PINCHTAB_PINNED_VERSION - never queries /releases/latest.
     Saves to ~/.contop/bin/pinchtab[.exe] and makes it executable.
     Returns the path on success, None on failure.
     """
@@ -162,7 +162,7 @@ async def ensure_pinchtab_installed() -> str | None:
         logger.info("PinchTab binary found: %s", binary)
         return binary
 
-    logger.info("PinchTab not found locally — downloading %s...", PINCHTAB_PINNED_VERSION)
+    logger.info("PinchTab not found locally - downloading %s...", PINCHTAB_PINNED_VERSION)
     return await _download_pinchtab_binary()
 
 
@@ -275,7 +275,7 @@ class BrowserAutomation:
         instead of the default headless mode. A headed request bypasses
         the cache and always launches a new instance if no headed one exists.
         """
-        # For headed requests, skip cache — the cached instance may be headless
+        # For headed requests, skip cache - the cached instance may be headless
         if not visible and self._cached_instance_id:
             return self._cached_instance_id
 
@@ -309,7 +309,7 @@ class BrowserAutomation:
         except (httpx.HTTPStatusError, httpx.ConnectError, httpx.TimeoutException) as exc:
             logger.warning("Failed to list PinchTab instances: %s", exc)
 
-        # No matching instance found — launch a new one
+        # No matching instance found - launch a new one
         mode = "headed" if visible else "headless"
         result = await self.launch_instance(name=target_name, mode=mode)
         instance_id = result.get("id", "")
@@ -480,7 +480,7 @@ class BrowserAutomation:
         snapshot = await self.snapshot(tab_id, interactive_only=False)
         if isinstance(snapshot, dict) and snapshot.get("status") == "error":
             return ""
-        # Build text from snapshot nodes — each node has a 'name' field with text
+        # Build text from snapshot nodes - each node has a 'name' field with text
         nodes = snapshot.get("nodes", [])
         title = snapshot.get("title", "")
         lines: list[str] = []

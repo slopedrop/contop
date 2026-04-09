@@ -8,10 +8,10 @@ Contop uses WebRTC for all real-time communication between the mobile app and se
 
 ## Why WebRTC?
 
-- **Low latency** — Sub-700ms for data channel messages, real-time video streaming
-- **NAT traversal** — Works across firewalls and NATs with STUN/TURN
-- **E2E encryption** — DTLS for data channels, SRTP for video
-- **P2P** — Direct connection between phone and desktop (no relay server in most cases)
+- **Low latency** - Sub-700ms for data channel messages, real-time video streaming
+- **NAT traversal** - Works across firewalls and NATs with STUN/TURN
+- **E2E encryption** - DTLS for data channels, SRTP for video
+- **P2P** - Direct connection between phone and desktop (no relay server in most cases)
 
 ## Connection Lifecycle
 
@@ -38,8 +38,8 @@ The WebSocket (`/ws/signaling`) is only used for the initial SDP/ICE exchange, h
 ### Device Metadata in SDP
 
 The mobile app includes device metadata in the SDP offer:
-- `device_name` — From expo-device (e.g., "iPhone 15 Pro")
-- `location` — GPS coordinates from expo-location
+- `device_name` - From expo-device (e.g., "iPhone 15 Pro")
+- `location` - GPS coordinates from expo-location
 
 The server extracts this during signaling for the device management panel.
 
@@ -71,7 +71,7 @@ Two data channels are established for different reliability needs:
 
 - **Interval**: 30 seconds
 - **Max missed**: 3 consecutive misses before timeout warning
-- **Synchronous send** (not async — was causing race conditions)
+- **Synchronous send** (not async - was causing race conditions)
 - **Auto-restart**: Done callback restarts the timer if it crashes
 - **No auto-close**: Timeout does NOT close the connection (mobile may be backgrounded)
 
@@ -79,10 +79,10 @@ Two data channels are established for different reliability needs:
 
 When the WebRTC connection drops:
 
-1. **Immediate execution kill** — `_kill_execution_on_disconnect()` fires with no grace period
-2. **Confirmation cleanup** — Pending `agent_confirmation_request` futures are resolved as rejected (expired)
-3. **Message queue** — A `deque(maxlen=1000)` queues messages while disconnected and flushes on reconnect
-4. **Execution transfer** — If a new peer connects, the running execution is detached from the old peer and adopted by the new one
+1. **Immediate execution kill** - `_kill_execution_on_disconnect()` fires with no grace period
+2. **Confirmation cleanup** - Pending `agent_confirmation_request` futures are resolved as rejected (expired)
+3. **Message queue** - A `deque(maxlen=1000)` queues messages while disconnected and flushes on reconnect
+4. **Execution transfer** - If a new peer connects, the running execution is detached from the old peer and adopted by the new one
 
 ## STUN/TURN Infrastructure
 
@@ -107,8 +107,8 @@ aiortc's default video encoder bitrates are overridden at import time for VP8 an
 
 The server injects `x-google-start-bitrate` and `x-google-max-bitrate` attributes into the SDP answer's video fmtp lines:
 
-- `x-google-start-bitrate=2000` (2 Mbps) — tells the mobile client's libwebrtc to begin bandwidth estimation high
-- `x-google-max-bitrate=8000` (8 Mbps) — raises the ceiling for congestion control
+- `x-google-start-bitrate=2000` (2 Mbps) - tells the mobile client's libwebrtc to begin bandwidth estimation high
+- `x-google-max-bitrate=8000` (8 Mbps) - raises the ceiling for congestion control
 
 This is the same technique used by Chrome Remote Desktop to avoid the slow ramp-up problem where the first few seconds of video are pixelated while bandwidth estimation converges.
 

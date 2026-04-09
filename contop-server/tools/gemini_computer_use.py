@@ -1,16 +1,16 @@
 """
-Gemini Computer Use adapter — planning layer only.
+Gemini Computer Use adapter - planning layer only.
 
 Calls the Gemini CU API with a screenshot + instruction, receives function_call
 responses with normalized 0-999 coordinates, and maps them to the standard
 gui_automation action vocabulary (click, type, scroll, hotkey, etc.).
 
-Does NOT execute actions — the caller routes planned actions through
+Does NOT execute actions - the caller routes planned actions through
 gui_automation.py so there is a single execution path for all backends.
 
 Stateless API: full conversation history must be sent with each call.
 
-[Source: tech-spec — Model Role Selection & Gemini Computer Use Adapter]
+[Source: tech-spec - Model Role Selection & Gemini Computer Use Adapter]
 """
 import asyncio
 import base64
@@ -59,7 +59,7 @@ class PlannedAction:
     """A Gemini CU action mapped to standard gui_automation format.
 
     Fields:
-        action: Our action name — "click", "type", "scroll", "hotkey",
+        action: Our action name - "click", "type", "scroll", "hotkey",
                 "press_key", "move_mouse", "drag", "wait", "cli".
         target: Human description of the target element.
         coordinates: Action-specific dict in capture-space pixel coords.
@@ -190,7 +190,7 @@ class GeminiComputerUseClient:
                         tools=[types.Tool(computer_use=types.ComputerUse(
                             environment=types.Environment.ENVIRONMENT_UNSPECIFIED,
                         ))],
-                        # Disable AFC — we manage function responses manually via _history.
+                        # Disable AFC - we manage function responses manually via _history.
                         # Without this, the SDK tries to auto-call functions alongside our
                         # manual history, corrupting conversation state and causing 404s.
                         automatic_function_calling=types.AutomaticFunctionCallingConfig(
@@ -231,7 +231,7 @@ class GeminiComputerUseClient:
             duration_ms = int((time.monotonic() - start) * 1000)
             return PlanResult(
                 status="done",
-                description="Model returned no actions — task may be complete.",
+                description="Model returned no actions - task may be complete.",
                 duration_ms=duration_ms,
             )
 
@@ -268,7 +268,7 @@ class GeminiComputerUseClient:
                         },
                     )
 
-            # Handle function calls — map to our action vocabulary
+            # Handle function calls - map to our action vocabulary
             if part.function_call:
                 action_name = part.function_call.name
                 args = dict(part.function_call.args) if part.function_call.args else {}
@@ -311,7 +311,7 @@ class GeminiComputerUseClient:
         """Map a Gemini CU action to our standard gui_automation action(s)."""
         mapper = _CU_TO_GUI_MAP.get(cu_action)
         if mapper is None:
-            logger.warning("Unknown CU action: %s — skipping", cu_action)
+            logger.warning("Unknown CU action: %s - skipping", cu_action)
             return []
         return mapper(self, args)
 

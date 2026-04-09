@@ -2,9 +2,9 @@
 Unit tests for PinchTab browser automation client.
 
 Tests the BrowserAutomation HTTP client wrapper using mocked httpx responses.
-All PinchTab API calls are mocked — no live server required.
+All PinchTab API calls are mocked - no live server required.
 
-[Source: tech-spec-smart-file-search-browser-tool.md — Task 9]
+[Source: tech-spec-smart-file-search-browser-tool.md - Task 9]
 """
 import asyncio
 import time
@@ -434,7 +434,7 @@ class TestAutoDownload:
 
                         assert result is not None
                         assert "pinchtab" in result
-                        # Single GET for the binary (no API call — pinned version)
+                        # Single GET for the binary (no API call - pinned version)
                         assert mock_get.call_count == 1
 
     @pytest.mark.asyncio

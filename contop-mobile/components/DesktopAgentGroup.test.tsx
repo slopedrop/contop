@@ -36,9 +36,9 @@ describe('DesktopAgentGroup', () => {
 
     render(<DesktopAgentGroup entries={entries} isActive={false} />);
 
-    // Should auto-expand — the intervention card should be visible
+    // Should auto-expand - the intervention card should be visible
     expect(screen.getByTestId('intervention-card')).toBeTruthy();
-    expect(screen.getByText(/INTERVENTION — Sandbox Caught/)).toBeTruthy();
+    expect(screen.getByText(/INTERVENTION - Sandbox Caught/)).toBeTruthy();
   });
 
   test('[P0] 3.5-UNIT-011: shows amber dot indicator when collapsed with pending confirmation', () => {
@@ -58,7 +58,7 @@ describe('DesktopAgentGroup', () => {
 
     render(<DesktopAgentGroup entries={entries} isActive={false} />);
 
-    // Resolved confirmation — group stays collapsed, no amber dot
+    // Resolved confirmation - group stays collapsed, no amber dot
     expect(screen.queryByTestId('pending-confirmation-indicator')).toBeNull();
   });
 
@@ -70,7 +70,7 @@ describe('DesktopAgentGroup', () => {
       <DesktopAgentGroup entries={entries} isActive={false} />,
     );
 
-    // Auto-expanded due to pending confirmation — amber dot should NOT show
+    // Auto-expanded due to pending confirmation - amber dot should NOT show
     // (dot only shows when collapsed)
     expect(screen.queryByTestId('pending-confirmation-indicator')).toBeNull();
   });
@@ -109,13 +109,13 @@ describe('DesktopAgentGroup', () => {
 
     render(<DesktopAgentGroup entries={entries} isActive={false} />);
 
-    // Initially collapsed — terminal step not visible
+    // Initially collapsed - terminal step not visible
     expect(screen.queryByText('Running: ls')).toBeNull();
 
     // Press header to expand
     fireEvent.press(screen.getByText('CONTOP DESKTOP'));
 
-    // Now expanded — terminal step visible
+    // Now expanded - terminal step visible
     expect(screen.getByText('Running: ls')).toBeTruthy();
   });
 });

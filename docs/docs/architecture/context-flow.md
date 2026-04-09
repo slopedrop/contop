@@ -4,7 +4,7 @@ sidebar_position: 8
 
 # Context Flow
 
-How conversation context moves through Contop's two-agent architecture — from the moment a user types a message on their phone to the final response, and how that context is maintained across turns, disconnections, and server restarts.
+How conversation context moves through Contop's two-agent architecture - from the moment a user types a message on their phone to the final response, and how that context is maintained across turns, disconnections, and server restarts.
 
 For the agent architecture itself, see [ADK Agent](./adk-agent.md). For the transport layer, see [WebRTC Transport](./webrtc-transport.md).
 
@@ -20,7 +20,7 @@ graph LR
     EA -->|"result + tool summary"| U
 ```
 
-The **conversation agent** handles routing and chat. It sees the full conversation history as text but never touches the desktop. The **execution agent** runs autonomously on the host machine with 40+ tools — it sees its own tool calls and results in detail but only gets a text summary of the broader conversation.
+The **conversation agent** handles routing and chat. It sees the full conversation history as text but never touches the desktop. The **execution agent** runs autonomously on the host machine with 40+ tools - it sees its own tool calls and results in detail but only gets a text summary of the broader conversation.
 
 The challenge is keeping both agents contextually aware without duplicating information or wasting tokens. This document explains how that works.
 
@@ -45,7 +45,7 @@ sequenceDiagram
 2. Server forwards to the CLI proxy (Gemini CLI or Claude CLI), which streams back the response
 3. Mobile accumulates the streamed text and appends the assistant response to `chatHistoryRef`
 
-The conversation agent receives `chatHistoryRef` as its message history — every prior user and assistant turn.
+The conversation agent receives `chatHistoryRef` as its message history - every prior user and assistant turn.
 
 ### Classified Intent (Desktop Execution)
 
@@ -69,7 +69,7 @@ sequenceDiagram
 1. Mobile's `sendUserIntent()` sends a `conversation_request` with tool declarations for classification
 2. The conversation agent decides the request needs desktop execution and returns `tool_calls`
 3. Mobile builds a `conversation_context` string from recent `chatHistoryRef` turns and sends a `user_intent` message to the server
-4. The execution agent enters its autonomous loop — calling tools, observing results, reasoning about next steps
+4. The execution agent enters its autonomous loop - calling tools, observing results, reasoning about next steps
 5. When done, it sends back an `agent_result` containing the answer, a `tool_summary` of what tools it used, and its `session_id`
 6. Mobile syncs both the user message and the agent's response (prefixed with tool details) into `chatHistoryRef`
 
@@ -94,13 +94,13 @@ chatHistoryRef = [
 ]
 ```
 
-The last turn was answered directly by the conversation agent — no execution needed — because the tool details were visible in the prior assistant entry.
+The last turn was answered directly by the conversation agent - no execution needed - because the tool details were visible in the prior assistant entry.
 
 ### Execution Agent
 
-The execution agent maintains its own session via Google ADK's `DatabaseSessionService`. This session contains full-fidelity records of every tool call, every tool result, and every intermediate reasoning step — far more detail than the text summaries in `chatHistoryRef`.
+The execution agent maintains its own session via Google ADK's `DatabaseSessionService`. This session contains full-fidelity records of every tool call, every tool result, and every intermediate reasoning step - far more detail than the text summaries in `chatHistoryRef`.
 
-On each intent, the execution agent also receives a `conversation_context` string — a text summary of recent mobile-side conversation turns that happened since its last execution. This is how it learns about chat that occurred between execution runs.
+On each intent, the execution agent also receives a `conversation_context` string - a text summary of recent mobile-side conversation turns that happened since its last execution. This is how it learns about chat that occurred between execution runs.
 
 The user's current request and the conversation context are combined into a single message:
 
@@ -115,9 +115,9 @@ Open the weather app and check tomorrow's forecast
 
 ## Conversation Context and Offset Tracking
 
-A naive approach would send the entire `chatHistoryRef` as conversation context on every execution. But the ADK session already contains the history from prior executions — sending it again wastes tokens and grows linearly with conversation length.
+A naive approach would send the entire `chatHistoryRef` as conversation context on every execution. But the ADK session already contains the history from prior executions - sending it again wastes tokens and grows linearly with conversation length.
 
-Instead, mobile tracks a sync offset (`lastExecutionSyncIndexRef`) — an index into `chatHistoryRef` marking how far the ADK session's knowledge extends. When building `conversation_context`, only turns *after* this offset are included:
+Instead, mobile tracks a sync offset (`lastExecutionSyncIndexRef`) - an index into `chatHistoryRef` marking how far the ADK session's knowledge extends. When building `conversation_context`, only turns *after* this offset are included:
 
 ```
 chatHistoryRef.slice(lastExecutionSyncIndexRef.current)
@@ -136,11 +136,11 @@ After each execution completes, the offset advances to the end of `chatHistoryRe
 
 On Turn 4, `conversation_context` contains only Turn 3 ("How are you?" and the response). Turns 1-2 are already in the ADK session from Turn 2's execution. Zero duplication.
 
-The offset adjusts automatically when the sliding window (`trimHistory()`) drops old entries from the front of `chatHistoryRef`. On server restart, the offset resets to 0 and the full history is re-sent as conversation context — but the ADK session is also restored from SQLite (see below), so the execution agent still has its detailed tool history.
+The offset adjusts automatically when the sliding window (`trimHistory()`) drops old entries from the front of `chatHistoryRef`. On server restart, the offset resets to 0 and the full history is re-sent as conversation context - but the ADK session is also restored from SQLite (see below), so the execution agent still has its detailed tool history.
 
 ## Session Persistence
 
-The execution agent's ADK sessions are stored in SQLite at `~/.contop/data/sessions.db`. Every tool call, tool result, and model response is persisted — the full execution history survives server restarts.
+The execution agent's ADK sessions are stored in SQLite at `~/.contop/data/sessions.db`. Every tool call, tool result, and model response is persisted - the full execution history survives server restarts.
 
 ### How Session IDs Flow
 
@@ -193,7 +193,7 @@ When a user opens a previous session from the history screen and taps "Continue"
    - Rebuilds `chatHistoryRef` via `restoreHistory()` (including tool summary prefixes from entry metadata)
    - Sends `session_context` (not `new_session`) to the server with the stored `adk_session_id`
 3. Server receives the session context and prepares to restore the ADK session on the next intent
-4. The conversation can resume where it left off — the execution agent recovers its full tool history from SQLite
+4. The conversation can resume where it left off - the execution agent recovers its full tool history from SQLite
 
 ### New Session
 
@@ -226,9 +226,9 @@ In subscription mode, both agents route through CLI proxy processes rather than 
 
 Key behaviors:
 
-- **All providers use `useResume: false`** — every LLM call spawns a fresh CLI process with the full history in the prompt. No session chaining between calls.
-- **Tool listing is context-aware** — the `<available_functions>` block (listing tool names and descriptions) is included for the conversation agent's 4 classification tools but skipped for the execution agent's 40+ tools, since its system prompt already describes each tool in detail.
-- **System prompts are sanitized** — agent identity language and instruction-parsing patterns are rewritten to neutral third-person to avoid triggering CLI guardrails.
+- **All providers use `useResume: false`** - every LLM call spawns a fresh CLI process with the full history in the prompt. No session chaining between calls.
+- **Tool listing is context-aware** - the `<available_functions>` block (listing tool names and descriptions) is included for the conversation agent's 4 classification tools but skipped for the execution agent's 40+ tools, since its system prompt already describes each tool in detail.
+- **System prompts are sanitized** - agent identity language and instruction-parsing patterns are rewritten to neutral third-person to avoid triggering CLI guardrails.
 
 For detailed prompt examples showing exactly what each LLM call receives, see `docs/cli-proxy-examples.md` and `docs/cli-proxy-sessions.md` in the project root.
 

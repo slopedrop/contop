@@ -66,7 +66,7 @@ program
       process.exit(1);
     }
 
-    // ── Check CLI binary is installed (skip for codex/openai — uses direct API) ──
+    // ── Check CLI binary is installed (skip for codex/openai - uses direct API) ──
     const isCodex = providerName === 'codex' || providerName === 'openai';
     if (!isCodex) {
       try {
@@ -77,7 +77,7 @@ program
       } catch {
         console.error(
           `❌ CLI binary "${provider.binary}" not found.\n` +
-          `   Install it first — see README.md for setup instructions.`,
+          `   Install it first - see README.md for setup instructions.`,
         );
         process.exit(1);
       }

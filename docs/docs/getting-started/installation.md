@@ -10,7 +10,7 @@ The [Tauri desktop app](/user-guide/desktop-app) provides a GUI for settings man
 
 ### macOS
 
-**Homebrew (recommended — no security warnings):**
+**Homebrew (recommended - no security warnings):**
 
 ```bash
 brew install slopedrop/contop/contop
@@ -24,7 +24,7 @@ On first launch, macOS may show a security warning since the app is not code-sig
 
 ### Windows
 
-**Scoop (recommended — no SmartScreen warnings):**
+**Scoop (recommended - no SmartScreen warnings):**
 
 ```powershell
 scoop bucket add contop https://github.com/slopedrop/scoop-contop
@@ -52,7 +52,7 @@ sudo dpkg -i contop-desktop_x.x.x_amd64.deb
 
 ### First-Launch Setup
 
-When you install via Homebrew, Scoop, or download the macOS/Linux build directly, Python dependencies are installed automatically on first launch. The app shows a progress overlay with download status — this takes a few minutes depending on your internet speed (~500 MB for CPU, ~2.5 GB with CUDA).
+When you install via Homebrew, Scoop, or download the macOS/Linux build directly, Python dependencies are installed automatically on first launch. The app shows a progress overlay with download status - this takes a few minutes depending on your internet speed (~500 MB for CPU, ~2.5 GB with CUDA).
 
 The Windows NSIS installer handles this during installation instead.
 
@@ -76,7 +76,7 @@ All download links are available on the [Releases page](https://github.com/slope
 4. Grant camera + microphone permissions
 
 :::tip
-Production builds are created via Expo EAS Build. The native WebRTC bridge requires bare workflow compilation — Expo Go is only for development.
+Production builds are created via Expo EAS Build. The native WebRTC bridge requires bare workflow compilation - Expo Go is only for development.
 :::
 
 ## Developer Setup (Server Only)

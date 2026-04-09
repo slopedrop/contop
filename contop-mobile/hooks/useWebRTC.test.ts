@@ -94,7 +94,7 @@ jest.mock('../stores/useAIStore', () => ({
   ),
 }));
 
-// Mock connectSignalingWithFallback — returns the mock WebSocket as if LAN succeeded.
+// Mock connectSignalingWithFallback - returns the mock WebSocket as if LAN succeeded.
 // The actual fallback logic is tested in webrtc.test.ts.
 jest.mock('../services/webrtc', () => {
   const actual = jest.requireActual('../services/webrtc');
@@ -204,7 +204,7 @@ describe('useWebRTC hook', () => {
       resetStore: mockResetStore,
     });
 
-    // Restore connectSignalingWithFallback mock — returns the mock WebSocket
+    // Restore connectSignalingWithFallback mock - returns the mock WebSocket
     const webrtcMock = jest.requireMock('../services/webrtc') as {
       connectSignalingWithFallback: jest.Mock;
     };
@@ -214,22 +214,22 @@ describe('useWebRTC hook', () => {
     });
   });
 
-  describe('connect() — signaling setup', () => {
+  describe('connect() - signaling setup', () => {
     test('[P0] 1.4-UNIT-007a: connect() calls connectSignalingWithFallback with correct payload', async () => {
-      // Given — a valid pairing payload with server_host, server_port, and token
+      // Given - a valid pairing payload with server_host, server_port, and token
       const payload = buildFakePairingPayload();
 
       const webrtcMock = jest.requireMock('../services/webrtc') as {
         connectSignalingWithFallback: jest.Mock;
       };
 
-      // When — connect() is called with the pairing payload
+      // When - connect() is called with the pairing payload
       const { result } = renderHook(() => useWebRTC());
       await act(async () => {
         await result.current.connect(payload);
       });
 
-      // Then — connectSignalingWithFallback is called with the payload
+      // Then - connectSignalingWithFallback is called with the payload
       expect(webrtcMock.connectSignalingWithFallback).toHaveBeenCalledWith(
         expect.objectContaining({
           server_host: payload.server_host,
@@ -240,16 +240,16 @@ describe('useWebRTC hook', () => {
     });
 
     test('[P0] 1.4-UNIT-007b: connect() creates RTCPeerConnection with ICE servers from stun_config', async () => {
-      // Given — a pairing payload with stun_config containing ICE servers
+      // Given - a pairing payload with stun_config containing ICE servers
       const payload = buildFakePairingPayload();
 
-      // When — connect() is called
+      // When - connect() is called
       const { result } = renderHook(() => useWebRTC());
       await act(async () => {
         await result.current.connect(payload);
       });
 
-      // Then — RTCPeerConnection is created with ICE servers from the payload
+      // Then - RTCPeerConnection is created with ICE servers from the payload
       expect(RTCPeerConnection).toHaveBeenCalledWith(
         expect.objectContaining({
           iceServers: payload.stun_config.ice_servers,
@@ -258,16 +258,16 @@ describe('useWebRTC hook', () => {
     });
 
     test('[P0] 1.4-UNIT-007c: connect() creates SDP offer and sends via WebSocket', async () => {
-      // Given — a pairing payload and an open WebSocket
+      // Given - a pairing payload and an open WebSocket
       const payload = buildFakePairingPayload();
 
-      // When — connect() is called and WebSocket is open
+      // When - connect() is called and WebSocket is open
       const { result } = renderHook(() => useWebRTC());
       await act(async () => {
         await result.current.connect(payload);
       });
 
-      // Then — an SDP offer is created and sent via the WebSocket
+      // Then - an SDP offer is created and sent via the WebSocket
       expect(mockPC.createOffer).toHaveBeenCalled();
       expect(mockPC.setLocalDescription).toHaveBeenCalled();
       expect(mockWebSocketInstance.send).toHaveBeenCalledWith(
@@ -276,7 +276,7 @@ describe('useWebRTC hook', () => {
     });
 
     test('[P0] 1.4-UNIT-007d: receives SDP answer and sets remote description', async () => {
-      // Given — connect() has been called and an offer was sent
+      // Given - connect() has been called and an offer was sent
       const payload = buildFakePairingPayload();
 
       const { result } = renderHook(() => useWebRTC());
@@ -284,7 +284,7 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — an SDP answer is received via WebSocket
+      // When - an SDP answer is received via WebSocket
       const answerMessage = JSON.stringify({ type: 'answer', sdp: 'mock-remote-sdp' });
       const wsMessageHandler = wsHandlers['message']?.[0] as
         | ((event: { data: string }) => void)
@@ -293,7 +293,7 @@ describe('useWebRTC hook', () => {
         wsMessageHandler?.({ data: answerMessage });
       });
 
-      // Then — the remote description is set on the peer connection
+      // Then - the remote description is set on the peer connection
       expect(mockPC.setRemoteDescription).toHaveBeenCalledWith(
         expect.objectContaining({ type: 'answer', sdp: 'mock-remote-sdp' }),
       );
@@ -302,7 +302,7 @@ describe('useWebRTC hook', () => {
 
   describe('ICE candidate exchange', () => {
     test('[P0] 1.4-UNIT-008a: local ICE candidates sent via WebSocket', async () => {
-      // Given — connect() has been called and peer connection emits ICE candidates
+      // Given - connect() has been called and peer connection emits ICE candidates
       const payload = buildFakePairingPayload();
       let iceCandidateHandler: ((event: { candidate: unknown }) => void) | undefined;
       mockPC.addEventListener.mockImplementation(
@@ -316,20 +316,20 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — a local ICE candidate is generated
+      // When - a local ICE candidate is generated
       const mockCandidate = { candidate: 'candidate:1234', sdpMid: '0', sdpMLineIndex: 0 };
       await act(async () => {
         iceCandidateHandler?.({ candidate: mockCandidate });
       });
 
-      // Then — the ICE candidate is sent via WebSocket
+      // Then - the ICE candidate is sent via WebSocket
       expect(mockWebSocketInstance.send).toHaveBeenCalledWith(
         expect.stringContaining('"type":"ice_candidate"'),
       );
     });
 
     test('[P0] 1.4-UNIT-008b: remote ICE candidates added to peer connection', async () => {
-      // Given — connect() has been called and WebSocket receives an ICE candidate
+      // Given - connect() has been called and WebSocket receives an ICE candidate
       const payload = buildFakePairingPayload();
 
       const { result } = renderHook(() => useWebRTC());
@@ -337,7 +337,7 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — a remote ICE candidate message arrives via WebSocket
+      // When - a remote ICE candidate message arrives via WebSocket
       const remoteCandidateMsg = JSON.stringify({
         type: 'ice_candidate',
         candidate: { candidate: 'candidate:5678', sdpMid: '0', sdpMLineIndex: 0 },
@@ -349,7 +349,7 @@ describe('useWebRTC hook', () => {
         wsMessageHandler?.({ data: remoteCandidateMsg });
       });
 
-      // Then — the candidate is added to the peer connection
+      // Then - the candidate is added to the peer connection
       expect(mockPC.addIceCandidate).toHaveBeenCalledWith(
         expect.objectContaining({ candidate: 'candidate:5678' }),
       );
@@ -358,33 +358,33 @@ describe('useWebRTC hook', () => {
 
   describe('data channel', () => {
     test('[P0] 1.4-UNIT-009a: data channel "contop" created with ordered: true', async () => {
-      // Given — connect() is called with a valid payload
+      // Given - connect() is called with a valid payload
       const payload = buildFakePairingPayload();
 
-      // When — the peer connection is set up
+      // When - the peer connection is set up
       const { result } = renderHook(() => useWebRTC());
       await act(async () => {
         await result.current.connect(payload);
       });
 
-      // Then — a data channel named "contop" is created with ordered delivery
+      // Then - a data channel named "contop" is created with ordered delivery
       expect(mockPC.createDataChannel).toHaveBeenCalledWith('contop', { ordered: true });
     });
 
     test('[P0] 1.4-UNIT-009b: sendMessage() wraps in canonical envelope {type, id, payload} with UUID v4', async () => {
-      // Given — a connected hook with an open data channel
+      // Given - a connected hook with an open data channel
       const payload = buildFakePairingPayload();
       const { result } = renderHook(() => useWebRTC());
       await act(async () => {
         await result.current.connect(payload);
       });
 
-      // When — sendMessage() is called with a type and payload
+      // When - sendMessage() is called with a type and payload
       await act(async () => {
         result.current.sendMessage('tool_call', { command: 'ls' });
       });
 
-      // Then — the message is sent via data channel in canonical envelope format with UUID v4 id
+      // Then - the message is sent via data channel in canonical envelope format with UUID v4 id
       expect(mockDC.send).toHaveBeenCalledTimes(1);
       const sentData = JSON.parse(mockDC.send.mock.calls[0][0] as string) as {
         type: string;
@@ -399,7 +399,7 @@ describe('useWebRTC hook', () => {
     });
 
     test('[P1] 1.4-UNIT-009c: data channel message events parsed and handled', async () => {
-      // Given — a connected hook with a data channel that receives messages
+      // Given - a connected hook with a data channel that receives messages
       const payload = buildFakePairingPayload();
       let dcMessageHandler: ((event: { data: string }) => void) | undefined;
       mockDC.addEventListener.mockImplementation(
@@ -413,7 +413,7 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — a message arrives on the data channel
+      // When - a message arrives on the data channel
       const incomingMessage = JSON.stringify({
         type: 'state_update',
         id: 'aaaaaaaa-bbbb-4ccc-9ddd-eeeeeeeeeeee',
@@ -423,7 +423,7 @@ describe('useWebRTC hook', () => {
         dcMessageHandler?.({ data: incomingMessage });
       });
 
-      // Then — the message is parsed without throwing (handler is registered)
+      // Then - the message is parsed without throwing (handler is registered)
       expect(mockDC.addEventListener).toHaveBeenCalledWith('message', expect.any(Function));
     });
   });
@@ -485,7 +485,7 @@ describe('useWebRTC hook', () => {
 
   describe('connectionStatus state management', () => {
     test('[P0] 1.4-UNIT-010a: connectionStatus → "connected" when PC connectionState is "connected"', async () => {
-      // Given — connect() has been called and peer connection state changes
+      // Given - connect() has been called and peer connection state changes
       const payload = buildFakePairingPayload();
       let connectionStateHandler: (() => void) | undefined;
       mockPC.addEventListener.mockImplementation((event: string, handler: () => void) => {
@@ -507,18 +507,18 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — peer connection state becomes 'connected'
+      // When - peer connection state becomes 'connected'
       mockPC.connectionState = 'connected';
       await act(async () => {
         connectionStateHandler?.();
       });
 
-      // Then — connectionStatus is set to 'connected' in the Zustand store
+      // Then - connectionStatus is set to 'connected' in the Zustand store
       expect(mockSetConnectionStatus).toHaveBeenCalledWith('connected');
     });
 
     test('[P0] 1.4-UNIT-010b: connectionStatus transitions for "disconnected"/"failed"/"closed" PC states (permanent connection)', async () => {
-      // Given — connect() has been called with a permanent connection (no connection_type = permanent)
+      // Given - connect() has been called with a permanent connection (no connection_type = permanent)
       // Persistent Pairing update: permanent connections do NOT auto-reconnect on ICE disconnect,
       // they set 'disconnected' and require manual reconnect with biometric.
       const payload = buildFakePairingPayload();
@@ -543,41 +543,41 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — peer connection state becomes 'disconnected' (permanent connection)
+      // When - peer connection state becomes 'disconnected' (permanent connection)
       mockPC.connectionState = 'disconnected';
       await act(async () => {
         connectionStateHandler?.();
       });
 
-      // Then — connectionStatus is set to 'disconnected' (permanent: no auto-reconnect)
+      // Then - connectionStatus is set to 'disconnected' (permanent: no auto-reconnect)
       expect(mockSetConnectionStatus).toHaveBeenCalledWith('disconnected');
       expect(mockSetAIState).toHaveBeenCalledWith('idle');
 
-      // When — peer connection state becomes 'failed'
+      // When - peer connection state becomes 'failed'
       mockSetConnectionStatus.mockClear();
       mockPC.connectionState = 'failed';
       await act(async () => {
         connectionStateHandler?.();
       });
 
-      // Then — connectionStatus is set to 'reconnecting' (failed always triggers reconnect)
+      // Then - connectionStatus is set to 'reconnecting' (failed always triggers reconnect)
       expect(mockSetConnectionStatus).toHaveBeenCalledWith('reconnecting');
 
-      // When — peer connection state becomes 'closed'
+      // When - peer connection state becomes 'closed'
       mockSetConnectionStatus.mockClear();
       mockPC.connectionState = 'closed';
       await act(async () => {
         connectionStateHandler?.();
       });
 
-      // Then — 'closed' during reconnection is suppressed (isReconnecting is true from failed)
+      // Then - 'closed' during reconnection is suppressed (isReconnecting is true from failed)
       expect(mockSetConnectionStatus).not.toHaveBeenCalledWith('disconnected');
     });
   });
 
   describe('keepalive mechanism', () => {
     test('[P0] 1.4-UNIT-011a: keepalive response sent when server keepalive received', async () => {
-      // Given — a connected hook with an open data channel
+      // Given - a connected hook with an open data channel
       const payload = buildFakePairingPayload();
       let dcMessageHandler: ((event: { data: string }) => void) | undefined;
       mockDC.addEventListener.mockImplementation(
@@ -591,7 +591,7 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — a keepalive message is received from the server
+      // When - a keepalive message is received from the server
       const keepaliveMsg = JSON.stringify({
         type: 'keepalive',
         id: 'aaaaaaaa-bbbb-4ccc-9ddd-eeeeeeeeeeee',
@@ -601,7 +601,7 @@ describe('useWebRTC hook', () => {
         dcMessageHandler?.({ data: keepaliveMsg });
       });
 
-      // Then — a keepalive response is sent back via the data channel
+      // Then - a keepalive response is sent back via the data channel
       const sentCalls = mockDC.send.mock.calls;
       const keepaliveResponse = sentCalls.find((call: unknown[]) => {
         const parsed = JSON.parse(call[0] as string) as { type: string };
@@ -611,7 +611,7 @@ describe('useWebRTC hook', () => {
     });
 
     test('[P0] 1.4-UNIT-011b: 3 missed keepalives → does NOT disconnect (mobile may be backgrounded)', async () => {
-      // Given — a connected hook expecting keepalive messages every 30s
+      // Given - a connected hook expecting keepalive messages every 30s
       const payload = buildFakePairingPayload();
       const mockSetConnectionStatus = jest.fn();
       useAIStoreMock.default.getState.mockReturnValue({
@@ -630,12 +630,12 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — 3+ keepalive intervals pass without receiving a keepalive (90s total)
+      // When - 3+ keepalive intervals pass without receiving a keepalive (90s total)
       await act(async () => {
         jest.advanceTimersByTime(90_000);
       });
 
-      // Then — the connection is NOT declared dead
+      // Then - the connection is NOT declared dead
       // (mobile JS pauses when backgrounded, but ICE/P2P stays alive)
       expect(mockSetConnectionStatus).not.toHaveBeenCalledWith('disconnected');
 
@@ -643,7 +643,7 @@ describe('useWebRTC hook', () => {
     });
 
     test('[P1] 1.4-UNIT-011c: keepalive counter resets on received keepalive', async () => {
-      // Given — a connected hook that has missed some keepalives
+      // Given - a connected hook that has missed some keepalives
       const payload = buildFakePairingPayload();
       let dcMessageHandler: ((event: { data: string }) => void) | undefined;
       mockDC.addEventListener.mockImplementation(
@@ -669,7 +669,7 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — 2 keepalive intervals pass (60s) but then a keepalive is received
+      // When - 2 keepalive intervals pass (60s) but then a keepalive is received
       await act(async () => {
         jest.advanceTimersByTime(60_000);
       });
@@ -683,7 +683,7 @@ describe('useWebRTC hook', () => {
         dcMessageHandler?.({ data: keepaliveMsg });
       });
 
-      // Then — after another 60s (only 2 more missed), connection is NOT declared dead
+      // Then - after another 60s (only 2 more missed), connection is NOT declared dead
       await act(async () => {
         jest.advanceTimersByTime(60_000);
       });
@@ -701,7 +701,7 @@ describe('useWebRTC hook', () => {
 
   describe('disconnect()', () => {
     test('[P0] 1.4-UNIT-012a: disconnect() closes data channel, peer connection, WebSocket', async () => {
-      // Given — an active connection with open data channel, peer connection, and WebSocket
+      // Given - an active connection with open data channel, peer connection, and WebSocket
       const payload = buildFakePairingPayload();
       const mockSoftReset = jest.fn();
       useAIStoreMock.default.getState.mockReturnValue({
@@ -718,19 +718,19 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — disconnect() is called
+      // When - disconnect() is called
       await act(async () => {
         result.current.disconnect();
       });
 
-      // Then — all resources are cleaned up
+      // Then - all resources are cleaned up
       expect(mockDC.close).toHaveBeenCalled();
       expect(mockPC.close).toHaveBeenCalled();
       expect(mockWebSocketInstance.close).toHaveBeenCalled();
     });
 
     test('[P0] 1.4-UNIT-012b: disconnect() calls softReset (preserves stored credentials)', async () => {
-      // Given — an active connection
+      // Given - an active connection
       const payload = buildFakePairingPayload();
       const mockSoftReset = jest.fn();
       useAIStoreMock.default.getState.mockReturnValue({
@@ -747,19 +747,19 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — disconnect() is called
+      // When - disconnect() is called
       await act(async () => {
         result.current.disconnect();
       });
 
-      // Then — softReset() is called (clears runtime state but preserves stored credentials)
+      // Then - softReset() is called (clears runtime state but preserves stored credentials)
       expect(mockSoftReset).toHaveBeenCalled();
     });
   });
 
   describe('auto-reconnect (Story 1.5)', () => {
     test('[P0] 1.5-UNIT-001: ICE disconnect → connectionStatus "reconnecting" and restartIce() called (temp connection)', async () => {
-      // Given — an active temp connection with peer connection state 'connected'
+      // Given - an active temp connection with peer connection state 'connected'
       // Persistent Pairing: only temp connections auto-reconnect on ICE disconnect
       const payload = buildFakePairingPayload({ connection_type: 'temp' });
       let connectionStateHandler: (() => void) | undefined;
@@ -782,19 +782,19 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — ICE connection state transitions to 'disconnected'
+      // When - ICE connection state transitions to 'disconnected'
       mockPC.connectionState = 'disconnected';
       await act(async () => {
         connectionStateHandler?.();
       });
 
-      // Then — connectionStatus is set to 'reconnecting' and restartIce() is called
+      // Then - connectionStatus is set to 'reconnecting' and restartIce() is called
       expect(mockSetConnectionStatus).toHaveBeenCalledWith('reconnecting');
       expect(mockPC.restartIce).toHaveBeenCalled();
     });
 
     test('[P0] 1.5-UNIT-002: ICE recovery within 2s silent window → connectionStatus "connected", timers cancelled (temp connection)', async () => {
-      // Given — an active temp connection that has entered 'disconnected' ICE state
+      // Given - an active temp connection that has entered 'disconnected' ICE state
       const payload = buildFakePairingPayload({ connection_type: 'temp' });
       let connectionStateHandler: (() => void) | undefined;
       mockPC.addEventListener.mockImplementation((event: string, handler: () => void) => {
@@ -824,14 +824,14 @@ describe('useWebRTC hook', () => {
         connectionStateHandler?.();
       });
 
-      // When — ICE recovers within 2s silent window
+      // When - ICE recovers within 2s silent window
       jest.advanceTimersByTime(1000); // only 1s elapsed
       mockPC.connectionState = 'connected';
       await act(async () => {
         connectionStateHandler?.();
       });
 
-      // Then — status went through 'reconnecting' before recovering to 'connected'
+      // Then - status went through 'reconnecting' before recovering to 'connected'
       expect(mockSetConnectionStatus).toHaveBeenCalledWith('reconnecting');
       expect(mockSetConnectionStatus).toHaveBeenLastCalledWith('connected');
       // And no haptic feedback was triggered during the silent window
@@ -841,7 +841,7 @@ describe('useWebRTC hook', () => {
     });
 
     test('[P0] 1.5-UNIT-003: Silent window expires → haptic feedback triggered (temp connection)', async () => {
-      // Given — an active temp connection that has entered reconnecting state
+      // Given - an active temp connection that has entered reconnecting state
       const payload = buildFakePairingPayload({ connection_type: 'temp' });
       let connectionStateHandler: (() => void) | undefined;
       mockPC.addEventListener.mockImplementation((event: string, handler: () => void) => {
@@ -871,19 +871,19 @@ describe('useWebRTC hook', () => {
         connectionStateHandler?.();
       });
 
-      // When — the 2s silent window expires without ICE recovery
+      // When - the 2s silent window expires without ICE recovery
       await act(async () => {
         jest.advanceTimersByTime(2000);
       });
 
-      // Then — haptic feedback is triggered to notify the user
+      // Then - haptic feedback is triggered to notify the user
       expect(Haptics.notificationAsync).toHaveBeenCalled();
 
       jest.useRealTimers();
     });
 
     test('[P0] 1.5-UNIT-004: Full reconnection after silent window (new WS + PC + SDP) (temp connection)', async () => {
-      // Given — an active temp connection that has entered reconnecting state
+      // Given - an active temp connection that has entered reconnecting state
       const payload = buildFakePairingPayload({ connection_type: 'temp' });
       let connectionStateHandler: (() => void) | undefined;
       mockPC.addEventListener.mockImplementation((event: string, handler: () => void) => {
@@ -918,19 +918,19 @@ describe('useWebRTC hook', () => {
         connectionStateHandler?.();
       });
 
-      // When — the silent window expires and full reconnection is attempted
+      // When - the silent window expires and full reconnection is attempted
       await act(async () => {
         jest.advanceTimersByTime(2000);
       });
 
-      // Then — connectSignalingWithFallback is called again (full reconnect)
+      // Then - connectSignalingWithFallback is called again (full reconnect)
       expect(webrtcMock.connectSignalingWithFallback.mock.calls.length).toBeGreaterThan(initialFallbackCalls);
 
       jest.useRealTimers();
     });
 
     test('[P0] 1.5-UNIT-005: Max reconnect attempts (5) exhausted → disconnected + aiState disconnected (temp connection)', async () => {
-      // Given — an active temp connection that keeps failing to reconnect
+      // Given - an active temp connection that keeps failing to reconnect
       const payload = buildFakePairingPayload({ connection_type: 'temp' });
       let connectionStateHandler: (() => void) | undefined;
       mockPC.addEventListener.mockImplementation((event: string, handler: () => void) => {
@@ -955,7 +955,7 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — initial disconnect triggers reconnection (counter=0)
+      // When - initial disconnect triggers reconnection (counter=0)
       mockPC.connectionState = 'disconnected';
       await act(async () => {
         connectionStateHandler?.();
@@ -980,7 +980,7 @@ describe('useWebRTC hook', () => {
         connectionStateHandler?.();
       });
 
-      // Then — connectionStatus is 'disconnected' and aiState is 'disconnected'
+      // Then - connectionStatus is 'disconnected' and aiState is 'disconnected'
       expect(mockSetConnectionStatus).toHaveBeenLastCalledWith('disconnected');
       expect(mockSetAIState).toHaveBeenCalledWith('disconnected');
 
@@ -988,7 +988,7 @@ describe('useWebRTC hook', () => {
     });
 
     test('[P0] 1.5-UNIT-009: ICE "failed" → skip silent window, immediately full reconnect', async () => {
-      // Given — an active connection
+      // Given - an active connection
       const payload = buildFakePairingPayload();
       let connectionStateHandler: (() => void) | undefined;
       mockPC.addEventListener.mockImplementation((event: string, handler: () => void) => {
@@ -1017,13 +1017,13 @@ describe('useWebRTC hook', () => {
       };
       const callsBefore = webrtcMock.connectSignalingWithFallback.mock.calls.length;
 
-      // When — ICE state transitions directly to 'failed'
+      // When - ICE state transitions directly to 'failed'
       mockPC.connectionState = 'failed';
       await act(async () => {
         connectionStateHandler?.();
       });
 
-      // Then — full reconnect is triggered immediately (no 2s silent window)
+      // Then - full reconnect is triggered immediately (no 2s silent window)
       expect(mockSetConnectionStatus).toHaveBeenCalledWith('reconnecting');
       expect(webrtcMock.connectSignalingWithFallback.mock.calls.length).toBeGreaterThan(callsBefore);
       // And haptic feedback fires even though silent window was skipped
@@ -1033,7 +1033,7 @@ describe('useWebRTC hook', () => {
     });
 
     test('[P1] 1.5-UNIT-014: WS error/close during reconnection does NOT set disconnected (temp connection)', async () => {
-      // Given — an active temp connection that is in reconnecting state
+      // Given - an active temp connection that is in reconnecting state
       const payload = buildFakePairingPayload({ connection_type: 'temp' });
       let connectionStateHandler: (() => void) | undefined;
       mockPC.addEventListener.mockImplementation((event: string, handler: () => void) => {
@@ -1064,7 +1064,7 @@ describe('useWebRTC hook', () => {
       // Reset to track only calls after reconnecting is set
       mockSetConnectionStatus.mockClear();
 
-      // When — WebSocket fires error/close during reconnection
+      // When - WebSocket fires error/close during reconnection
       const wsErrorHandler = wsHandlers['error']?.[0];
       const wsCloseHandler = wsHandlers['close']?.[0];
       await act(async () => {
@@ -1072,7 +1072,7 @@ describe('useWebRTC hook', () => {
         wsCloseHandler?.();
       });
 
-      // Then — connectionStatus should NOT be set to 'disconnected' (stay in 'reconnecting')
+      // Then - connectionStatus should NOT be set to 'disconnected' (stay in 'reconnecting')
       const disconnectedCalls = mockSetConnectionStatus.mock.calls.filter(
         (call: unknown[]) => call[0] === 'disconnected',
       );
@@ -1082,7 +1082,7 @@ describe('useWebRTC hook', () => {
 
   describe('graceful termination (Story 1.5)', () => {
     test('[P0] 1.5-UNIT-006: disconnect() sends session_end via data channel', async () => {
-      // Given — an active connection with open data channel
+      // Given - an active connection with open data channel
       const payload = buildFakePairingPayload();
       useAIStoreMock.default.getState.mockReturnValue({
         setConnectionStatus: jest.fn(),
@@ -1098,12 +1098,12 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — disconnect() is called
+      // When - disconnect() is called
       await act(async () => {
         result.current.disconnect();
       });
 
-      // Then — a session_end message is sent via the data channel before closing
+      // Then - a session_end message is sent via the data channel before closing
       const sentCalls = mockDC.send.mock.calls;
       const sessionEndMsg = sentCalls.find((call: unknown[]) => {
         const parsed = JSON.parse(call[0] as string) as { type: string };
@@ -1113,7 +1113,7 @@ describe('useWebRTC hook', () => {
     });
 
     test('[P1] 1.5-UNIT-007: disconnect() during reconnection cancels all reconnection timers', async () => {
-      // Given — an active temp connection that is in reconnecting state
+      // Given - an active temp connection that is in reconnecting state
       const payload = buildFakePairingPayload({ connection_type: 'temp' });
       let connectionStateHandler: (() => void) | undefined;
       mockPC.addEventListener.mockImplementation((event: string, handler: () => void) => {
@@ -1137,7 +1137,7 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // Trigger reconnecting state — must set status to 'reconnecting'
+      // Trigger reconnecting state - must set status to 'reconnecting'
       mockPC.connectionState = 'disconnected';
       await act(async () => {
         connectionStateHandler?.();
@@ -1146,7 +1146,7 @@ describe('useWebRTC hook', () => {
       // Verify we entered reconnecting state (prerequisite for this test)
       expect(mockSetConnectionStatus).toHaveBeenCalledWith('reconnecting');
 
-      // When — disconnect() is called during reconnection
+      // When - disconnect() is called during reconnection
       await act(async () => {
         result.current.disconnect();
       });
@@ -1158,7 +1158,7 @@ describe('useWebRTC hook', () => {
       };
       webrtcMock.connectSignalingWithFallback.mockClear();
 
-      // Then — advancing timers should NOT trigger any reconnection attempts
+      // Then - advancing timers should NOT trigger any reconnection attempts
       await act(async () => {
         jest.advanceTimersByTime(10_000);
       });
@@ -1177,15 +1177,15 @@ describe('useWebRTC hook', () => {
 
   describe('remote video stream (Story 2.3)', () => {
     test('[P0] 2.3-UNIT-001: remoteStream is null before any connection', () => {
-      // Given — a freshly created hook
+      // Given - a freshly created hook
       const { result } = renderHook(() => useWebRTC());
 
-      // Then — remoteStream should be null
+      // Then - remoteStream should be null
       expect(result.current.remoteStream).toBeNull();
     });
 
     test('[P0] 2.3-UNIT-002: ontrack event with video track updates remoteStream', async () => {
-      // Given — a connected hook with peer connection that fires ontrack
+      // Given - a connected hook with peer connection that fires ontrack
       const payload = buildFakePairingPayload();
       let trackHandler: ((event: { track: { kind: string }; streams: unknown[] }) => void) | undefined;
       mockPC.addEventListener.mockImplementation(
@@ -1202,18 +1202,18 @@ describe('useWebRTC hook', () => {
       // Verify ontrack handler was registered
       expect(mockPC.addEventListener).toHaveBeenCalledWith('track', expect.any(Function));
 
-      // When — a video track event is received
+      // When - a video track event is received
       const mockStream = { toURL: () => 'mock-stream-url', id: 'stream-1' };
       await act(async () => {
         trackHandler?.({ track: { kind: 'video' }, streams: [mockStream] });
       });
 
-      // Then — remoteStream is set to the stream from the event
+      // Then - remoteStream is set to the stream from the event
       expect(result.current.remoteStream).toBe(mockStream);
     });
 
     test('[P0] 2.3-UNIT-002b: ontrack with empty streams array creates MediaStream from track', async () => {
-      // Given — a connected hook where aiortc sends track without associated stream
+      // Given - a connected hook where aiortc sends track without associated stream
       const payload = buildFakePairingPayload();
       let trackHandler: ((event: { track: { kind: string }; streams?: unknown[] }) => void) | undefined;
       mockPC.addEventListener.mockImplementation(
@@ -1227,19 +1227,19 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — a video track event is received with empty streams (aiortc behavior)
+      // When - a video track event is received with empty streams (aiortc behavior)
       const mockTrack = { kind: 'video', id: 'track-1' };
       await act(async () => {
         trackHandler?.({ track: mockTrack, streams: [] });
       });
 
-      // Then — a new MediaStream is created and set as remoteStream
+      // Then - a new MediaStream is created and set as remoteStream
       expect(result.current.remoteStream).not.toBeNull();
       expect(result.current.remoteStream?.toURL()).toBe('mock-stream-url');
     });
 
     test('[P0] 2.3-UNIT-003: disconnect() clears remoteStream to null', async () => {
-      // Given — a connected hook with an active remote stream
+      // Given - a connected hook with an active remote stream
       const payload = buildFakePairingPayload();
       let trackHandler: ((event: { track: { kind: string }; streams: unknown[] }) => void) | undefined;
       mockPC.addEventListener.mockImplementation(
@@ -1269,17 +1269,17 @@ describe('useWebRTC hook', () => {
       });
       expect(result.current.remoteStream).toBe(mockStream);
 
-      // When — disconnect() is called
+      // When - disconnect() is called
       await act(async () => {
         result.current.disconnect();
       });
 
-      // Then — remoteStream is cleared to null
+      // Then - remoteStream is cleared to null
       expect(result.current.remoteStream).toBeNull();
     });
 
     test('[P1] 2.3-UNIT-004: ontrack with audio track does NOT update remoteStream', async () => {
-      // Given — a connected hook
+      // Given - a connected hook
       const payload = buildFakePairingPayload();
       let trackHandler: ((event: { track: { kind: string }; streams: unknown[] }) => void) | undefined;
       mockPC.addEventListener.mockImplementation(
@@ -1293,20 +1293,20 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — an audio track event is received (not video)
+      // When - an audio track event is received (not video)
       const mockStream = { toURL: () => 'mock-audio-url', id: 'audio-stream' };
       await act(async () => {
         trackHandler?.({ track: { kind: 'audio' }, streams: [mockStream] });
       });
 
-      // Then — remoteStream remains null
+      // Then - remoteStream remains null
       expect(result.current.remoteStream).toBeNull();
     });
   });
 
   describe('signaling URL support (Story 1.7)', () => {
     test('[P0] 1.7-UNIT-007c: connect() passes payload with signaling_url to connectSignalingWithFallback (AC4)', async () => {
-      // Given — a pairing payload with signaling_url from Cloudflare Tunnel
+      // Given - a pairing payload with signaling_url from Cloudflare Tunnel
       const payload = buildFakePairingPayload({
         signaling_url: 'wss://my-tunnel.trycloudflare.com/ws/signaling',
       });
@@ -1315,13 +1315,13 @@ describe('useWebRTC hook', () => {
         connectSignalingWithFallback: jest.Mock;
       };
 
-      // When — connect() is called with the payload
+      // When - connect() is called with the payload
       const { result } = renderHook(() => useWebRTC());
       await act(async () => {
         await result.current.connect(payload);
       });
 
-      // Then — connectSignalingWithFallback is called with the payload containing signaling_url
+      // Then - connectSignalingWithFallback is called with the payload containing signaling_url
       expect(webrtcMock.connectSignalingWithFallback).toHaveBeenCalledWith(
         expect.objectContaining({
           signaling_url: 'wss://my-tunnel.trycloudflare.com/ws/signaling',
@@ -1331,20 +1331,20 @@ describe('useWebRTC hook', () => {
     });
 
     test('[P0] 1.7-UNIT-007d: connect() without signaling_url passes payload to connectSignalingWithFallback (AC5)', async () => {
-      // Given — a pairing payload WITHOUT signaling_url (LAN-only mode)
+      // Given - a pairing payload WITHOUT signaling_url (LAN-only mode)
       const payload = buildFakePairingPayload();
 
       const webrtcMock = jest.requireMock('../services/webrtc') as {
         connectSignalingWithFallback: jest.Mock;
       };
 
-      // When — connect() is called
+      // When - connect() is called
       const { result } = renderHook(() => useWebRTC());
       await act(async () => {
         await result.current.connect(payload);
       });
 
-      // Then — connectSignalingWithFallback is called with the payload (no signaling_url)
+      // Then - connectSignalingWithFallback is called with the payload (no signaling_url)
       expect(webrtcMock.connectSignalingWithFallback).toHaveBeenCalledWith(
         expect.objectContaining({
           server_host: payload.server_host,
@@ -1358,7 +1358,7 @@ describe('useWebRTC hook', () => {
     });
 
     test('[P0] 1.7-UNIT-007e: attemptFullReconnect calls connectSignalingWithFallback with stored payload (AC4)', async () => {
-      // Given — a connected temp session with signaling_url in the payload
+      // Given - a connected temp session with signaling_url in the payload
       const payload = buildFakePairingPayload({
         signaling_url: 'wss://reconnect-tunnel.trycloudflare.com/ws/signaling',
         connection_type: 'temp',
@@ -1397,7 +1397,7 @@ describe('useWebRTC hook', () => {
       // Clear to track only reconnection calls
       webrtcMock.connectSignalingWithFallback.mockClear();
 
-      // When — ICE disconnects and silent window expires, triggering full reconnect
+      // When - ICE disconnects and silent window expires, triggering full reconnect
       mockPC.connectionState = 'disconnected';
       await act(async () => {
         connectionStateHandler?.();
@@ -1406,7 +1406,7 @@ describe('useWebRTC hook', () => {
         jest.advanceTimersByTime(2000);
       });
 
-      // Then — connectSignalingWithFallback is called again with the same payload
+      // Then - connectSignalingWithFallback is called again with the same payload
       expect(webrtcMock.connectSignalingWithFallback).toHaveBeenCalledWith(
         expect.objectContaining({
           signaling_url: 'wss://reconnect-tunnel.trycloudflare.com/ws/signaling',
@@ -1420,7 +1420,7 @@ describe('useWebRTC hook', () => {
 
   describe('reconnection robustness fixes', () => {
     test('[P0] WS closed during SDP exchange throws and triggers retry', async () => {
-      // Given — a connected session that enters reconnecting state
+      // Given - a connected session that enters reconnecting state
       const payload = buildFakePairingPayload();
       let connectionStateHandler: (() => void) | undefined;
       mockPC.addEventListener.mockImplementation((event: string, handler: () => void) => {
@@ -1444,7 +1444,7 @@ describe('useWebRTC hook', () => {
         await result.current.connect(payload);
       });
 
-      // When — WS readyState becomes CLOSED before the SDP offer can be sent
+      // When - WS readyState becomes CLOSED before the SDP offer can be sent
       mockWebSocketInstance.readyState = 3; // CLOSED
 
       mockPC.connectionState = 'failed';
@@ -1452,7 +1452,7 @@ describe('useWebRTC hook', () => {
         connectionStateHandler?.();
       });
 
-      // Then — the system should NOT get stuck; it should schedule a retry
+      // Then - the system should NOT get stuck; it should schedule a retry
       // (the error is caught by attemptFullReconnect, which schedules backoff)
       // Advance past the backoff timer to trigger the next attempt
       mockWebSocketInstance.readyState = 1; // restore OPEN for next attempt
@@ -1467,7 +1467,7 @@ describe('useWebRTC hook', () => {
     });
 
     test('[P1] handleIceFailed + handleIceDisconnected race does not fire duplicate attemptFullReconnect', async () => {
-      // Given — a connected temp session (temp uses auto-reconnect on disconnect)
+      // Given - a connected temp session (temp uses auto-reconnect on disconnect)
       const payload = buildFakePairingPayload({ connection_type: 'temp' });
       let connectionStateHandler: (() => void) | undefined;
       mockPC.addEventListener.mockImplementation((event: string, handler: () => void) => {
@@ -1497,7 +1497,7 @@ describe('useWebRTC hook', () => {
 
       const callsAfterConnect = webrtcMock.connectSignalingWithFallback.mock.calls.length;
 
-      // When — ICE goes 'disconnected' (starts 2s silent window)
+      // When - ICE goes 'disconnected' (starts 2s silent window)
       mockPC.connectionState = 'disconnected';
       await act(async () => {
         connectionStateHandler?.();
@@ -1513,12 +1513,12 @@ describe('useWebRTC hook', () => {
       // One reconnection attempt should have been made (from handleIceFailed)
       expect(callsAfterFailed).toBe(callsAfterConnect + 1);
 
-      // When — the 2s silent window timer fires
+      // When - the 2s silent window timer fires
       await act(async () => {
         jest.advanceTimersByTime(2000);
       });
 
-      // Then — no additional reconnection attempt (timer was cancelled)
+      // Then - no additional reconnection attempt (timer was cancelled)
       const callsAfterTimer = webrtcMock.connectSignalingWithFallback.mock.calls.length;
       expect(callsAfterTimer).toBe(callsAfterFailed);
 
@@ -1526,7 +1526,7 @@ describe('useWebRTC hook', () => {
     });
 
     test('[P0] WS 4002 close after SDP offer sent triggers reconnection (temp connection)', async () => {
-      // Given — an initial temp connection where the SDP offer is sent successfully
+      // Given - an initial temp connection where the SDP offer is sent successfully
       // but the WS dies with 4002 before the SDP answer arrives (PC still 'new')
       const payload = buildFakePairingPayload({ connection_type: 'temp' });
       mockPC.connectionState = 'new';
@@ -1554,13 +1554,13 @@ describe('useWebRTC hook', () => {
 
       const callsAfterConnect = webrtcMock.connectSignalingWithFallback.mock.calls.length;
 
-      // When — WS closes with 4002 while PC is still 'new' (answer never arrived)
+      // When - WS closes with 4002 while PC is still 'new' (answer never arrived)
       const wsCloseHandler = wsHandlers['close']?.[0];
       await act(async () => {
         wsCloseHandler?.({ code: 4002, reason: 'superseded' });
       });
 
-      // Then — reconnection is triggered (handleIceDisconnected called)
+      // Then - reconnection is triggered (handleIceDisconnected called)
       expect(mockSetConnectionStatus).toHaveBeenCalledWith('reconnecting');
 
       // And after the 2s silent window, a full reconnection attempt is made

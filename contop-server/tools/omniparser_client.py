@@ -1,5 +1,5 @@
 """
-OmniParser V2 HTTP client — sends screenshots to an external OmniParser
+OmniParser V2 HTTP client - sends screenshots to an external OmniParser
 server for UI element detection and returns structured element data.
 
 OmniParser is optional. When unavailable, the system falls back to
@@ -10,7 +10,7 @@ that accepts a base64-encoded screenshot and returns:
 - Annotated image with numbered bounding boxes
 - List of detected elements with normalized bounding box coordinates
 
-[Source: architecture.md — GUI Automation Fallback, OmniParser V2]
+[Source: architecture.md - GUI Automation Fallback, OmniParser V2]
 """
 import logging
 import os
@@ -21,7 +21,7 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-# Default URL — override via OMNIPARSER_URL env var
+# Default URL - override via OMNIPARSER_URL env var
 DEFAULT_OMNIPARSER_URL = "http://localhost:8090"
 PARSE_TIMEOUT_S = 30.0  # OmniParser can be slow on CPU
 
@@ -142,7 +142,7 @@ class OmniParserClient:
 
         except httpx.ConnectError:
             if self._available is not False:
-                logger.info("OmniParser not available at %s — using Gemini vision fallback", self._base_url)
+                logger.info("OmniParser not available at %s - using Gemini vision fallback", self._base_url)
             self._available = False
             return None
         except Exception:
@@ -182,11 +182,11 @@ class OmniParserRouter:
                 from tools.omniparser_local import get_omniparser_local
                 self._local = get_omniparser_local()
             except ImportError as e:
-                logger.warning("OmniParser local import failed: %s — using HTTP fallback", e)
+                logger.warning("OmniParser local import failed: %s - using HTTP fallback", e)
                 self._local_available = False
                 return None
             except Exception as e:
-                logger.warning("OmniParser local init failed: %s — using HTTP fallback", e, exc_info=True)
+                logger.warning("OmniParser local init failed: %s - using HTTP fallback", e, exc_info=True)
                 self._local_available = False
                 return None
         return self._local

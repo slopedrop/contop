@@ -36,7 +36,7 @@
 
 ---
 
-Contop turns your phone into an AI remote control for any desktop. Speak or type a command on your mobile, and an autonomous agent on your computer observes your screen, runs CLI commands, clicks buttons, fills forms, automates browsers, and streams progress back — all in real time over a peer-to-peer WebRTC tunnel.
+Contop turns your phone into an AI remote control for any desktop. Speak or type a command on your mobile, and an autonomous agent on your computer observes your screen, runs CLI commands, clicks buttons, fills forms, automates browsers, and streams progress back - all in real time over a peer-to-peer WebRTC tunnel.
 
 No port forwarding. No VPN. No SSH. Scan a QR code and start working.
 
@@ -46,7 +46,7 @@ No port forwarding. No VPN. No SSH. Scan a QR code and start working.
 
 ### Desktop App
 
-**macOS (Homebrew — recommended):**
+**macOS (Homebrew - recommended):**
 ```bash
 brew install slopedrop/contop/contop
 
@@ -59,7 +59,7 @@ No security warnings. Python dependencies install automatically on first launch.
 Download the `.dmg` from [Releases](https://github.com/slopedrop/contop/releases), open it, and drag to Applications.
 > First launch: right-click the app → **Open** → click **Open** in the dialog. This is standard for open-source apps without code signing.
 
-**Windows (Scoop — recommended):**
+**Windows (Scoop - recommended):**
 ```powershell
 scoop bucket add contop https://github.com/slopedrop/scoop-contop
 scoop install contop
@@ -71,7 +71,7 @@ No SmartScreen warnings. Python dependencies install automatically on first laun
 
 **Windows (manual):**
 Download the `.exe` installer from [Releases](https://github.com/slopedrop/contop/releases) and run it.
-> SmartScreen may show a warning — click **More info** → **Run anyway**. This is standard for open-source apps without code signing.
+> SmartScreen may show a warning - click **More info** → **Run anyway**. This is standard for open-source apps without code signing.
 
 **Linux:**
 ```bash
@@ -95,7 +95,7 @@ iOS is not yet available for public alpha.
 ## How It Works
 
 <p align="center">
-  <img src="media/images/how-it-works.svg" alt="How It Works — Phone to Agent to Screen" />
+  <img src="media/images/how-it-works.svg" alt="How It Works - Phone to Agent to Screen" />
 </p>
 
 ## Demo
@@ -107,12 +107,12 @@ https://github.com/user-attachments/assets/98705f2a-72f3-4e26-ae48-bbb889ec9c97
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src="media/images/manual_control.jpg" alt="Manual control — direct touch control of the remote desktop" width="100%" /><br/>
-      <sub><b>Manual Control</b> — direct touch control of the remote screen</sub>
+      <img src="media/images/manual_control.jpg" alt="Manual control - direct touch control of the remote desktop" width="100%" /><br/>
+      <sub><b>Manual Control</b> - direct touch control of the remote screen</sub>
     </td>
     <td align="center" width="50%">
-      <img src="media/images/landscape_split_view.jpg" alt="Landscape split view — live video beside the execution thread" width="100%" /><br/>
-      <sub><b>Landscape Split View</b> — live video beside the execution thread</sub>
+      <img src="media/images/landscape_split_view.jpg" alt="Landscape split view - live video beside the execution thread" width="100%" /><br/>
+      <sub><b>Landscape Split View</b> - live video beside the execution thread</sub>
     </td>
   </tr>
 </table>
@@ -120,20 +120,20 @@ https://github.com/user-attachments/assets/98705f2a-72f3-4e26-ae48-bbb889ec9c97
 <table>
   <tr>
     <td align="center" width="25%">
-      <img src="media/images/session_history_1.jpg" alt="Session history — persisted conversation list" width="220" /><br/>
+      <img src="media/images/session_history_1.jpg" alt="Session history - persisted conversation list" width="220" /><br/>
       <sub><b>Session History</b></sub>
     </td>
     <td align="center" width="25%">
-      <img src="media/images/session_history_2.jpg" alt="Session history — restored conversation with full execution thread" width="220" /><br/>
+      <img src="media/images/session_history_2.jpg" alt="Session history - restored conversation with full execution thread" width="220" /><br/>
       <sub><b>Restored Session</b></sub>
     </td>
     <td align="center" width="25%">
-      <img src="media/images/settings_1.jpg" alt="Settings — models and API keys" width="220" /><br/>
-      <sub><b>Settings — Models</b></sub>
+      <img src="media/images/settings_1.jpg" alt="Settings - models and API keys" width="220" /><br/>
+      <sub><b>Settings - Models</b></sub>
     </td>
     <td align="center" width="25%">
-      <img src="media/images/settings_2.jpg" alt="Settings — security rules and system prompts" width="220" /><br/>
-      <sub><b>Settings — Security</b></sub>
+      <img src="media/images/settings_2.jpg" alt="Settings - security rules and system prompts" width="220" /><br/>
+      <sub><b>Settings - Security</b></sub>
     </td>
   </tr>
 </table>
@@ -141,34 +141,34 @@ https://github.com/user-attachments/assets/98705f2a-72f3-4e26-ae48-bbb889ec9c97
 ## Features
 
 ### Autonomous AI Agent
-- **30+ execution tools** — CLI, GUI automation, file operations, browser control, window management, document processing, app lifecycle, and more
-- **Smart vision routing** — 9 backends: OmniParser V2, Gemini Computer Use, Accessibility Tree, and 6 OpenRouter vision models (UI-TARS, Kimi, Qwen, Phi, Molmo, Holotron)
-- **Multi-step planning** — plan-generation tool with research sub-agent, tool chaining, and up to 50 iterations per task
-- **Multi-provider LLM** — Gemini, OpenAI, Anthropic, and OpenRouter (100+ models including Groq, Mistral, DeepSeek, and more) via LiteLLM
-- **Subscription mode** — use your existing Claude Pro/Max, Gemini Pro, or ChatGPT Plus/Pro subscription instead of API keys via the built-in CLI proxy (Claude Code, Gemini CLI, Codex CLI — text-only, no LLM vision fallback)
-- **Skills system** — extensible via SKILL.md standard with YAML workflows and Python tool loading
-- **Real-time feedback** — step-by-step progress, screenshots, and model/backend transparency streamed to your phone
+- **30+ execution tools** - CLI, GUI automation, file operations, browser control, window management, document processing, app lifecycle, and more
+- **Smart vision routing** - 9 backends: OmniParser V2, Gemini Computer Use, Accessibility Tree, and 6 OpenRouter vision models (UI-TARS, Kimi, Qwen, Phi, Molmo, Holotron)
+- **Multi-step planning** - plan-generation tool with research sub-agent, tool chaining, and up to 50 iterations per task
+- **Multi-provider LLM** - Gemini, OpenAI, Anthropic, and OpenRouter (100+ models including Groq, Mistral, DeepSeek, and more) via LiteLLM
+- **Subscription mode** - use your existing Claude Pro/Max, Gemini Pro, or ChatGPT Plus/Pro subscription instead of API keys via the built-in CLI proxy (Claude Code, Gemini CLI, Codex CLI - text-only, no LLM vision fallback)
+- **Skills system** - extensible via SKILL.md standard with YAML workflows and Python tool loading
+- **Real-time feedback** - step-by-step progress, screenshots, and model/backend transparency streamed to your phone
 
 ### Security
-- **Dual-Tool Evaluator** — every command classified and routed through a security gate before execution
-- **Destructive action approval** — dangerous operations require explicit user confirmation
-- **Sandboxed execution** — high-risk commands run in an isolated Docker container
-- **Restricted path isolation** — prevents agent from accessing protected directories
-- **JSONL audit log** — every tool call logged with timestamps, commands, and outcomes
-- **Away Mode** — PIN-locked secure overlay with auto-engage on idle (Windows)
+- **Dual-Tool Evaluator** - every command classified and routed through a security gate before execution
+- **Destructive action approval** - dangerous operations require explicit user confirmation
+- **Sandboxed execution** - high-risk commands run in an isolated Docker container
+- **Restricted path isolation** - prevents agent from accessing protected directories
+- **JSONL audit log** - every tool call logged with timestamps, commands, and outcomes
+- **Away Mode** - PIN-locked secure overlay with auto-engage on idle (Windows)
 
 ### Connectivity
-- **QR code pairing** — scan to connect with 30-day persistent tokens, no IP configuration needed
-- **Cloudflare Tunnel** — automatic public URL, zero port forwarding
-- **WebRTC P2P** — dual data channels (reliable + unreliable) with live video streaming
-- **Paired device management** — geo-location tracking, connection path visibility, per-device revoke, OS notifications
-- **Connection loss resilience** — automatic execution kill on disconnect, chat-only fallback mode
+- **QR code pairing** - scan to connect with 30-day persistent tokens, no IP configuration needed
+- **Cloudflare Tunnel** - automatic public URL, zero port forwarding
+- **WebRTC P2P** - dual data channels (reliable + unreliable) with live video streaming
+- **Paired device management** - geo-location tracking, connection path visibility, per-device revoke, OS notifications
+- **Connection loss resilience** - automatic execution kill on disconnect, chat-only fallback mode
 
 ### Desktop App (Tauri v2)
 - Lightweight native shell (Rust) with settings GUI
 - Manages the Python server as a sidecar process
 - API key and subscription mode configuration, security rules, system prompts
-- CLI proxy lifecycle management — auto-start, health monitoring, and watchdog restart
+- CLI proxy lifecycle management - auto-start, health monitoring, and watchdog restart
 - Cross-platform: Windows, macOS, Linux
 
 ### Mobile App (Expo / React Native)
@@ -180,7 +180,7 @@ https://github.com/user-attachments/assets/98705f2a-72f3-4e26-ae48-bbb889ec9c97
 ## Architecture
 
 <p align="center">
-  <img src="media/images/architecture.svg" alt="Architecture — Mobile, Desktop Host, External Services" />
+  <img src="media/images/architecture.svg" alt="Architecture - Mobile, Desktop Host, External Services" />
 </p>
 
 ## Tech Stack
@@ -203,7 +203,7 @@ https://github.com/user-attachments/assets/98705f2a-72f3-4e26-ae48-bbb889ec9c97
 
 - Python 3.12+ with [uv](https://docs.astral.sh/uv/)
 - Node.js 18+
-- At least one LLM API key: [Gemini](https://aistudio.google.com/apikey), [OpenAI](https://platform.openai.com/api-keys), [Anthropic](https://console.anthropic.com/), or [OpenRouter](https://openrouter.ai/keys) — or an existing Claude Pro/Max, Gemini Pro, or ChatGPT Plus/Pro subscription via the built-in CLI proxy
+- At least one LLM API key: [Gemini](https://aistudio.google.com/apikey), [OpenAI](https://platform.openai.com/api-keys), [Anthropic](https://console.anthropic.com/), or [OpenRouter](https://openrouter.ai/keys) - or an existing Claude Pro/Max, Gemini Pro, or ChatGPT Plus/Pro subscription via the built-in CLI proxy
 - Android / iOS device with Expo dev build
 
 ### 1. Start the Server
@@ -234,7 +234,7 @@ npx expo run:android   # or: npx expo run:ios
 
 1. Open the desktop app (or visit `http://localhost:8000`) to see the QR code
 2. Scan the QR code from the mobile app
-3. Start speaking or typing — the agent observes your screen and executes your commands
+3. Start speaking or typing - the agent observes your screen and executes your commands
 
 > For detailed setup, platform-specific instructions, and configuration options, see the [full documentation](https://docs.contop.app).
 

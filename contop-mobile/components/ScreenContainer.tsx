@@ -17,7 +17,7 @@ export default function ScreenContainer({
 }: ScreenContainerProps) {
   const insets = useSafeAreaInsets();
 
-  // Only set padding for requested edges — omit others so className
+  // Only set padding for requested edges - omit others so className
   // padding (e.g. px-8) is not overridden by explicit 0 values
   const paddingStyle: Record<string, number> = {};
   if (edges.includes('top')) paddingStyle.paddingTop = insets.top;

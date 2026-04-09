@@ -1,5 +1,5 @@
 """
-Unit tests for core/file_tools.py — File operations tools.
+Unit tests for core/file_tools.py - File operations tools.
 
 Tests read_file, edit_file, find_files with happy path, error, and edge cases.
 

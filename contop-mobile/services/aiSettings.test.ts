@@ -166,7 +166,7 @@ describe('aiSettings service', () => {
     });
 
     test('[P1] 5.7-UNIT-011: returns base prompt when customInstructions is empty string (falsy)', () => {
-      // '' is falsy — function returns base CONVERSATION_AGENT_PROMPT
+      // '' is falsy - function returns base CONVERSATION_AGENT_PROMPT
       const settings: AISettings = {
         conversationModel: 'gemini-2.5-flash',
         executionModel: 'gemini-2.5-flash',

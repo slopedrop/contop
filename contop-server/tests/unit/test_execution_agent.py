@@ -1,5 +1,5 @@
 """
-Unit tests for core/execution_agent.py — ADK agent initialization, tool loop, callbacks.
+Unit tests for core/execution_agent.py - ADK agent initialization, tool loop, callbacks.
 
 Tests 14.1-14.4, 15.1-15.3, 16.1-16.3, 17.1-17.4, 18.1-18.3 from Story 3.0.
 """
@@ -515,7 +515,7 @@ class TestRunIntent:
         await started.wait()
         assert agent._running is True
 
-        # Start second intent — should cancel first
+        # Start second intent - should cancel first
         fast_event = MagicMock()
         fast_event.is_final_response.return_value = True
         fast_event.content = MagicMock()

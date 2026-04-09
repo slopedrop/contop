@@ -8,7 +8,7 @@ Every tool execution is logged to an append-only JSONL audit trail for security 
 
 ## Log Format
 
-Audit logs use JSON Lines format — one JSON object per line, append-only:
+Audit logs use JSON Lines format - one JSON object per line, append-only:
 
 ```json
 {
@@ -57,8 +57,8 @@ One file per calendar day with daily rotation.
 
 Special log entries mark session boundaries:
 
-- **`log_session_start()`** — Records session ID, device info, connection type
-- **`log_session_end()`** — Records summary stats (total commands, duration, error count)
+- **`log_session_start()`** - Records session ID, device info, connection type
+- **`log_session_end()`** - Records summary stats (total commands, duration, error count)
 
 ## Fire-and-Forget Strategy
 
@@ -85,7 +85,7 @@ Per-session LLM call logs capture the full request/response cycle for debugging 
 
 The CLI proxy writes detailed logs to `~/.contop/logs/llm-sub-{sessionId}-{timestamp}.log`:
 
-- **Lazy creation** — Log file is only created on the first LLM call, not on proxy startup (avoids empty files)
+- **Lazy creation** - Log file is only created on the first LLM call, not on proxy startup (avoids empty files)
 - **Logged per call**: CLI binary spawned, arguments, model, prompt text, response text, tool calls, token usage, duration, and exit code
 
 ### API Mode (Direct)

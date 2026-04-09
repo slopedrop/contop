@@ -1,5 +1,5 @@
 """
-Geo-location utility — resolve IP addresses to human-readable locations.
+Geo-location utility - resolve IP addresses to human-readable locations.
 
 Private/LAN IPs → "Local Network", Tailscale CGNAT → "Tailscale Network",
 public IPs → "{city}, {country}" via ip-api.com (free, no key needed).

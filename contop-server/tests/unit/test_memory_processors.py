@@ -1,5 +1,5 @@
 """
-Unit tests for core/memory_processors.py — TokenLimiter and ToolCallFilter.
+Unit tests for core/memory_processors.py - TokenLimiter and ToolCallFilter.
 
 Tests context management processors used in _before_model_callback.
 

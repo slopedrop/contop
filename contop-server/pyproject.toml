@@ -77,7 +77,7 @@ markers = [
 asyncio_mode = "auto"
 
 [tool.uv]
-# cu126 and cpu extras are mutually exclusive — you install one or the other
+# cu126 and cpu extras are mutually exclusive - you install one or the other
 conflicts = [[{ extra = "cu126" }, { extra = "cpu" }]]
 
 # Use PyTorch CUDA index for torch/torchvision so GPU wheels are resolved

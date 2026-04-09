@@ -1,5 +1,5 @@
 """
-Document conversion tool — platform-agnostic conversion between file formats.
+Document conversion tool - platform-agnostic conversion between file formats.
 
 Registered as an agent FunctionTool when the office-documents skill is enabled.
 Detects available tools on the system and uses the best method automatically.

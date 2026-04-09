@@ -1,5 +1,5 @@
 """
-WebRTC peer connection manager — manages aiortc RTCPeerConnection lifecycle.
+WebRTC peer connection manager - manages aiortc RTCPeerConnection lifecycle.
 
 Handles SDP negotiation, ICE candidate exchange, data channel management,
 keepalive emission, and canonical message envelope formatting.
@@ -17,7 +17,7 @@ from typing import Any, Callable, Coroutine
 from aiortc import RTCConfiguration, RTCIceCandidate, RTCIceServer, RTCPeerConnection, RTCSessionDescription
 
 # Import ExecutionAgent at module level so the heavy google.adk / google.genai
-# module chain loads at server startup — NOT on first user_intent, where the
+# module chain loads at server startup - NOT on first user_intent, where the
 # synchronous import would block the event loop and starve aiortc's SCTP
 # heartbeat processing, causing the mobile to close the data channel.
 from core.execution_agent import ExecutionAgent
@@ -36,7 +36,7 @@ VALID_BACKENDS = {
 }
 
 # ---------------------------------------------------------------------------
-# Video bitrate tuning — two-pronged approach (like Chrome Remote Desktop).
+# Video bitrate tuning - two-pronged approach (like Chrome Remote Desktop).
 #
 # Problem: aiortc's encoder starts at 500 kbps (VP8) / 1 Mbps (H264) and
 # caps at 1.5 / 3 Mbps.  The mobile client's libwebrtc REMB feedback also
@@ -49,11 +49,11 @@ VALID_BACKENDS = {
 #      client's libwebrtc starts its bandwidth estimate high and sends
 #      high REMB from the very first RTCP packet.
 # ---------------------------------------------------------------------------
-_ENCODER_START_BITRATE = 1_500_000   # 1.5 Mbps — moderate start (3x VP8 default)
-_ENCODER_MAX_BITRATE   = 5_000_000   # 5 Mbps — raised ceiling for REMB ramp
-_ENCODER_MIN_BITRATE   = 250_000     # 250 kbps — keep original floor so encoder can back off
-_CLIENT_START_KBPS     = 2000        # 2 Mbps — client REMB starts here (vs default 300 kbps)
-_CLIENT_MAX_KBPS       = 8000        # 8 Mbps — client REMB ceiling
+_ENCODER_START_BITRATE = 1_500_000   # 1.5 Mbps - moderate start (3x VP8 default)
+_ENCODER_MAX_BITRATE   = 5_000_000   # 5 Mbps - raised ceiling for REMB ramp
+_ENCODER_MIN_BITRATE   = 250_000     # 250 kbps - keep original floor so encoder can back off
+_CLIENT_START_KBPS     = 2000        # 2 Mbps - client REMB starts here (vs default 300 kbps)
+_CLIENT_MAX_KBPS       = 8000        # 8 Mbps - client REMB ceiling
 
 _codec_patched = False
 
@@ -91,7 +91,7 @@ def _boost_sdp_bitrate(sdp: str) -> str:
     its remote description, it parses x-google-start-bitrate and uses it as
     the initial bandwidth estimate for its congestion controller.  This makes
     the client send high REMB values from the very first RTCP packet, so the
-    server encoder ramps up almost instantly — the same trick CRD uses.
+    server encoder ramps up almost instantly - the same trick CRD uses.
     """
     import re
 
@@ -283,7 +283,7 @@ class WebRTCPeerManager:
                 # the reliable transport on slower links (Tailscale/tunnel),
                 # causing SCTP abort and data channel death within seconds.
                 # Frames are sent on-demand when user_intent needs LLM context.
-                # The video track (RTP) handles live display — it's unreliable
+                # The video track (RTP) handles live display - it's unreliable
                 # and gracefully degrades under congestion.
                 logger.info("Data channel '%s' received from mobile (connection_type=%s)", label, self.connection_type)
 
@@ -295,10 +295,10 @@ class WebRTCPeerManager:
                 def on_dc_close() -> None:
                     self._data_channel = None
                     if self._has_running_execution():
-                        logger.warning("Data channel closed during execution — killing execution immediately")
+                        logger.warning("Data channel closed during execution - killing execution immediately")
                         self._disconnect_cleanup_task = asyncio.create_task(self._kill_execution_on_disconnect())
                     else:
-                        logger.warning("Data channel closed — closing peer connection")
+                        logger.warning("Data channel closed - closing peer connection")
                         asyncio.create_task(self._close_and_unregister())
 
         except (TypeError, AttributeError):
@@ -322,7 +322,7 @@ class WebRTCPeerManager:
             self._screen_track = ScreenCaptureTrack()
             self._pc.addTrack(self._screen_track)
         except Exception:
-            logger.exception("Failed to create screen capture track — continuing without video")
+            logger.exception("Failed to create screen capture track - continuing without video")
             self._screen_track = None
 
         answer = await self._pc.createAnswer()
@@ -400,17 +400,17 @@ class WebRTCPeerManager:
         """
         if self._keepalive_task is not None:
             if not self._keepalive_task.done():
-                logger.warning("Keepalive already running — skipped start")
+                logger.warning("Keepalive already running - skipped start")
                 return
-            # Previous task ended (crashed or exited) — log and restart
+            # Previous task ended (crashed or exited) - log and restart
             try:
                 exc = self._keepalive_task.exception() if not self._keepalive_task.cancelled() else None
             except (asyncio.CancelledError, BaseException):
                 exc = None  # Task raised CancelledError explicitly (not via .cancel())
             if exc:
-                logger.error("Previous keepalive task crashed: %s — restarting", exc)
+                logger.error("Previous keepalive task crashed: %s - restarting", exc)
             else:
-                logger.warning("Previous keepalive task ended — restarting")
+                logger.warning("Previous keepalive task ended - restarting")
             self._keepalive_task = None
 
         logger.info("Keepalive loop starting (closed=%s)", self._closed)
@@ -426,9 +426,9 @@ class WebRTCPeerManager:
         except (asyncio.CancelledError, BaseException):
             exc = None
         if exc:
-            logger.error("Keepalive task died: %s — auto-restarting", exc, exc_info=exc)
+            logger.error("Keepalive task died: %s - auto-restarting", exc, exc_info=exc)
         elif not self._closed:
-            logger.warning("Keepalive task exited without error while peer is still open — auto-restarting")
+            logger.warning("Keepalive task exited without error while peer is still open - auto-restarting")
         else:
             return  # Peer is closed, don't restart
         # Auto-restart: clear the dead task and start a fresh one
@@ -503,15 +503,15 @@ class WebRTCPeerManager:
             logger.info("Execution stop requested by client")
             return
         if msg_type == "new_session":
-            # Mobile started a new chat — reset ADK session to clear multi-turn memory
+            # Mobile started a new chat - reset ADK session to clear multi-turn memory
             if self._execution_agent is not None:
                 self._execution_agent.reset_session()
             self._reconnect_context = ""
             self._pending_adk_session_id = None
-            logger.info("New session requested by client — ADK session reset")
+            logger.info("New session requested by client - ADK session reset")
             return
         if msg_type == "session_context":
-            # Mobile reconnected with an existing session — store conversation
+            # Mobile reconnected with an existing session - store conversation
             # backstory so the ADK agent has context on the next user_intent.
             payload = data.get("payload", {})
             entries = payload.get("entries", [])
@@ -580,7 +580,7 @@ class WebRTCPeerManager:
         tool_name = payload.get("name", "")
         args = payload.get("args", {})
         gemini_call_id = payload.get("gemini_call_id", "")
-        # H3: force_host must NOT come from the raw tool_call payload — it can
+        # H3: force_host must NOT come from the raw tool_call payload - it can
         # only be set by the confirmation flow in execution_agent._before_tool_callback.
         force_host = False
 
@@ -682,7 +682,7 @@ class WebRTCPeerManager:
 
         # Sanitize the system prompt for CLI providers: strip identity
         # overrides that cause CLI tools to reject the prompt as injection.
-        # The original prompt is preserved for API mode — this only affects
+        # The original prompt is preserved for API mode - this only affects
         # the subscription path through CLI proxies.
         if system_prompt and isinstance(system_prompt, str):
             system_prompt = system_prompt.replace(
@@ -692,11 +692,11 @@ class WebRTCPeerManager:
                 "You are one half of a two-agent system:",
                 "The system uses a two-agent architecture:",
             ).replace(
-                "- **You (mobile agent)** — handle conversation, memory, and routing. You decide whether a request needs desktop execution or can be answered directly.",
-                "- **Conversation agent** — handles conversation, memory, and routing. Decides whether a request needs desktop execution or can be answered directly.",
+                "- **You (mobile agent)** - handle conversation, memory, and routing. You decide whether a request needs desktop execution or can be answered directly.",
+                "- **Conversation agent** - handles conversation, memory, and routing. Decides whether a request needs desktop execution or can be answered directly.",
             ).replace(
-                "You CANNOT see the desktop screen — only the desktop agent can.",
-                "The conversation agent cannot see the desktop screen — only the desktop agent can.",
+                "You CANNOT see the desktop screen - only the desktop agent can.",
+                "The conversation agent cannot see the desktop screen - only the desktop agent can.",
             ).replace(
                 "You remember everything said in this conversation. The conversation history IS your memory. Never claim you cannot remember something from earlier. If the user told you their name, you know it.",
                 "The conversation history serves as memory. Everything said in this conversation is available for reference.",
@@ -890,7 +890,7 @@ class WebRTCPeerManager:
             custom_instructions = payload.get("custom_instructions") or None
             # Mobile tells us whether it's using subscription (CLI proxy) for this model.
             # If explicitly False, the server must NOT route through the CLI proxy even
-            # if the server's own settings say cli_proxy — mobile's choice wins.
+            # if the server's own settings say cli_proxy - mobile's choice wins.
             use_subscription = payload.get("use_subscription")
 
             # Send state_update immediately
@@ -939,7 +939,7 @@ class WebRTCPeerManager:
         """Periodically send keepalive messages every KEEPALIVE_INTERVAL_SECONDS.
 
         Does NOT close the connection on missed responses. Mobile apps pause JS
-        execution when backgrounded — keepalive replies stop but the P2P ICE
+        execution when backgrounded - keepalive replies stop but the P2P ICE
         transport stays alive (STUN binding requests continue at the ICE layer).
         Closing the connection here would kill a viable session.
 
@@ -950,11 +950,11 @@ class WebRTCPeerManager:
         """
         send_count = 0
         try:
-            logger.info("Keepalive loop running — first send in %ds", KEEPALIVE_INTERVAL_SECONDS)
+            logger.info("Keepalive loop running - first send in %ds", KEEPALIVE_INTERVAL_SECONDS)
             while True:
                 await asyncio.sleep(KEEPALIVE_INTERVAL_SECONDS)
                 if self._closed:
-                    logger.info("Keepalive loop exiting — peer closed (sent %d total)", send_count)
+                    logger.info("Keepalive loop exiting - peer closed (sent %d total)", send_count)
                     return
                 try:
                     dc = self._data_channel
@@ -962,20 +962,20 @@ class WebRTCPeerManager:
                         self._missed_client_responses += 1
                         if self._missed_client_responses == MAX_MISSED_CLIENT_RESPONSES:
                             logger.warning(
-                                "Client unresponsive after %d keepalives — keeping connection alive (mobile may be backgrounded)",
+                                "Client unresponsive after %d keepalives - keeping connection alive (mobile may be backgrounded)",
                                 self._missed_client_responses,
                             )
                         self.send_message("keepalive", {})
                         send_count += 1
                         logger.debug("Keepalive #%d sent (missed_responses=%d)", send_count, self._missed_client_responses)
                     else:
-                        logger.warning("Keepalive skip — dc=%s state=%s", dc is not None, getattr(dc, "readyState", "N/A") if dc else "N/A")
+                        logger.warning("Keepalive skip - dc=%s state=%s", dc is not None, getattr(dc, "readyState", "N/A") if dc else "N/A")
                 except Exception:
-                    logger.exception("Keepalive iteration failed — continuing")
+                    logger.exception("Keepalive iteration failed - continuing")
         except asyncio.CancelledError:
             logger.info("Keepalive loop cancelled (sent %d total)", send_count)
         except Exception:
-            logger.exception("Keepalive loop crashed — this kills server→mobile heartbeat")
+            logger.exception("Keepalive loop crashed - this kills server→mobile heartbeat")
 
     def _has_running_execution(self) -> bool:
         """Check if an execution task is currently running."""
@@ -1001,7 +1001,7 @@ class WebRTCPeerManager:
 
         # Queue messages so mobile sees them on reconnect
         self._message_queue.append(("agent_result", {
-            "answer": "Connection lost — the running execution was stopped for safety.",
+            "answer": "Connection lost - the running execution was stopped for safety.",
             "steps_taken": 0,
             "duration_ms": 0,
         }))
@@ -1095,7 +1095,7 @@ class WebRTCPeerManager:
             self._screen_track.stop()
             self._screen_track = None
 
-        # keep_host_awake is a global setting — do NOT turn it off on session close.
+        # keep_host_awake is a global setting - do NOT turn it off on session close.
 
         try:
             await self._pc.close()

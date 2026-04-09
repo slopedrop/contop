@@ -73,7 +73,7 @@ class TestQRPayloadSchema:
         # When
         pairing_token = await generate_token()
 
-        # Then — every field is present and non-None
+        # Then - every field is present and non-None
         assert pairing_token.token is not None, "token field must be set"
         assert pairing_token.dtls_fingerprint is not None, "dtls_fingerprint field must be set"
         assert pairing_token.stun_config is not None, "stun_config field must be set"
@@ -93,7 +93,7 @@ class TestQRPayloadSchema:
         # When
         qr_bytes = await generate_qr_code(pairing_token)
 
-        # Then — QR code is valid PNG
+        # Then - QR code is valid PNG
         assert qr_bytes[:4] == b"\x89PNG", "QR code must be valid PNG"
 
     async def test_token_ttl_constant_is_30_days(self):
@@ -375,7 +375,7 @@ class TestExpiredTokenValidation:
         # Given
         pairing_token = await generate_token()
 
-        # When — simulate 31 days passing
+        # When - simulate 31 days passing
         future_time = datetime.now(timezone.utc) + timedelta(days=31)
         with patch("core.pairing.datetime") as mock_dt:
             mock_dt.now.return_value = future_time
@@ -419,14 +419,14 @@ class TestExpiredTokenValidation:
         # Given
         pairing_token = await generate_token()
 
-        # When — simulate exactly 30 days passing
+        # When - simulate exactly 30 days passing
         boundary_time = pairing_token.created_at + timedelta(days=30)
         with patch("core.pairing.datetime") as mock_dt:
             mock_dt.now.return_value = boundary_time
             mock_dt.side_effect = lambda *args, **kw: datetime(*args, **kw)
             result = await validate_token(pairing_token.token)
 
-        # Then — at exactly expires_at, the token is expired (>= comparison)
+        # Then - at exactly expires_at, the token is expired (>= comparison)
         assert result is None, (
             "Token at exactly 30-day boundary should be expired"
         )
@@ -515,7 +515,7 @@ class TestGeminiApiKeyInQRPayload:
         When:  We generate a QR code
         Then:  The payload passed to json.dumps must contain gemini_api_key with the correct value
         """
-        # Given — monkeypatch get_gemini_api_key to return the expected test value
+        # Given - monkeypatch get_gemini_api_key to return the expected test value
         monkeypatch.setattr("core.settings.get_gemini_api_key", lambda: "test-api-key-12345")
         pairing_token = await generate_token()
 
@@ -526,7 +526,7 @@ class TestGeminiApiKeyInQRPayload:
             captured_payloads.append(obj)
             return original_dumps(obj, **kwargs)
 
-        # When — capture the payload dict before it becomes JSON bytes in the QR code
+        # When - capture the payload dict before it becomes JSON bytes in the QR code
         with patch("core.pairing.json.dumps", capturing_dumps):
             await generate_qr_code(pairing_token)
 
@@ -601,7 +601,7 @@ class TestQRPayloadTunnelUrl:
 
         Given: No Cloudflare Tunnel is active
         When:  We generate a QR code
-        Then:  The payload must NOT contain signaling_url key (not null, not empty — absent)
+        Then:  The payload must NOT contain signaling_url key (not null, not empty - absent)
         """
         monkeypatch.setenv("GEMINI_API_KEY", "test-api-key")
         pairing_token = await generate_token()

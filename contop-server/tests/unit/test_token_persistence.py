@@ -1,5 +1,5 @@
 """
-Unit tests for token persistence — save/load/round-trip, temp exclusion, expiry cleanup.
+Unit tests for token persistence - save/load/round-trip, temp exclusion, expiry cleanup.
 
 Module under test: core.pairing (save_tokens_to_disk, load_tokens_from_disk, generate_token)
 """

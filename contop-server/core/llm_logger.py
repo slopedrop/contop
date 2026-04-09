@@ -1,5 +1,5 @@
 """
-LLM Call Logger — human-readable log of every model call (API mode).
+LLM Call Logger - human-readable log of every model call (API mode).
 
 Logs the full input (system prompt, messages, tool calls) and output
 (response text, tool calls, thinking) for every LLM invocation made
@@ -11,7 +11,7 @@ Stored in ~/.contop/logs/
 Instance-based: each ExecutionAgent creates its own LlmLogger to avoid
 cross-session corruption when multiple agents run concurrently.
 
-[Source: project-context.md — JSONL-Auditing]
+[Source: project-context.md - JSONL-Auditing]
 """
 
 import logging
@@ -45,7 +45,7 @@ class LlmLogger:
 
         header = (
             f"{SEP}\n"
-            f"  LLM CALL LOG — API MODE\n"
+            f"  LLM CALL LOG - API MODE\n"
             f"{SEP}\n"
             f"  Session ID : {session_id}\n"
             f"  Model      : {model}\n"
@@ -70,7 +70,7 @@ class LlmLogger:
 
         lines = [
             f"{SEP}",
-            f"  TURN {self._turn_counter} — LLM INPUT",
+            f"  TURN {self._turn_counter} - LLM INPUT",
             f"{SEP}",
             f"  Time       : {datetime.now(timezone.utc).isoformat()}",
             f"  Model      : {model}",

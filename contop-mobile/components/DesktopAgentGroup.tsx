@@ -21,7 +21,7 @@ type Props = {
 };
 
 /**
- * Collapsible "CONTOP DESKTOP" group — terminal-style subprocess view.
+ * Collapsible "CONTOP DESKTOP" group - terminal-style subprocess view.
  *
  * Collapsed: header with step count + status.
  * Expanded: terminal-style command boxes. Tap any step to open detail modal.
@@ -61,7 +61,7 @@ export default function DesktopAgentGroup({ entries, isActive }: Props): React.J
 
   return (
     <View testID="desktop-agent-group" style={s.container}>
-      {/* Header — always visible */}
+      {/* Header - always visible */}
       <Pressable onPress={() => setIsManualExpanded(!isManualExpanded)} style={s.header}>
         <View style={s.headerLeft}>
           <Ionicons name="desktop-outline" size={13} color="#6B7280" />
@@ -92,7 +92,7 @@ export default function DesktopAgentGroup({ entries, isActive }: Props): React.J
         </View>
       </Pressable>
 
-      {/* Running tool detail — visible when collapsed */}
+      {/* Running tool detail - visible when collapsed */}
       {!isExpanded && isActive && runningDetail && (
         <View style={s.runningDetail}>
           <Ionicons name="terminal-outline" size={11} color="#4ADE80" />
@@ -102,7 +102,7 @@ export default function DesktopAgentGroup({ entries, isActive }: Props): React.J
         </View>
       )}
 
-      {/* Model/backend subtitle — inside container, below header */}
+      {/* Model/backend subtitle - inside container, below header */}
       {(model || backend) && (
         <View style={s.modelSubtitle}>
           {model && (
@@ -187,7 +187,7 @@ const STEP_ICON_COLOR: Record<string, string> = {
   cancelled: '#6B7280',
 };
 
-/** Terminal-style command step — shows command, truncated output, status. */
+/** Terminal-style command step - shows command, truncated output, status. */
 function TerminalStep({ entry, onPress }: { entry: ExecutionEntry; onPress: () => void }) {
   const meta = entry.metadata ?? {};
   const tool = (meta.tool as string) ?? '';
@@ -214,11 +214,11 @@ function TerminalStep({ entry, onPress }: { entry: ExecutionEntry; onPress: () =
         />
         {status === 'running'
           ? <TextShimmer style={s.termCommand} numberOfLines={2}>
-              {isScreen ? 'observe_screen (screenshot)' : isUIContext ? 'get_ui_context (accessibility)' : command}
-            </TextShimmer>
+            {isScreen ? 'observe_screen (screenshot)' : isUIContext ? 'get_ui_context (accessibility)' : command}
+          </TextShimmer>
           : <Text style={s.termCommand} numberOfLines={2}>
-              {isScreen ? 'observe_screen (screenshot)' : isUIContext ? 'get_ui_context (accessibility)' : command}
-            </Text>
+            {isScreen ? 'observe_screen (screenshot)' : isUIContext ? 'get_ui_context (accessibility)' : command}
+          </Text>
         }
         <View style={s.termStatus}>
           {status === 'completed' && <Ionicons name="checkmark-circle" size={12} color="#22C55E" />}
@@ -294,7 +294,7 @@ function CommandDetailModal({ entry, onClose }: { entry: ExecutionEntry; onClose
           <View style={m.headerLeft}>
             <Ionicons name="terminal-outline" size={16} color="#9CA3AF" />
             <Text style={m.headerTitle}>
-              {step ? `Step ${step}` : 'Details'} — {tool}
+              {step ? `Step ${step}` : 'Details'} - {tool}
             </Text>
           </View>
           <Pressable onPress={onClose} hitSlop={12}>
@@ -311,8 +311,8 @@ function CommandDetailModal({ entry, onClose }: { entry: ExecutionEntry; onClose
             {status === 'running'
               ? <TextShimmer style={[m.statusText, { color: STEP_ICON_COLOR[status] ?? '#22C55E' }]}>{status}</TextShimmer>
               : <Text style={[m.statusText, { color: STEP_ICON_COLOR[status] ?? '#22C55E' }]}>
-                  {status}
-                </Text>
+                {status}
+              </Text>
             }
             {exitCode !== undefined && (
               <Text style={m.metaText}>exit {exitCode}</Text>

@@ -7,7 +7,7 @@ using platform-native accessibility APIs via platform_adapters/.
 All platform-specific calls are wrapped with asyncio.to_thread() since
 accessibility APIs are synchronous operations.
 
-[Source: tech-spec-gui-agent-optimization.md — Tier 1: Keyboard-First Execution]
+[Source: tech-spec-gui-agent-optimization.md - Tier 1: Keyboard-First Execution]
 """
 import asyncio
 import logging
@@ -38,7 +38,7 @@ class UIAutomation:
         Args:
             max_depth: Maximum tree depth to walk when collecting elements.
                        Default 8 handles deeply nested dialogs (Save As, Open, etc.).
-            window_title: Optional — scan this window instead of the foreground window.
+            window_title: Optional - scan this window instead of the foreground window.
                           Useful for dialogs (Save As, Open) that may not yet have focus.
 
         Returns:

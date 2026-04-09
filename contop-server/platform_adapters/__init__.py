@@ -4,7 +4,7 @@ OS-specific adapters for window management (Windows, macOS, Linux).
 Provides get_adapter() which auto-detects the platform and returns
 the appropriate PlatformAdapter instance.
 
-[Source: architecture.md — Cross-Platform OS Abstraction Layer]
+[Source: architecture.md - Cross-Platform OS Abstraction Layer]
 """
 import platform
 

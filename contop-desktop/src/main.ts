@@ -45,7 +45,7 @@ interface ConnectionInfo {
 let pollingTimer: ReturnType<typeof setInterval> | null = null;
 let connectionInfoTimer: ReturnType<typeof setInterval> | null = null;
 let proxyWatchdogTimer: ReturnType<typeof setInterval> | null = null;
-/** Providers the user explicitly stopped — watchdog won't auto-restart these. */
+/** Providers the user explicitly stopped - watchdog won't auto-restart these. */
 const userStoppedProxies = new Set<"anthropic" | "gemini" | "openai">();
 let connectionInfoFetching = false;
 let currentBlobUrl: string | null = null;
@@ -56,7 +56,7 @@ let activeApiKey = "";
 let startupTimerInterval: ReturnType<typeof setInterval> | null = null;
 let startupStartTime = 0;
 let previousHasActiveToken: boolean | null = null;
-/** Set when forget-connection runs while server is down — cleared after server-side revoke succeeds */
+/** Set when forget-connection runs while server is down - cleared after server-side revoke succeeds */
 let pendingForgetRevoke = false;
 let showingTempQR = false;
 let deviceEverConnected = false;
@@ -195,7 +195,7 @@ function updateStatus(status: ServerStatus, message?: string) {
     stopStartupTimer();
   }
 
-  // Startup detail — show contextual messages or error info
+  // Startup detail - show contextual messages or error info
   const detail = startupDetail();
   if (status === "starting") {
     detail.style.display = "";
@@ -271,7 +271,7 @@ function stopPolling() {
 }
 
 function startHealthPolling() {
-  const SAFETY_TIMEOUT_MS = 180_000; // 3 minutes — generous fallback
+  const SAFETY_TIMEOUT_MS = 180_000; // 3 minutes - generous fallback
   const pollStart = Date.now();
   let consecutiveErrors = 0;
   let healthCheckRunning = false;
@@ -290,13 +290,13 @@ function startHealthPolling() {
         activeApiKey = currentSettings?.gemini_api_key || "";
         showConnectionInfo();
         // If a forget/revoke happened while server was down, tokens.json was
-        // already deleted by forget_connection — the server started with 0 tokens.
+        // already deleted by forget_connection - the server started with 0 tokens.
         // No need for a server-side DELETE (which could race with the new token).
         // Just clear the flag and create a fresh QR.
         const wasForgetPending = pendingForgetRevoke;
         pendingForgetRevoke = false;
-        try { await fetchQRCode(true); } catch { /* QR fetch failed — error shown in placeholder */ }
-        // Poll faster (1s) after a pending forget — the mobile's "Forget Connection"
+        try { await fetchQRCode(true); } catch { /* QR fetch failed - error shown in placeholder */ }
+        // Poll faster (1s) after a pending forget - the mobile's "Forget Connection"
         // also sends DELETE /api/pair which may revoke the token we just created.
         // Fast polling detects this and regenerates the QR before the user scans.
         startConnectionInfoPolling(wasForgetPending ? 1000 : 5000);
@@ -317,7 +317,7 @@ function startHealthPolling() {
       stopPolling();
       updateStatus("error", "Server did not respond after 3 minutes. Try stopping and starting again.");
     } else if (consecutiveErrors >= 20 && elapsed > 30_000) {
-      // 20 consecutive errors (10s of failures) after at least 30s — process likely crashed
+      // 20 consecutive errors (10s of failures) after at least 30s - process likely crashed
       stopPolling();
       updateStatus("error", "Server process appears to have stopped unexpectedly. Try starting again.");
     }
@@ -412,7 +412,7 @@ async function fetchConnectionInfo() {
       }
     }
 
-    // Manual connection details — show toggle when there's an active token
+    // Manual connection details - show toggle when there's an active token
     const manualToggle = $("manual-details-toggle");
     const manualTokenEl = $("manual-token");
     const manualHostEl = $("manual-host");
@@ -449,7 +449,7 @@ async function fetchConnectionInfo() {
     // handles both same-device switching and new-device connections.
     if (showingTempQR) {
       if (!tempDeviceConnected) {
-        // Track the lowest client count seen — catches phone disconnecting from permanent
+        // Track the lowest client count seen - catches phone disconnecting from permanent
         minClientsSinceTempQR = Math.min(minClientsSinceTempQR, info.connected_clients);
 
         if (info.connected_clients > minClientsSinceTempQR) {
@@ -473,7 +473,7 @@ async function fetchConnectionInfo() {
           startConnectionInfoPolling();
         }
       } else if (info.connected_clients === 0) {
-        // All devices disconnected — reset temp QR state so permanent UI takes over
+        // All devices disconnected - reset temp QR state so permanent UI takes over
         showingTempQR = false;
         tempDeviceConnected = false;
         if (tempQRBtnEl) {
@@ -484,7 +484,7 @@ async function fetchConnectionInfo() {
         if (cancelBtnEl2) cancelBtnEl2.style.display = "none";
         startConnectionInfoPolling();
       }
-      // else: QR still showing (no temp device yet) or temp device still connected — no action
+      // else: QR still showing (no temp device yet) or temp device still connected - no action
     }
 
     if (!showingTempQR && pairedStatusEl) {
@@ -502,14 +502,14 @@ async function fetchConnectionInfo() {
         // No device connected yet: keep QR visible, hide paired controls
         pairedStatusEl.style.display = "none";
         if (forgetBtnEl) forgetBtnEl.style.display = "none";
-        // Always show temp QR button — users can generate temp access even before permanent pairing
+        // Always show temp QR button - users can generate temp access even before permanent pairing
         if (tempQRBtnEl) tempQRBtnEl.style.display = "";
       }
     }
 
     // Cross-device sync: detect token revocation and auto-regenerate QR
     if (previousHasActiveToken === true && !info.has_active_token) {
-      // Token was just revoked (e.g., mobile forgot connection) — regenerate QR
+      // Token was just revoked (e.g., mobile forgot connection) - regenerate QR
       showingTempQR = false;
       deviceEverConnected = false;
       tempDeviceConnected = false;
@@ -519,7 +519,7 @@ async function fetchConnectionInfo() {
         const notice = $("qr-notice");
         notice.textContent = "Connection was forgotten \u2014 scan the new QR code to pair.";
         notice.style.display = "block";
-      } catch { /* server may be restarting — fetchQRCode already shows the error */ }
+      } catch { /* server may be restarting - fetchQRCode already shows the error */ }
     }
     previousHasActiveToken = info.has_active_token;
   } catch {
@@ -532,28 +532,28 @@ async function fetchConnectionInfo() {
 // --- Devices Tab ---
 
 function formatDate(iso: string | null): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   try {
     const d = new Date(iso);
     return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
-  } catch { return "—"; }
+  } catch { return "-"; }
 }
 
 function formatTime(iso: string | null): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   try {
     const d = new Date(iso);
     return d.toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
-  } catch { return "—"; }
+  } catch { return "-"; }
 }
 
 function connectionPathLabel(path: string | null): string {
-  if (!path) return "—";
+  if (!path) return "-";
   const map: Record<string, string> = { lan: "LAN", tailscale: "Tailscale", tunnel: "Tunnel" };
   return map[path] || path;
 }
 
-/** Shared cleanup after forgetting the connection — resets pairing state, QR area, and device list. */
+/** Shared cleanup after forgetting the connection - resets pairing state, QR area, and device list. */
 async function performForgetCleanup() {
   try { await invoke("forget_connection"); } catch { /* best-effort */ }
 
@@ -576,7 +576,7 @@ async function performForgetCleanup() {
   // Clear device list
   renderDeviceList([]);
 
-  // Generate fresh QR — if server is down, mark as pending so we revoke + regenerate on next start
+  // Generate fresh QR - if server is down, mark as pending so we revoke + regenerate on next start
   try {
     await fetchQRCode(true);
     await pollDevices();
@@ -609,7 +609,7 @@ function renderDeviceList(devices: DeviceInfo[]) {
     const statusClass = d.connected ? "connected" : "disconnected";
     const statusLabel = d.connected ? "Connected" : "Disconnected";
     const safeName = escapeHtml(d.device_name || "Unknown Device");
-    const safeLocation = escapeHtml(d.last_location || "—");
+    const safeLocation = escapeHtml(d.last_location || "-");
     const safeDeviceId = escapeHtml(d.device_id || "");
     return `
       <div class="device-card">
@@ -755,7 +755,7 @@ function updateSetupStep1() {
 
 async function fetchQRCode(_force = false, connectionType?: string) {
   try {
-    // Omit connection_type param entirely when not specified — Tauri Option<String>
+    // Omit connection_type param entirely when not specified - Tauri Option<String>
     // requires the key to be absent (not null) to deserialize as None
     const args: Record<string, string> = {};
     if (connectionType) {
@@ -798,10 +798,10 @@ function updateProxyStatusUI(provider: string, status: "running" | "stopped" | "
     dot.title = titles[status] || status;
   }
   const startBtn = document.getElementById(`sub-start-${provider}`) as HTMLButtonElement | null;
-  const stopBtn  = document.getElementById(`sub-stop-${provider}`)  as HTMLButtonElement | null;
+  const stopBtn = document.getElementById(`sub-stop-${provider}`) as HTMLButtonElement | null;
   const processAlive = status !== "stopped";
   if (startBtn) startBtn.disabled = processAlive;
-  if (stopBtn)  stopBtn.disabled  = !processAlive;
+  if (stopBtn) stopBtn.disabled = !processAlive;
 }
 
 /** Notify the server of proxy changes so it pushes live status to mobile. */
@@ -833,7 +833,7 @@ async function syncProxies(settings: Settings): Promise<void> {
   for (const provider of ["anthropic", "gemini", "openai"] as const) {
     const cfg = providerAuth[provider];
     if (cfg?.mode === "cli_proxy") {
-      // Mode changed to cli_proxy — clear any prior user-stop intent and start
+      // Mode changed to cli_proxy - clear any prior user-stop intent and start
       userStoppedProxies.delete(provider);
       const port = cfg.proxy_url ? portFromUrl(cfg.proxy_url, 0) || undefined : undefined;
       try { await invoke("start_proxy", { provider, port }); } catch { /* already running or npx not found */ }
@@ -873,7 +873,7 @@ function startProxyWatchdog(): void {
             updateProxyStatusUI(provider, "starting");
             setTimeout(() => void refreshAllProxyStatuses(), 2000);
           }
-        } catch { /* ignore — server may be stopping */ }
+        } catch { /* ignore - server may be stopping */ }
       }
     } finally {
       watchdogRunning = false;
@@ -902,7 +902,7 @@ async function startServer() {
   } catch (e) {
     const errMsg = String(e).toLowerCase();
     if (errMsg.includes("already running") || errMsg.includes("already in use")) {
-      // Server/port is occupied — kill the process on the port, wait 5s, then retry
+      // Server/port is occupied - kill the process on the port, wait 5s, then retry
       updateStatus("starting", "Port occupied. Killing existing process and restarting...");
       startBtn().disabled = true;
       stopBtn().disabled = true;
@@ -950,7 +950,7 @@ async function stopServer() {
   stopDevicesPolling();
   stopProxyWatchdog();
   userStoppedProxies.clear();
-  // Kill all CLI proxy processes — they serve no purpose without the server
+  // Kill all CLI proxy processes - they serve no purpose without the server
   for (const provider of ["anthropic", "gemini", "openai"] as const) {
     try { await invoke("stop_proxy", { provider }); } catch { /* already stopped */ }
     updateProxyStatusUI(provider, "stopped");
@@ -1038,7 +1038,7 @@ async function onApiKeyChanged(newKey: string) {
       const notice = $("qr-notice");
       notice.textContent = "API key changed \u2014 QR code refreshed. Please re-scan.";
       notice.style.display = "block";
-    } catch { /* QR refresh failed — fetchQRCode already shows the error */ }
+    } catch { /* QR refresh failed - fetchQRCode already shows the error */ }
   }
 }
 
@@ -1234,7 +1234,7 @@ async function saveSettings() {
     const portInput = $(`sub-port-${provider}`) as HTMLInputElement;
     const port = parseInt(portInput.value, 10);
     const proxyUrl = port ? `http://localhost:${port}` : currentSettings.provider_auth[provider]?.proxy_url || "";
-    // Preserve existing mode — it's set by Start/Stop actions, not a checkbox
+    // Preserve existing mode - it's set by Start/Stop actions, not a checkbox
     const existingMode = currentSettings.provider_auth[provider]?.mode ?? "api_key";
     currentSettings.provider_auth[provider] = { mode: existingMode, proxy_url: proxyUrl };
   }
@@ -1525,7 +1525,7 @@ async function loadSkills() {
         listEl.querySelectorAll(`.skill-tab[data-skill-tab="${skillName}"]`).forEach((t) => t.classList.remove("active"));
         el.classList.add("active");
 
-        // Show/hide content — load async content before swapping to avoid jitter
+        // Show/hide content - load async content before swapping to avoid jitter
         const mdPanel = $(`skill-tab-md-${skillName}`);
         const scriptsPanel = $(`skill-tab-scripts-${skillName}`);
 
@@ -1556,7 +1556,7 @@ async function loadSkills() {
               scriptsList!.innerHTML = '<p class="skill-description">Failed to load scripts.</p>';
             }
           }
-          // Content ready — now swap panels atomically
+          // Content ready - now swap panels atomically
           if (mdPanel) mdPanel.style.display = "none";
           scriptsPanel.style.display = "block";
         } else {
@@ -1640,7 +1640,7 @@ async function loadSkills() {
 window.addEventListener("DOMContentLoaded", async () => {
   updateStatus("stopped");
 
-  // First-launch setup — runs GPU detection + dependency installation if needed
+  // First-launch setup - runs GPU detection + dependency installation if needed
   // Non-blocking: runs in background so window close always works
   {
     const setupStatus = document.getElementById("setup-status");
@@ -1740,7 +1740,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     invoke<string>("ensure_dependencies_installed")
       .then((result) => {
         if (result === "ready") {
-          // Already installed — don't show overlay at all
+          // Already installed - don't show overlay at all
         } else if (statusEl) {
           statusEl.textContent = "Dependencies ready.";
           setProgress(100);
@@ -1781,7 +1781,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     console.warn("Update check failed (non-fatal):", e);
   }
 
-  // Page navigation — refresh settings data when entering Settings page
+  // Page navigation - refresh settings data when entering Settings page
   document.querySelectorAll(".nav-item").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const page = (btn as HTMLElement).dataset.page;
@@ -1839,7 +1839,7 @@ window.addEventListener("DOMContentLoaded", async () => {
             mode: "cli_proxy",
             proxy_url: `http://localhost:${port ?? portInput.value}`,
           };
-          void invoke("save_settings", { settings: currentSettings }).catch(() => {});
+          void invoke("save_settings", { settings: currentSettings }).catch(() => { });
         }
         statusEl.textContent = "Launching…";
         statusEl.className = "sub-status";
@@ -1854,10 +1854,10 @@ window.addEventListener("DOMContentLoaded", async () => {
               statusEl.textContent = "Connected";
               statusEl.className = "sub-status sub-ok";
             } else if (s === "stopped" || s === "degraded") {
-              statusEl.textContent = s === "degraded" ? "CLI session failed" : "Process exited — check logs";
+              statusEl.textContent = s === "degraded" ? "CLI session failed" : "Process exited - check logs";
               statusEl.className = "sub-status sub-error";
             }
-            // "starting" — leave "Launching…" text, next check will resolve
+            // "starting" - leave "Launching…" text, next check will resolve
           } catch { /* */ }
         };
         setTimeout(() => { void checkHealth(); void notifyProxyChange(); }, 2000);
@@ -1874,12 +1874,12 @@ window.addEventListener("DOMContentLoaded", async () => {
         await invoke("stop_proxy", { provider });
         userStoppedProxies.add(provider);
       } catch {
-        // stop_proxy failed — don't add to Set so watchdog can still manage it
+        // stop_proxy failed - don't add to Set so watchdog can still manage it
       }
       // Set mode back to api_key
       if (currentSettings?.provider_auth) {
         currentSettings.provider_auth[provider].mode = "api_key";
-        void invoke("save_settings", { settings: currentSettings }).catch(() => {});
+        void invoke("save_settings", { settings: currentSettings }).catch(() => { });
       }
       updateProxyStatusUI(provider, "stopped");
       updateApiKeyPrompt(currentSettings?.gemini_api_key ?? "");
@@ -2003,7 +2003,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   $("copy-token-btn").addEventListener("click", () => {
     const tokenEl = $("manual-token");
     const text = tokenEl.textContent ?? "";
-    if (text && text !== "—") {
+    if (text && text !== "-") {
       navigator.clipboard.writeText(text);
       const btn = $("copy-token-btn") as HTMLButtonElement;
       btn.textContent = "Copied!";
@@ -2011,7 +2011,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // Temp QR button — start tunnel on demand, then generate a temp QR code.
+  // Temp QR button - start tunnel on demand, then generate a temp QR code.
   // Also handles "Show QR" re-display when temp device already connected.
   $("temp-qr-btn").addEventListener("click", async () => {
     const btn = $("temp-qr-btn") as HTMLButtonElement;
@@ -2057,7 +2057,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // Cancel temp QR — switch back to permanent QR mode
+  // Cancel temp QR - switch back to permanent QR mode
   $("cancel-temp-qr-btn").addEventListener("click", async () => {
     showingTempQR = false;
     tempDeviceConnected = false;
@@ -2111,14 +2111,14 @@ window.addEventListener("DOMContentLoaded", async () => {
       showConnectionInfo();
       const wasForgetPending = pendingForgetRevoke;
       pendingForgetRevoke = false;
-      try { await fetchQRCode(true); } catch { /* QR fetch failed — error shown in placeholder */ }
+      try { await fetchQRCode(true); } catch { /* QR fetch failed - error shown in placeholder */ }
       startConnectionInfoPolling(wasForgetPending ? 1000 : 5000);
     }
   } catch {
-    // Server not running — keep "stopped" state
+    // Server not running - keep "stopped" state
   }
 
-  // Home page is default — the API key prompt card is visible there if no key is set
+  // Home page is default - the API key prompt card is visible there if no key is set
   if (!hasApiKey) {
     navigateTo("home");
   }

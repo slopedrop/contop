@@ -14,8 +14,8 @@ sidebar_position: 1
 | **Package Manager** | [uv](https://docs.astral.sh/uv/) (Python dependency management) |
 | **RAM** | 4 GB minimum, 8 GB recommended (16 GB if using local OmniParser) |
 | **Disk** | ~500 MB for server + dependencies |
-| **[Docker](/security/docker-sandbox)** | Optional — required for sandboxed command execution |
-| **GPU** | Optional — NVIDIA GPU accelerates OmniParser (CPU fallback available) |
+| **[Docker](/security/docker-sandbox)** | Optional - required for sandboxed command execution |
+| **GPU** | Optional - NVIDIA GPU accelerates OmniParser (CPU fallback available) |
 
 ### Platform-Specific Notes
 

@@ -251,7 +251,7 @@ class TestTokenReconnection:
             except Exception:
                 pass
 
-        # Then — old peer manager was closed
+        # Then - old peer manager was closed
         old_peer.close.assert_called_once()
 
     async def test_new_ws_creates_fresh_session(self):

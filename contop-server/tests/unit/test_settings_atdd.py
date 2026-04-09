@@ -55,7 +55,7 @@ class TestDefaultSettingsCreation:
         When:  load_settings() is called
         Then:  A file at the settings path must be created with DEFAULT_SETTINGS
         """
-        # Given — file does not exist
+        # Given - file does not exist
         assert not isolate_settings.exists(), "Settings file should not exist before first load"
 
         # When
@@ -185,11 +185,11 @@ class TestHotReload:
         When:  The file is modified externally with new values
         Then:  get_settings() must return the new values (not stale cache)
         """
-        # Given — initial load creates defaults
+        # Given - initial load creates defaults
         initial = load_settings()
         assert initial == DEFAULT_SETTINGS
 
-        # When — modify file externally
+        # When - modify file externally
         modified = {
             "version": 1,
             "restricted_paths": ["/new/restricted"],
@@ -201,7 +201,7 @@ class TestHotReload:
         future_time = time.time() + 2
         os.utime(isolate_settings, (future_time, future_time))
 
-        # Then — get_settings() must detect change
+        # Then - get_settings() must detect change
         reloaded = get_settings()
         assert reloaded["restricted_paths"] == ["/new/restricted"], (
             f"get_settings() must detect file changes, got {reloaded['restricted_paths']}"
@@ -233,7 +233,7 @@ class TestSaveSettings:
         }
         save_settings(custom)
 
-        # Then — read file directly (bypass cache)
+        # Then - read file directly (bypass cache)
         on_disk = json.loads(isolate_settings.read_text())
         assert on_disk["restricted_paths"] == ["/saved/path"], (
             f"File on disk must contain saved paths, got {on_disk['restricted_paths']}"

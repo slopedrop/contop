@@ -49,7 +49,7 @@ export function useWebRTC() {
   // Callback ref for forwarding data channel messages to consumers (e.g. useConversation)
   const onDataChannelMessageRef = useRef<((message: DataChannelMessage) => void) | null>(null);
 
-  // Ref for shared connection setup — breaks circular useCallback dependency
+  // Ref for shared connection setup - breaks circular useCallback dependency
   // between initConnection → handleIce* → attemptFullReconnect → initConnection
   const initConnectionRef = useRef<(payload: PairingPayload) => Promise<void>>(
     () => Promise.resolve(),
@@ -102,10 +102,10 @@ export function useWebRTC() {
       pcRef.current = null;
       dcRef.current = null;
       fastDcRef.current = null;
-      if (prevFastDc) try { prevFastDc.close(); } catch {}
-      if (prevDc) try { prevDc.close(); } catch {}
-      if (prevPc) try { prevPc.close(); } catch {}
-      if (prevWs) try { prevWs.close(); } catch {}
+      if (prevFastDc) try { prevFastDc.close(); } catch { }
+      if (prevDc) try { prevDc.close(); } catch { }
+      if (prevPc) try { prevPc.close(); } catch { }
+      if (prevWs) try { prevWs.close(); } catch { }
       connectingRef.current = false;
     }
 
@@ -121,11 +121,11 @@ export function useWebRTC() {
 
     try {
       // _doInitConnection closes existing PC/WS/DC internally (lines 180-188).
-      // Do NOT close refs here — a concurrent _doInitConnection may be using them.
+      // Do NOT close refs here - a concurrent _doInitConnection may be using them.
       await initConnectionRef.current(payload);
     } catch (err) {
       console.warn('[WebRTC] Reconnection attempt failed:', (err as Error)?.message ?? err);
-      // Reconnection attempt failed — schedule next with backoff
+      // Reconnection attempt failed - schedule next with backoff
       if (!isReconnectingRef.current) return;
       if (reconnectAttemptsRef.current >= MAX_RECONNECT_ATTEMPTS) {
         isReconnectingRef.current = false;
@@ -142,14 +142,14 @@ export function useWebRTC() {
   }, []);
 
   const handleIceDisconnected = useCallback(() => {
-    // Stop keepalive timer from old connection — prevents stale warnings during reconnect
+    // Stop keepalive timer from old connection - prevents stale warnings during reconnect
     if (keepaliveTimerRef.current) {
       clearInterval(keepaliveTimerRef.current);
       keepaliveTimerRef.current = null;
     }
 
     if (isReconnectingRef.current) {
-      // Already reconnecting — this disconnect is from a failed reconnection attempt
+      // Already reconnecting - this disconnect is from a failed reconnection attempt
       attemptFullReconnect();
       return;
     }
@@ -164,7 +164,7 @@ export function useWebRTC() {
       const { setConnectionStatus, setAIState, setProviderAuth, providerAuth } = useAIStore.getState();
       setAIState('idle');
       setConnectionStatus('disconnected');
-      // Mark all proxies as unavailable — they can't be reached without a connection
+      // Mark all proxies as unavailable - they can't be reached without a connection
       if (providerAuth) {
         const unavailable: Record<string, { mode: string; available: boolean }> = {};
         for (const [p, cfg] of Object.entries(providerAuth)) {
@@ -192,7 +192,7 @@ export function useWebRTC() {
       silentWindowTimerRef.current = null;
       if (!isReconnectingRef.current) return;
 
-      // Silent window expired — trigger haptic and start full reconnection
+      // Silent window expired - trigger haptic and start full reconnection
       await triggerDisconnectHaptic();
       attemptFullReconnect();
     }, SILENT_RECONNECT_WINDOW_MS);
@@ -205,13 +205,13 @@ export function useWebRTC() {
     }
     useAIStore.getState().setConnectionStatus('reconnecting');
 
-    // ICE failed permanently — skip silent window but alert user with haptic
+    // ICE failed permanently - skip silent window but alert user with haptic
     triggerDisconnectHaptic();
     // Immediately attempt full reconnection
     attemptFullReconnect();
   }, [attemptFullReconnect]);
 
-  // Shared connection setup — creates WS, PC, DC, event handlers, and SDP exchange.
+  // Shared connection setup - creates WS, PC, DC, event handlers, and SDP exchange.
   // Reassigned every render so closures always capture the latest useCallback refs.
   // Safety: setRemoteStream is stable (React useState setter identity guarantee),
   // and all useCallback refs are stable due to ref-based dependencies.
@@ -247,7 +247,7 @@ export function useWebRTC() {
     if (prevPc) prevPc.close();
     if (prevWs) prevWs.close();
 
-    // LAN-first connection with fallback — tries all available paths automatically
+    // LAN-first connection with fallback - tries all available paths automatically
     console.log('[WebRTC] Connecting with fallback strategy');
     const { ws, path } = await connectSignalingWithFallback(payload);
     console.log('[WebRTC] Connected via:', path);
@@ -275,10 +275,10 @@ export function useWebRTC() {
 
     dc.addEventListener('open', () => {
       // Guard: ignore stale DC open events from a previous (dead) peer connection.
-      // Use ref check instead of pc.connectionState — the ref is nulled in cleanup
+      // Use ref check instead of pc.connectionState - the ref is nulled in cleanup
       // while connectionState can lag behind on react-native-webrtc.
       if (pc !== pcRef.current) {
-        console.log('[WebRTC] DC open from stale PC — ignoring');
+        console.log('[WebRTC] DC open from stale PC - ignoring');
         return;
       }
       console.log('[WebRTC] Data channel opened');
@@ -299,9 +299,9 @@ export function useWebRTC() {
     dc.addEventListener('close', () => {
       console.warn('[WebRTC] Data channel closed');
       // Data channel can die while ICE/RTP stays alive (SCTP transport issue).
-      // Video keeps playing but messages can't get through — trigger reconnection.
+      // Video keeps playing but messages can't get through - trigger reconnection.
       if (dc === dcRef.current && !isReconnectingRef.current) {
-        console.log('[WebRTC] Data channel lost — triggering reconnection');
+        console.log('[WebRTC] Data channel lost - triggering reconnection');
         handleIceDisconnected();
       }
     });
@@ -324,7 +324,7 @@ export function useWebRTC() {
 
       if (message.type === 'keepalive') {
         // Reset counter AND restart timer so the 30s window begins from this
-        // keepalive — eliminates false "missed" warnings caused by phase drift
+        // keepalive - eliminates false "missed" warnings caused by phase drift
         // between independently-started client/server timers.
         missedKeepalivesRef.current = 0;
         if (keepaliveTimerRef.current) {
@@ -346,7 +346,7 @@ export function useWebRTC() {
         const validStates: AIState[] = ['idle', 'listening', 'processing', 'executing', 'sandboxed', 'disconnected'];
         const newState = (message.payload?.ai_state ?? message.payload?.state) as AIState | undefined;
         if (newState && validStates.includes(newState)) {
-          // Don't let server state_update overwrite manual mode — user is in direct control
+          // Don't let server state_update overwrite manual mode - user is in direct control
           const current = useAIStore.getState().aiState;
           if (current !== 'manual') {
             useAIStore.getState().setAIState(newState);
@@ -361,7 +361,7 @@ export function useWebRTC() {
         if (serverConnType === 'temp' || serverConnType === 'permanent') {
           useAIStore.getState().setConnectionType(serverConnType);
         }
-        // Sync provider_auth — tells mobile which providers have a proxy configured on desktop.
+        // Sync provider_auth - tells mobile which providers have a proxy configured on desktop.
         // Also default mobileAuthPreference to cli_proxy for newly-available providers
         // so subscription mode activates without requiring a re-scan or manual toggle.
         if (message.payload?.provider_auth) {
@@ -392,7 +392,7 @@ export function useWebRTC() {
             && (e.metadata?.status === 'running' || e.metadata?.status === 'cancelled')
         );
         // Guard: if the step was already marked cancelled (user hit stop),
-        // ignore late completion messages — the cancelled state is final.
+        // ignore late completion messages - the cancelled state is final.
         if (existing && existing.metadata?.status === 'cancelled') {
           return;
         }
@@ -436,7 +436,7 @@ export function useWebRTC() {
       }
 
       // Handle agent_status: transient status updates (e.g. OmniParser loading, model info)
-      // Each statusType gets its own slot — only same-type updates replace each other.
+      // Each statusType gets its own slot - only same-type updates replace each other.
       if (message.type === 'agent_status') {
         const p = message.payload as Record<string, unknown>;
         const store = useAIStore.getState();
@@ -460,7 +460,7 @@ export function useWebRTC() {
         return;
       }
 
-      // Skip agent_thinking and agent_text — too verbose for mobile UI.
+      // Skip agent_thinking and agent_text - too verbose for mobile UI.
       // Only tool execution steps (agent_progress) are shown.
       if (message.type === 'agent_thinking' || message.type === 'agent_text') {
         return;
@@ -477,7 +477,7 @@ export function useWebRTC() {
         // step-completion messages for tools that were mid-flight when the user
         // cancelled, so their spinners would persist forever.
         // Safety: the data channel is ordered, so on the happy path all
-        // step-completion messages arrive before agent_result — this loop is
+        // step-completion messages arrive before agent_result - this loop is
         // a no-op for successful completions. Snapshot IDs first to avoid
         // iterating over a store array while issuing mutations.
         const runningIds = store.executionEntries
@@ -551,14 +551,14 @@ export function useWebRTC() {
         return;
       }
 
-      // Handle away_mode_status — sync away mode state
+      // Handle away_mode_status - sync away mode state
       if (message.type === 'away_mode_status') {
         const p = message.payload as Record<string, unknown>;
         useAIStore.getState().setIsAwayMode(!!p.away_mode);
         return;
       }
 
-      // Handle security_alert — overlay was tampered with
+      // Handle security_alert - overlay was tampered with
       if (message.type === 'security_alert') {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         const store = useAIStore.getState();
@@ -572,7 +572,7 @@ export function useWebRTC() {
         return;
       }
 
-      // Handle manual_control_result — haptic feedback on error, no state change
+      // Handle manual_control_result - haptic feedback on error, no state change
       if (message.type === 'manual_control_result') {
         const p = message.payload as Record<string, unknown>;
         if (p.status === 'error') {
@@ -626,7 +626,7 @@ export function useWebRTC() {
         // the server's initial state_update (sent on DC open) never
         // re-fires.  Sending refresh_proxy_status triggers a fresh
         // health check + push.  On the very first connect the DC may not
-        // be open yet — harmless: the server already sends provider_auth
+        // be open yet - harmless: the server already sends provider_auth
         // when the DC opens.
         const curDc = dcRef.current;
         if (curDc && curDc.readyState === 'open') {
@@ -677,11 +677,11 @@ export function useWebRTC() {
       }
     });
 
-    // Handle WebSocket errors — guarded for stale instances
+    // Handle WebSocket errors - guarded for stale instances
     ws.addEventListener('error', (e: any) => {
       console.log('[WebRTC] WebSocket error:', e?.message || e);
       if (ws !== wsRef.current) return;
-      // Error events are always followed by a close event — let the close
+      // Error events are always followed by a close event - let the close
       // handler decide whether to reconnect or set disconnected.
     });
 
@@ -692,20 +692,20 @@ export function useWebRTC() {
       console.log('[WebRTC] WebSocket closed:', e?.code, e?.reason);
       if (ws !== wsRef.current) return;
 
-      // P2P is active — signaling WS is no longer needed.
+      // P2P is active - signaling WS is no longer needed.
       if (pcRef.current?.connectionState === 'connected') return;
 
-      // SDP answer can never arrive on a dead WS — trigger reconnection.
+      // SDP answer can never arrive on a dead WS - trigger reconnection.
       if (!isReconnectingRef.current) {
         handleIceDisconnected();
       } else {
-        // Already reconnecting — this attempt's WS died (e.g. 4002 superseded).
+        // Already reconnecting - this attempt's WS died (e.g. 4002 superseded).
         // Retry immediately.
         attemptFullReconnect();
       }
     });
 
-    // WebSocket is already open from connectSignalingWithFallback — send SDP offer directly
+    // WebSocket is already open from connectSignalingWithFallback - send SDP offer directly
     console.log('[WebRTC] WebSocket already open, creating SDP offer...');
     const offer = await pc.createOffer({
       mandatory: { OfferToReceiveAudio: true, OfferToReceiveVideo: true },
@@ -721,7 +721,7 @@ export function useWebRTC() {
       throw new Error('[WebRTC] WebSocket closed during SDP exchange');
     }
 
-    // Start location lookup in the background — must not delay the offer.
+    // Start location lookup in the background - must not delay the offer.
     // ICE gathering begins at setLocalDescription, so candidates are already
     // flowing to the server. The offer must arrive before them.
     const locationPromise = (async (): Promise<string | null> => {
@@ -769,7 +769,7 @@ export function useWebRTC() {
       ws.send(JSON.stringify({ type: 'device_location', location: deviceLocation }));
     }
 
-    // Keepalive monitoring is started in dc.addEventListener('open') — not here.
+    // Keepalive monitoring is started in dc.addEventListener('open') - not here.
     // Starting here would accumulate false "missed" warnings during ICE/DTLS setup.
     // Clear any stale timer from a previous connection attempt.
     if (keepaliveTimerRef.current) {

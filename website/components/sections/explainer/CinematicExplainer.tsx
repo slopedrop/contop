@@ -108,7 +108,7 @@ export function CinematicExplainer() {
       s4.hold(0.3);
       s4.out();
 
-      // ── Scene 5: Three commands — char-by-char typewriter ──
+      // ── Scene 5: Three commands - char-by-char typewriter ──
       const s5 = scene(".s5");
       s5.in();
       // Command 1: tech
@@ -127,7 +127,7 @@ export function CinematicExplainer() {
         })
         .to({}, { duration: 0.6 })
         .to(".s5-cmd2", { opacity: 0, duration: 0.1 });
-      // Command 3: browsing/action — stays
+      // Command 3: browsing/action - stays
       tl.to(".s5-cmd3", { opacity: 1, duration: 0 })
         .to(".s5-text3", {
           text: { value: "\u201CCompress my project folder and upload it to Google Drive.\u201D" },
@@ -153,7 +153,7 @@ export function CinematicExplainer() {
       s6.hold(0.3);
       s6.out();
 
-      // ── Scene 7: Agent working — lines type in char by char ──
+      // ── Scene 7: Agent working - lines type in char by char ──
       const s7 = scene(".s7");
       s7.in();
       tl.to(".s7-l1", { text: { value: "Reading your screen..." }, duration: 0.4, ease: "none" })
@@ -163,7 +163,7 @@ export function CinematicExplainer() {
       s7.hold(0.8);
       s7.out();
 
-      // ── Scene 8: "Done." — big impact ──
+      // ── Scene 8: "Done." - big impact ──
       const s8 = scene(".s8");
       s8.in();
       tl.from(".s8-done", {
@@ -182,7 +182,7 @@ export function CinematicExplainer() {
       s9.hold(0.3);
       s9.out();
 
-      // ── Scene 10: QR scan — pieces assemble ──
+      // ── Scene 10: QR scan - pieces assemble ──
       const s10 = scene(".s10");
       s10.in();
       tl.from(".s10-cell", {
@@ -220,7 +220,7 @@ export function CinematicExplainer() {
       s11.hold(0.3);
       s11.out();
 
-      // ── Scene 12: Capabilities — staggered line reveals ──
+      // ── Scene 12: Capabilities - staggered line reveals ──
       const s12 = scene(".s12");
       s12.in();
       tl.from(".s12-title", { opacity: 0, duration: 0.2 }).from(".s12-line", {
@@ -289,7 +289,7 @@ export function CinematicExplainer() {
       s13.hold(0.4);
       s13.out();
 
-      // ── Scene 14: Approval card — slides in ──
+      // ── Scene 14: Approval card - slides in ──
       const s14 = scene(".s14");
       s14.in();
       tl.from(".s14-card", {
@@ -312,14 +312,14 @@ export function CinematicExplainer() {
       s14.hold(0.4);
       s14.out();
 
-      // ── Security details — animated with icons ──
+      // ── Security details - animated with icons ──
       const sSecure = scene(".s-secure");
       sSecure.in();
       tl.from(".s-secure-item", { opacity: 0, x: -20, stagger: 0.2, duration: 0.25 });
       sSecure.hold(1.0);
       sSecure.out();
 
-      // ── Device Management — paired devices scene ──
+      // ── Device Management - paired devices scene ──
       const sDevices = scene(".s-devices");
       sDevices.in();
       tl.from(".s-devices-card", { y: 30, opacity: 0, duration: 0.3, ease: "power3.out" })
@@ -331,7 +331,7 @@ export function CinematicExplainer() {
       sDevices.hold(0.8);
       sDevices.out();
 
-      // ── Away Mode — The problem ──
+      // ── Away Mode - The problem ──
       const sAway = scene(".s-away");
       sAway.in();
       tl.from(".s-away-problem", { opacity: 0, duration: 0.3 })
@@ -340,7 +340,7 @@ export function CinematicExplainer() {
       sAway.hold(0.3);
       sAway.out();
 
-      // ── Away Mode — Lock engages ──
+      // ── Away Mode - Lock engages ──
       const sAwayLock = scene(".s-away-lock");
       sAwayLock.in();
       tl.from(".s-away-laptop", { opacity: 0, y: 20, duration: 0.3 })
@@ -350,7 +350,7 @@ export function CinematicExplainer() {
       sAwayLock.hold(0.3);
       sAwayLock.out();
 
-      // ── Away Mode — Split view ──
+      // ── Away Mode - Split view ──
       const sAwaySplit = scene(".s-away-split");
       sAwaySplit.in();
       tl.from(".s-away-left", { opacity: 0, x: -30, duration: 0.3 })
@@ -380,7 +380,7 @@ export function CinematicExplainer() {
       sOpen.hold(0.4);
       sOpen.out();
 
-      // ── Scene 16: "Download. Launch. Scan. Talk." — one word at a time ──
+      // ── Scene 16: "Download. Launch. Scan. Talk." - one word at a time ──
       const s16 = scene(".s16");
       s16.in();
       tl.from(".s16-word", {
@@ -448,7 +448,7 @@ export function CinematicExplainer() {
         </p>
       </div>
 
-      {/* ===== 4: Phone — voice + text input ===== */}
+      {/* ===== 4: Phone - voice + text input ===== */}
       <div className="s4 scene flex-col gap-6">
         <div className="s4-phone relative flex h-[260px] w-[130px] flex-col items-center justify-center rounded-[26px] border border-white/[0.08] sm:h-[320px] sm:w-[160px]">
           <div className="mb-6 h-1 w-10 rounded-full bg-white/[0.06]" />
@@ -482,7 +482,7 @@ export function CinematicExplainer() {
         </p>
       </div>
 
-      {/* ===== 5: Three commands — char-by-char typewriter ===== */}
+      {/* ===== 5: Three commands - char-by-char typewriter ===== */}
       <div className="s5 scene">
         <div className="relative max-w-2xl px-6 text-center font-mono text-lg sm:text-2xl lg:text-3xl">
           <div className="s5-cmd1 absolute inset-0 flex items-center justify-center text-accent-light opacity-0">
@@ -525,7 +525,7 @@ export function CinematicExplainer() {
         </p>
       </div>
 
-      {/* ===== 7: Working — typed lines ===== */}
+      {/* ===== 7: Working - typed lines ===== */}
       <div className="s7 scene">
         <div className="w-full max-w-lg space-y-5 px-6 font-mono text-sm sm:text-base">
           <p className="min-h-[1.3em] text-cyan"><span className="s7-l1" /></p>
@@ -560,13 +560,12 @@ export function CinematicExplainer() {
             {Array.from({ length: 25 }).map((_, i) => (
               <div
                 key={i}
-                className={`s10-cell h-5 w-5 rounded-[2px] sm:h-6 sm:w-6 ${
-                  [0, 1, 2, 4, 5, 6, 10, 12, 14, 18, 19, 20, 22, 23, 24].includes(
-                    i
-                  )
+                className={`s10-cell h-5 w-5 rounded-[2px] sm:h-6 sm:w-6 ${[0, 1, 2, 4, 5, 6, 10, 12, 14, 18, 19, 20, 22, 23, 24].includes(
+                  i
+                )
                     ? "bg-white/80"
                     : "bg-white/[0.06]"
-                }`}
+                  }`}
               />
             ))}
           </div>
@@ -702,7 +701,7 @@ export function CinematicExplainer() {
             Already paying for Claude, Gemini, or ChatGPT?
           </p>
           <p className="s-sub-detail text-base text-text-muted sm:text-lg">
-            Contop routes through your existing CLI — no extra cost.
+            Contop routes through your existing CLI - no extra cost.
           </p>
         </div>
       </div>
@@ -771,7 +770,7 @@ export function CinematicExplainer() {
         </div>
       </div>
 
-      {/* ===== Security details — animated ===== */}
+      {/* ===== Security details - animated ===== */}
       <div className="s-secure scene flex-col gap-5 px-6">
         <div className="flex max-w-sm flex-col gap-5">
           <div className="s-secure-item flex items-center gap-3">
@@ -836,7 +835,7 @@ export function CinematicExplainer() {
         </p>
       </div>
 
-      {/* ===== Away Mode — The problem ===== */}
+      {/* ===== Away Mode - The problem ===== */}
       <div className="s-away scene flex-col gap-6 px-6">
         <div className="s-away-problem flex flex-col items-center gap-4">
           <svg viewBox="0 0 24 24" className="h-12 w-12 text-text-muted" fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -853,7 +852,7 @@ export function CinematicExplainer() {
         </div>
       </div>
 
-      {/* ===== Away Mode — Lock engages ===== */}
+      {/* ===== Away Mode - Lock engages ===== */}
       <div className="s-away-lock scene flex-col gap-4">
         <div className="s-away-laptop relative flex flex-col items-center">
           <div className="s-away-screen relative flex h-48 w-72 items-center justify-center rounded-lg border border-border-subtle bg-surface-raised sm:h-56 sm:w-80">
@@ -875,11 +874,11 @@ export function CinematicExplainer() {
         <p className="text-lg font-medium text-text-primary sm:text-xl">Away Mode locks the screen.</p>
       </div>
 
-      {/* ===== Away Mode — Split view ===== */}
+      {/* ===== Away Mode - Split view ===== */}
       <div className="s-away-split scene flex-col gap-6">
-        {/* Devices side by side — centered as a unit */}
+        {/* Devices side by side - centered as a unit */}
         <div className="flex items-end justify-center gap-8 sm:gap-12">
-          {/* Laptop — locked screen */}
+          {/* Laptop - locked screen */}
           <div className="s-away-left flex flex-col items-center">
             <div className="relative flex h-[140px] w-[210px] items-center justify-center rounded-t-lg border border-b-0 border-white/[0.08] bg-black/90 sm:h-[170px] sm:w-[260px]">
               <div className="flex flex-col items-center gap-2 opacity-60">
@@ -899,7 +898,7 @@ export function CinematicExplainer() {
             <span className="mt-2 text-xs text-text-muted">Physical screen</span>
           </div>
 
-          {/* Phone — live feed (matches s-replica style) */}
+          {/* Phone - live feed (matches s-replica style) */}
           <div className="s-away-right flex flex-col items-center">
             <div className="relative flex h-[180px] w-[90px] flex-col items-center justify-center rounded-[20px] border border-white/[0.08] sm:h-[210px] sm:w-[105px]">
               {/* Notch */}
@@ -927,7 +926,7 @@ export function CinematicExplainer() {
             <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0 text-green-400" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
               <polyline points="20 6 9 17 4 12" />
             </svg>
-            <p className="text-sm text-text-secondary sm:text-base">Keyboard locked — only PIN keys work</p>
+            <p className="text-sm text-text-secondary sm:text-base">Keyboard locked - only PIN keys work</p>
           </div>
           <div className="s-away-feat flex items-center gap-3">
             <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0 text-green-400" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
@@ -989,15 +988,15 @@ export function CinematicExplainer() {
         </p>
       </div>
 
-      {/* ===== 17: Logo reveal — mark appears, name types in ===== */}
+      {/* ===== 17: Logo reveal - mark appears, name types in ===== */}
       <div className="s17 scene flex-col gap-6">
         <div className="flex items-center gap-3 sm:gap-4">
           {/* Logo mark */}
           <svg viewBox="0 0 512 512" className="s17-mark h-14 w-14 text-accent-light sm:h-20 sm:w-20" fill="none" aria-hidden="true">
-            <rect x="106" y="106" width="150" height="300" rx="14" stroke="currentColor" strokeWidth="36" fill="#000"/>
-            <rect x="166" y="256" width="240" height="150" rx="12" stroke="currentColor" strokeWidth="36" fill="#000"/>
-            <polyline points="226,298 270,331 226,364" stroke="currentColor" strokeWidth="28" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-            <line x1="288" y1="364" x2="356" y2="364" stroke="currentColor" strokeWidth="28" strokeLinecap="round"/>
+            <rect x="106" y="106" width="150" height="300" rx="14" stroke="currentColor" strokeWidth="36" fill="#000" />
+            <rect x="166" y="256" width="240" height="150" rx="12" stroke="currentColor" strokeWidth="36" fill="#000" />
+            <polyline points="226,298 270,331 226,364" stroke="currentColor" strokeWidth="28" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            <line x1="288" y1="364" x2="356" y2="364" stroke="currentColor" strokeWidth="28" strokeLinecap="round" />
           </svg>
           <span className="s17-name text-4xl font-bold tracking-tight text-text-primary sm:text-6xl" />
         </div>

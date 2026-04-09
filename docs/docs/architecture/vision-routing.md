@@ -17,11 +17,11 @@ graph LR
     Route -->|understanding / no backend| LLM["LLM Vision Fallback"]
 ```
 
-1. **Capture** — `mss` screen capture (thread-local instances — mss is not thread-safe)
-2. **Downscale** — Resize to 1280px max width for consistent coordinate space
-3. **Backend selection** — Route to the configured vision backend
-4. **Parse** — Detect UI elements, extract coordinates and labels
-5. **Cache** — Results cached behind `_parse_lock` (thread-safe) for shared access between `observe_screen` and `execute_gui`
+1. **Capture** - `mss` screen capture (thread-local instances - mss is not thread-safe)
+2. **Downscale** - Resize to 1280px max width for consistent coordinate space
+3. **Backend selection** - Route to the configured vision backend
+4. **Parse** - Detect UI elements, extract coordinates and labels
+5. **Cache** - Results cached behind `_parse_lock` (thread-safe) for shared access between `observe_screen` and `execute_gui`
 
 ## Nine Vision Backends
 
@@ -89,8 +89,8 @@ Vision backends degrade gracefully:
 ## Hallucination Guardrails
 
 Vision system prompts enforce:
-- **No Fabricated Details** — Report only what's visible on screen
-- **Verify After execute_gui Type** — Always re-observe screen after typing to confirm text was entered correctly
+- **No Fabricated Details** - Report only what's visible on screen
+- **Verify After execute_gui Type** - Always re-observe screen after typing to confirm text was entered correctly
 
 ---
 

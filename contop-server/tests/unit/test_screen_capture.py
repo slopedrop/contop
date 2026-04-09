@@ -153,7 +153,7 @@ class TestScaleFactors:
 class TestRecv:
     """Test recv() returns valid av.VideoFrame."""
 
-    @pytest.mark.skipif(sys.platform != "win32", reason="mss.grab requires real display — fails on headless CI")
+    @pytest.mark.skipif(sys.platform != "win32", reason="mss.grab requires real display - fails on headless CI")
     async def test_recv_returns_video_frame(self):
         """4.2: recv() must return an av.VideoFrame with correct dimensions."""
         import av
@@ -313,7 +313,7 @@ class TestJpegRelay:
 
         task.cancel()
 
-        # Should not raise — CancelledError is handled cleanly inside the relay
+        # Should not raise - CancelledError is handled cleanly inside the relay
         # The task's internal CancelledError is caught, so await returns normally
         # We need to give it a moment to process the cancellation
         try:

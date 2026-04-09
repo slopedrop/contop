@@ -9,9 +9,9 @@ Commands classified as forbidden or restricted by the Dual-Tool Evaluator are ex
 ## When Sandbox Is Used
 
 The sandbox is invoked when the evaluator classifies a command as:
-- **Forbidden** — Matches the `forbidden_commands` list
-- **Restricted** — Targets a path in the `restricted_paths` list
-- **Unknown tool** — Defense-in-depth for unrecognized tool names
+- **Forbidden** - Matches the `forbidden_commands` list
+- **Restricted** - Targets a path in the `restricted_paths` list
+- **Unknown tool** - Defense-in-depth for unrecognized tool names
 
 ## Container Configuration
 
@@ -44,10 +44,10 @@ When Docker is unavailable (not installed or failed to start), the sandbox falls
 | Setting | Value |
 |---------|-------|
 | `auto_confirm` | `False` (always requires confirmation) |
-| `timeout` | `min(timeout_s, 10)` — 10 seconds maximum |
+| `timeout` | `min(timeout_s, 10)` - 10 seconds maximum |
 | Output limit | 50 KB (standard `max_output_bytes` default) |
 
-This fallback is intentionally restrictive — it prevents unattended execution of potentially dangerous commands without Docker's isolation guarantees.
+This fallback is intentionally restrictive - it prevents unattended execution of potentially dangerous commands without Docker's isolation guarantees.
 
 ## Environment Sanitization
 

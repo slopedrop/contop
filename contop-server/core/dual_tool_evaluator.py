@@ -1,5 +1,5 @@
 """
-Dual-Tool Evaluator — THE security gate for all LLM-derived command execution.
+Dual-Tool Evaluator - THE security gate for all LLM-derived command execution.
 
 All execution paths MUST be routed through DualToolEvaluator.classify() before
 invoking any tool. Direct calls to host_subprocess.run() or docker_sandbox.run()
@@ -7,8 +7,8 @@ are FORBIDDEN.
 
 Exception: device_control messages bypass the evaluator (direct device operations).
 
-[Source: project-context.md — Mandatory Dual-Tool Gate]
-[Source: architecture.md — Execution Routing Decision (Dual-Tool Architecture)]
+[Source: project-context.md - Mandatory Dual-Tool Gate]
+[Source: architecture.md - Execution Routing Decision (Dual-Tool Architecture)]
 """
 import hashlib
 import logging
@@ -48,7 +48,7 @@ KNOWN_TOOL_NAMES = {
 # e.g. "sudo rm file.txt" → check "rm", not "sudo".
 COMMAND_PREFIXES = {"sudo", "env", "nohup", "nice", "time", "doas"}
 
-# PowerShell destructive cmdlets — always checked via deep scan regardless of
+# PowerShell destructive cmdlets - always checked via deep scan regardless of
 # user settings.  These are PS equivalents of Unix destructive commands that
 # bypass the first-token check when wrapped (e.g. powershell -Command "Remove-Item ...").
 # This is a hardcoded security floor: users can ADD patterns via settings but
@@ -67,7 +67,7 @@ _ENCODED_COMMAND_RE = re.compile(
     re.IGNORECASE,
 )
 
-# Subshell / backtick extraction — surfaces commands inside $(...) and `...`
+# Subshell / backtick extraction - surfaces commands inside $(...) and `...`
 _SUBSHELL_RE = re.compile(r"\$\(([^)]+)\)|`([^`]+)`")
 
 # M9: Compiled destructive-pattern regex cache.  Stores (patterns_hash, compiled_re)
@@ -95,7 +95,7 @@ class ClassificationResult:
 class DualToolEvaluator:
     """Central classification gate for LLM-derived tool calls.
 
-    Pure classification — does NOT execute commands. Routes each tool call
+    Pure classification - does NOT execute commands. Routes each tool call
     to either "host" (direct execution) or "sandbox" (Docker container).
     """
 
@@ -166,7 +166,7 @@ class DualToolEvaluator:
                 voice_message="Browser command routed to host.",
             )
 
-        # 2a-skills. Skill tools — route to host
+        # 2a-skills. Skill tools - route to host
         if tool_name == "execute_skill":
             return ClassificationResult(
                 route="host",
@@ -201,7 +201,7 @@ class DualToolEvaluator:
                 voice_message="",
             )
 
-        # 2b. File-operation tools — pure compute, no shell, route to host
+        # 2b. File-operation tools - pure compute, no shell, route to host
         #     Check file_path argument against restricted paths (defense-in-depth).
         if tool_name in ("read_file", "edit_file", "find_files"):
             file_path = args.get("file_path", "") or args.get("path", "")
@@ -220,7 +220,7 @@ class DualToolEvaluator:
                 voice_message="",
             )
 
-        # 2c. Window & clipboard tools — need display access, route to host
+        # 2c. Window & clipboard tools - need display access, route to host
         if tool_name in ("window_list", "window_focus", "resize_window", "clipboard_read", "clipboard_write"):
             return ClassificationResult(
                 route="host",
@@ -228,7 +228,7 @@ class DualToolEvaluator:
                 voice_message="",
             )
 
-        # 2d. Document tools — file I/O only, route to host
+        # 2d. Document tools - file I/O only, route to host
         if tool_name in ("read_pdf", "read_image", "read_excel", "write_excel"):
             return ClassificationResult(
                 route="host",
@@ -236,7 +236,7 @@ class DualToolEvaluator:
                 voice_message="",
             )
 
-        # 2e. System info tools — read-only system queries, route to host
+        # 2e. System info tools - read-only system queries, route to host
         if tool_name in ("process_info", "system_info"):
             return ClassificationResult(
                 route="host",
@@ -244,7 +244,7 @@ class DualToolEvaluator:
                 voice_message="",
             )
 
-        # 2f. Download tool — URL validated internally, route to host
+        # 2f. Download tool - URL validated internally, route to host
         if tool_name == "download_file":
             return ClassificationResult(
                 route="host",
@@ -252,7 +252,7 @@ class DualToolEvaluator:
                 voice_message="",
             )
 
-        # 2g. Workflow tools — orchestrate primitives, route to host
+        # 2g. Workflow tools - orchestrate primitives, route to host
         if tool_name in (
             "save_dialog", "open_dialog", "launch_app", "open_file",
             "close_app", "app_menu",
@@ -265,7 +265,7 @@ class DualToolEvaluator:
                 voice_message="",
             )
 
-        # 3. Unknown tool names — default to sandbox (defense-in-depth)
+        # 3. Unknown tool names - default to sandbox (defense-in-depth)
         if tool_name not in KNOWN_TOOL_NAMES:
             logger.warning("Unknown tool name: %s", tool_name)
             return ClassificationResult(

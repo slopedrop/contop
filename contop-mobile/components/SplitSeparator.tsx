@@ -15,7 +15,7 @@ type SplitSeparatorProps = {
  * Landscape: vertical pill, reports X-delta (incremental).
  *
  * Uses onChange (not onUpdate) so each callback receives the incremental
- * delta since the previous event — prevents the cumulative-translation
+ * delta since the previous event - prevents the cumulative-translation
  * drift bug that caused jerky/snapping behavior.
  */
 export default function SplitSeparator({ orientation, onDrag }: SplitSeparatorProps): React.JSX.Element {

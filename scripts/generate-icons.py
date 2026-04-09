@@ -14,7 +14,7 @@ except ImportError:
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Icon geometry — square composition (300x300 centered in 512x512, ~18% padding):
+# Icon geometry - square composition (300x300 centered in 512x512, ~18% padding):
 #   Phone height (300) = total base width (300)
 #   Phone:   x=106, y=106, w=150, h=300, rx=14  (1:2 ratio, behind)
 #   Desktop: x=166, y=256, w=240, h=150, rx=12  (16:10 ratio, foreground)
@@ -56,7 +56,7 @@ MOBILE_ICON_SVG = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 5
 
 # Android adaptive foreground: scaled to 58% so content fills ~57% of the visible
 # area after the launcher mask crops to the inner 66.7% of the 108dp canvas.
-# Previous 70% scale made content fill ~69% of visible area — too tight.
+# Previous 70% scale made content fill ~69% of visible area - too tight.
 ADAPTIVE_FG_SVG = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
   <g transform="translate(256,256) scale(0.58) translate(-256,-256)">
     {ICON_SHAPES}
@@ -85,7 +85,7 @@ def save_ico(images: list[Image.Image], path: str):
 
     Pillow's ICO plugin sorts entries largest-first, which causes Tauri's
     codegen to pick the 256px entry (entries()[0]) and downscale it for the
-    taskbar — producing a blurry icon.  This writer puts entries in the
+    taskbar - producing a blurry icon.  This writer puts entries in the
     order given so we can place 32x32 first.
     See https://github.com/tauri-apps/tauri/issues/14596
     """
@@ -149,7 +149,7 @@ def main():
         resized = svg_to_png(APP_ICON_SVG, size)
         save(resized, os.path.join(tauri_icons, name))
 
-    # ICO (Windows) — 32x32 MUST be the first entry.
+    # ICO (Windows) - 32x32 MUST be the first entry.
     # Tauri's codegen reads only entries()[0] for the runtime window/taskbar icon
     # (see https://github.com/tauri-apps/tauri/issues/14596).
     # Pillow sorts entries largest-first which puts 256px first → blurry taskbar.
@@ -160,13 +160,13 @@ def main():
     save_ico(ico_images, ico_path)
     print(f"  {ico_path}")
 
-    # ICNS (macOS) — Pillow supports it
+    # ICNS (macOS) - Pillow supports it
     try:
         icns_path = os.path.join(tauri_icons, "icon.icns")
         master.save(icns_path, format="ICNS")
         print(f"  {icns_path}")
     except Exception as e:
-        print(f"  (Skipped icon.icns — {e})")
+        print(f"  (Skipped icon.icns - {e})")
 
     # --- 2. Mobile source assets (used by expo prebuild) ---
     print("\n[Mobile - Source assets for Expo]")

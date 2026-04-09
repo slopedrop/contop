@@ -1,9 +1,9 @@
 """
-macOS platform adapter — window management via pyobjc, accessibility via AXUIElement.
+macOS platform adapter - window management via pyobjc, accessibility via AXUIElement.
 
 Falls back gracefully if pyobjc is not installed.
 
-[Source: architecture.md — Cross-Platform OS Abstraction Layer, pyobjc]
+[Source: architecture.md - Cross-Platform OS Abstraction Layer, pyobjc]
 """
 import logging
 import subprocess
@@ -19,7 +19,7 @@ try:
     from AppKit import NSWorkspace, NSRunningApplication
     _HAS_PYOBJC = True
 except ImportError:
-    logger.info("pyobjc not installed — MacOSAdapter will use fallback")
+    logger.info("pyobjc not installed - MacOSAdapter will use fallback")
 
 try:
     from ApplicationServices import (
@@ -28,7 +28,7 @@ try:
     )
     _HAS_AX = True
 except ImportError:
-    logger.info("pyobjc Accessibility not available — accessibility methods will return empty results")
+    logger.info("pyobjc Accessibility not available - accessibility methods will return empty results")
 
 # Interactive AX roles to include in get_interactive_elements()
 _INTERACTIVE_ROLES = {
@@ -171,7 +171,7 @@ class MacOSAdapter(PlatformAdapter):
     def maximize_window(self) -> bool:
         try:
             if self.is_window_maximized():
-                return True  # Already maximized — idempotent
+                return True  # Already maximized - idempotent
             result = subprocess.run(
                 ["osascript", "-l", "JavaScript", "-e", self._MAXIMIZE_JXA],
                 capture_output=True, text=True, timeout=5,
@@ -239,7 +239,7 @@ class MacOSAdapter(PlatformAdapter):
                 "element_name": elem_name, "element_type": elem_type,
                 "action_performed": action,
                 "description": f"Successfully performed '{action}' on '{elem_name}' ({elem_type}).",
-                "voice_message": f"Done — {action} on {elem_name}.",
+                "voice_message": f"Done - {action} on {elem_name}.",
             }
 
         except Exception as exc:
@@ -330,7 +330,7 @@ class MacOSAdapter(PlatformAdapter):
         try:
             parts = []
             if title:
-                # Sanitize title for JXA string interpolation — escape backslashes and quotes
+                # Sanitize title for JXA string interpolation - escape backslashes and quotes
                 safe_title = title.replace("\\", "\\\\").replace('"', '\\"')
                 parts.append(f'var app=Application("{safe_title}");var w=app.windows[0];')
             else:

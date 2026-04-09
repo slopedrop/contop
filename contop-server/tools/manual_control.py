@@ -1,7 +1,7 @@
 """
-Manual control tool — handles direct user touch-to-desktop actions.
-Bypasses the Dual-Tool Evaluator — deterministic, user-initiated GUI actions.
-[Source: tech-spec-hybrid-control-mode.md — device_control bypass pattern]
+Manual control tool - handles direct user touch-to-desktop actions.
+Bypasses the Dual-Tool Evaluator - deterministic, user-initiated GUI actions.
+[Source: tech-spec-hybrid-control-mode.md - device_control bypass pattern]
 """
 import asyncio
 import logging
@@ -71,7 +71,7 @@ def _move_and_get_pos(dx: int, dy: int) -> tuple[int, int]:
 
 
 async def handle_mouse_move(dx: int, dy: int, screen_track=None) -> None:
-    """Fast path for mouse move — no result dict, fire-and-forget.
+    """Fast path for mouse move - no result dict, fire-and-forget.
 
     Optionally caches cursor position on the screen_track to avoid
     per-frame pyautogui.position() Win32 API calls in _draw_cursor().
@@ -87,12 +87,12 @@ async def handle_mouse_move(dx: int, dy: int, screen_track=None) -> None:
 
 
 async def handle_mouse_down() -> None:
-    """Fast path for mouse button down — enables drag when combined with move."""
+    """Fast path for mouse button down - enables drag when combined with move."""
     await asyncio.to_thread(pyautogui.mouseDown)
 
 
 async def handle_mouse_up() -> None:
-    """Fast path for mouse button up — ends drag."""
+    """Fast path for mouse button up - ends drag."""
     await asyncio.to_thread(pyautogui.mouseUp)
 
 
@@ -129,7 +129,7 @@ async def _handle_right_click(payload: dict, start: float) -> dict[str, Any]:
 
 
 async def handle_scroll(payload: dict) -> None:
-    """Fire-and-forget scroll — no result message, safe for rapid calls."""
+    """Fire-and-forget scroll - no result message, safe for rapid calls."""
     direction = payload.get("direction", "down")
     amount = payload.get("amount", 3)
     clicks = amount if direction == "up" else -amount
@@ -139,7 +139,7 @@ async def handle_scroll(payload: dict) -> None:
 async def _handle_scroll(payload: dict, start: float) -> dict[str, Any]:
     direction = payload.get("direction", "down")
     amount = payload.get("amount", 3)
-    # Direct mouse wheel scroll — positive=up, negative=down
+    # Direct mouse wheel scroll - positive=up, negative=down
     clicks = amount if direction == "up" else -amount
     await asyncio.to_thread(pyautogui.scroll, clicks)
     return _result("scroll", "success", f"Scrolled {direction} by {amount}",

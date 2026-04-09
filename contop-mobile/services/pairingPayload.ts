@@ -7,7 +7,7 @@
  * both QRScanner and the manual-entry connect flow.
  */
 
-// Default STUN servers — hardcoded to keep QR payload small
+// Default STUN servers - hardcoded to keep QR payload small
 export const DEFAULT_STUN_CONFIG = {
   ice_servers: [
     { urls: 'stun:stun.l.google.com:19302' },

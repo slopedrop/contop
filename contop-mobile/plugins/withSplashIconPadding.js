@@ -12,7 +12,7 @@ const path = require('path');
  *
  * This plugin:
  * 1. Creates a layer-list drawable wrapper that insets the logo by 28dp per side
- *    (232dp content area — logo corners at ~108dp from center, matching circle radius)
+ *    (232dp content area - logo corners at ~108dp from center, matching circle radius)
  * 2. Patches styles.xml via the managed withAndroidStyles mod to reference the
  *    wrapper instead of the raw bitmap
  */

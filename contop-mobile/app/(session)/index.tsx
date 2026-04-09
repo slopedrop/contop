@@ -79,7 +79,7 @@ export default function SessionScreen(): React.JSX.Element {
 
   const insets = useSafeAreaInsets();
 
-  // Activate orientation detection — syncs orientation + preferred layout to Zustand
+  // Activate orientation detection - syncs orientation + preferred layout to Zustand
   useOrientation();
 
   // Reload current models on screen focus (e.g. returning from settings)
@@ -114,7 +114,7 @@ export default function SessionScreen(): React.JSX.Element {
     };
   }, []);
 
-  // Payload ref for AppState listener — must be initialized before the listener
+  // Payload ref for AppState listener - must be initialized before the listener
   const payloadRef = useRef<import('../../types').PairingPayload | null>(null);
   useEffect(() => {
     getPairingToken().then((p) => { payloadRef.current = p; });
@@ -159,7 +159,7 @@ export default function SessionScreen(): React.JSX.Element {
         return;
       }
     } else {
-      // Biometrics unavailable — bypass lock to prevent user being stuck
+      // Biometrics unavailable - bypass lock to prevent user being stuck
       setIsLocked(false);
       router.replace('/(connect)/reconnecting');
     }
@@ -172,7 +172,7 @@ export default function SessionScreen(): React.JSX.Element {
     registerDeviceControlSender(sendMessage);
 
     async function initConnection() {
-      // Check the in-memory bridge first — the reconnecting screen passes the
+      // Check the in-memory bridge first - the reconnecting screen passes the
       // correct payload (temp OR permanent) via the bridge before navigating here.
       // Fall back to SecureStore (permanent-only) if no bridge payload exists.
       const bridgePayload = consumeTempPayload();
@@ -238,7 +238,7 @@ export default function SessionScreen(): React.JSX.Element {
       // Clear persist debounce on unmount
       if (persistDebounceRef.current) clearTimeout(persistDebounceRef.current);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run once on mount
   }, []);
 
   // Wire confirmation response sender so InterventionCard can send via data channel
@@ -265,7 +265,7 @@ export default function SessionScreen(): React.JSX.Element {
         metadata: { callId, name, status: 'pending' },
       });
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- setSendDataChannelMessage/setOnToolCall are stable useCallback refs
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- setSendDataChannelMessage/setOnToolCall are stable useCallback refs
   }, [sendMessage]);
 
   // Bridge data channel messages (frame, tool_result) to Gemini
@@ -361,7 +361,7 @@ export default function SessionScreen(): React.JSX.Element {
     });
 
     return () => setOnDataChannelMessage(null);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- handleToolResult is a stable useCallback ref
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- handleToolResult is a stable useCallback ref
   }, [setOnDataChannelMessage]);
 
   // Initialize Gemini AI instance when WebRTC connects, or re-initialize
@@ -377,7 +377,7 @@ export default function SessionScreen(): React.JSX.Element {
         conversation.connect();
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- connect is a stable useCallback ref; guard via ref prevents loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- connect is a stable useCallback ref; guard via ref prevents loops
   }, [connectionStatus]);
 
   // Create session in memory when WebRTC connects (NOT persisted until first entry)
@@ -403,7 +403,7 @@ export default function SessionScreen(): React.JSX.Element {
     }
     async function init() {
       const aiSettings = await loadAISettings();
-      // M2: re-check after async load — user may have disconnected during settings fetch
+      // M2: re-check after async load - user may have disconnected during settings fetch
       if (useAIStore.getState().connectionStatus !== 'connected') return;
       if (useAIStore.getState().activeSession) return;
       const newSession: SessionMeta = {
@@ -416,8 +416,8 @@ export default function SessionScreen(): React.JSX.Element {
       useAIStore.getState().setActiveSession(newSession);
     }
     void init();
-    // Don't persist yet — the debounced subscription will save on first entry
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: fires only when connectionStatus changes to 'connected'
+    // Don't persist yet - the debounced subscription will save on first entry
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: fires only when connectionStatus changes to 'connected'
   }, [connectionStatus]);
 
   // Debounced persistence via Zustand subscription (avoids re-renders)
@@ -437,7 +437,7 @@ export default function SessionScreen(): React.JSX.Element {
       unsubscribe();
       if (persistDebounceRef.current) clearTimeout(persistDebounceRef.current);
     };
-  }, []); // intentional empty deps — set up once on mount
+  }, []); // intentional empty deps - set up once on mount
 
   // Reset or restore Gemini history when activeSession changes
   // (e.g., from history "Continue" or "New Session") to prevent context leak.
@@ -449,7 +449,7 @@ export default function SessionScreen(): React.JSX.Element {
         // Clear stale mappings from the previous session
         toolCallEntryMapRef.current.clear();
         if (state.executionEntries.length > 0) {
-          // Restored from history — rebuild Gemini context from saved entries
+          // Restored from history - rebuild Gemini context from saved entries
           conversation.restoreHistory(state.executionEntries);
           // Restore ADK session ID so the server can resume the execution session
           adkSessionIdRef.current = state.activeSession?.adkSessionId ?? null;
@@ -466,12 +466,12 @@ export default function SessionScreen(): React.JSX.Element {
       activeSessionRef.current = newId;
     });
     return () => unsubscribe();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- stable refs
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- stable refs
   }, []);
 
   // On disconnect: stop voice, expire pending confirmations, enable chat-only mode.
   // The server kills execution on disconnect, so any pending confirmation
-  // cards are stale — mark them expired so the UI stops showing action buttons.
+  // cards are stale - mark them expired so the UI stops showing action buttons.
   useEffect(() => {
     if (connectionStatus === 'disconnected') {
       stopCapture();
@@ -511,7 +511,7 @@ export default function SessionScreen(): React.JSX.Element {
   useEffect(() => {
     conversation.setOnTextResponse((text: string, toolSummary?: string[]) => {
       const store = useAIStore.getState();
-      // Remove stale thinking placeholder — we now have an actual response
+      // Remove stale thinking placeholder - we now have an actual response
       const kept = store.executionEntries.filter((e) => e.type !== 'thinking');
       store.setExecutionEntries(kept);
       store.addExecutionEntry({
@@ -523,7 +523,7 @@ export default function SessionScreen(): React.JSX.Element {
       });
     });
     return () => conversation.setOnTextResponse(null);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- setOnTextResponse is a stable useCallback ref
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- setOnTextResponse is a stable useCallback ref
   }, []);
 
   // Receive error messages from Gemini and display as error cards
@@ -548,7 +548,7 @@ export default function SessionScreen(): React.JSX.Element {
       });
     });
     return () => conversation.setOnError(null);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- setOnError is a stable useCallback ref
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- setOnError is a stable useCallback ref
   }, []);
 
   // Enter voice mode: start audio capture
@@ -579,7 +579,7 @@ export default function SessionScreen(): React.JSX.Element {
     if (transcription) {
       setChatInput(transcription);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- transcribeAudio is a stable useCallback ref
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- transcribeAudio is a stable useCallback ref
   }, [stopCapture, getAudioBuffer]);
 
   // Send text message to server-side ADK agent
@@ -587,7 +587,7 @@ export default function SessionScreen(): React.JSX.Element {
     const text = chatInput.trim();
     if (!text) return;
     Keyboard.dismiss();
-    // Remove only the previous "thinking" placeholder — keep all conversation and desktop agent entries
+    // Remove only the previous "thinking" placeholder - keep all conversation and desktop agent entries
     const store = useAIStore.getState();
     const kept = store.executionEntries.filter((e) => e.type !== 'thinking');
     store.setExecutionEntries(kept);
@@ -596,7 +596,7 @@ export default function SessionScreen(): React.JSX.Element {
     setChatInput('');
     lastSentIntentRef.current = text;
     conversation.sendUserIntent(text);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- sendUserIntent is a stable useCallback ref
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- sendUserIntent is a stable useCallback ref
   }, [chatInput]);
 
   // Undo last action: inject "Undo the last action" as a user message (subtask 6.1)
@@ -609,7 +609,7 @@ export default function SessionScreen(): React.JSX.Element {
     store.addExecutionEntry({ id: generateId(), type: 'thinking', content: 'Thinking...', timestamp: Date.now() + 1 });
     lastSentIntentRef.current = 'Undo the last action';
     conversation.sendUserIntent('Undo the last action');
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- sendUserIntent is a stable useCallback ref
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- sendUserIntent is a stable useCallback ref
   }, []);
 
   // Send execution_stop to server to cancel running tool call.
@@ -644,7 +644,7 @@ export default function SessionScreen(): React.JSX.Element {
   }, [orientation, isManualMode, sendMessage]);
 
   // HUD mic: in video-focus, capture voice directly and send without confirmation.
-  // First press starts recording; second press stops, transcribes, and sends — stays in video-focus.
+  // First press starts recording; second press stops, transcribes, and sends - stays in video-focus.
   const handleHudMicPress = useCallback(async () => {
     if (isVoiceActive) {
       // Stop recording → transcribe → send directly (no confirmation)
@@ -661,7 +661,7 @@ export default function SessionScreen(): React.JSX.Element {
       if (transcription) {
         // Ensure overlay panel is visible before adding entries
         setIsOverlayCollapsed(false);
-        // Remove only the previous "thinking" placeholder — keep all entries
+        // Remove only the previous "thinking" placeholder - keep all entries
         const store = useAIStore.getState();
         const kept = store.executionEntries.filter((e) => e.type !== 'thinking');
         store.setExecutionEntries(kept);
@@ -680,14 +680,14 @@ export default function SessionScreen(): React.JSX.Element {
         lastSentIntentRef.current = transcription;
         conversation.sendUserIntent(transcription);
       }
-      // Stay in video-focus — no layout change
+      // Stay in video-focus - no layout change
     } else {
-      // Start recording — stay in video-focus
+      // Start recording - stay in video-focus
       startCapture();
       setIsVoiceActive(true);
       useAIStore.getState().setAIState('recording');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- transcribeAudio/sendUserIntent are stable useCallback refs
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- transcribeAudio/sendUserIntent are stable useCallback refs
   }, [isVoiceActive, startCapture, stopCapture, getAudioBuffer]);
 
   // Silent window timer: when entering 'reconnecting', hide UI changes for 2s
@@ -761,7 +761,7 @@ export default function SessionScreen(): React.JSX.Element {
     toolCallEntryMapRef.current.clear();
     conversation.close();
     disconnect();
-    // Credentials are preserved — user will see "Reconnect" on the connect screen.
+    // Credentials are preserved - user will see "Reconnect" on the connect screen.
     // Only "Forget Connection" in settings should clear credentials.
     router.replace('/(connect)/connect');
   }
@@ -776,7 +776,7 @@ export default function SessionScreen(): React.JSX.Element {
       try {
         await connect(payload);
       } catch {
-        // Connection failed — fall back to disconnected
+        // Connection failed - fall back to disconnected
         useAIStore.getState().setConnectionStatus('disconnected');
       }
     } else {
@@ -805,10 +805,10 @@ export default function SessionScreen(): React.JSX.Element {
   const connectionType = useAIStore((s) => s.connectionType);
   const pathLabel = connectionPath === 'lan' ? 'LAN'
     : connectionPath === 'tailscale' ? 'Tailscale'
-    : connectionPath === 'tunnel' ? 'Tunnel'
-    : '';
+      : connectionPath === 'tunnel' ? 'Tunnel'
+        : '';
 
-  // Connection status pill — small glassmorphic indicator in the video overlay
+  // Connection status pill - small glassmorphic indicator in the video overlay
   function renderConnectionPill() {
     if (isConnected) {
       const isTemp = connectionType === 'temp';
@@ -933,7 +933,7 @@ export default function SessionScreen(): React.JSX.Element {
       );
     }
 
-    // Connected with video — handled by renderConnectionPill()
+    // Connected with video - handled by renderConnectionPill()
     return null;
   }
 
@@ -943,14 +943,14 @@ export default function SessionScreen(): React.JSX.Element {
   const isOverlayMode = isFillVideo;
   const isLandscape = orientation === 'landscape';
 
-  // HUD pill state label — reflects actual aiState (not hardcoded)
+  // HUD pill state label - reflects actual aiState (not hardcoded)
   const hudStateLabel =
     aiState === 'processing' ? 'Thinking'
-    : aiState === 'executing' ? 'Executing'
-    : aiState === 'recording' ? 'Recording'
-    : aiState === 'listening' ? 'Listening'
-    : aiState === 'manual' ? 'Manual'
-    : 'Ready';
+      : aiState === 'executing' ? 'Executing'
+        : aiState === 'recording' ? 'Recording'
+          : aiState === 'listening' ? 'Listening'
+            : aiState === 'manual' ? 'Manual'
+              : 'Ready';
   const showHudStopButton = aiState === 'processing' || aiState === 'executing';
 
   // Navigate from overlay/HUD to split view for full interaction
@@ -966,31 +966,31 @@ export default function SessionScreen(): React.JSX.Element {
   // to avoid being clipped by the 160px miniVideoCard overflow:hidden.
   const videoContent = (
     <View style={{ flex: 1 }} onTouchStart={() => Keyboard.dismiss()}>
-    <RemoteScreen
-      stream={remoteStream}
-      fillViewport={isFillVideo}
-      compact={isCompactVideo}
-    >
-      {!isCompactVideo && (
-        <>
-          <View style={pillStyles.buttonRow}>
-            <HamburgerMenu
-              onNewSession={handleNewSession}
-              onHistory={() => router.push('./history')}
-              onSettings={() => router.push('./settings')}
-              onDisconnect={handleLeaveSession}
-            />
-          </View>
-          {renderConnectionPill()}
-        </>
-      )}
-      {renderStateOverlay()}
-    </RemoteScreen>
+      <RemoteScreen
+        stream={remoteStream}
+        fillViewport={isFillVideo}
+        compact={isCompactVideo}
+      >
+        {!isCompactVideo && (
+          <>
+            <View style={pillStyles.buttonRow}>
+              <HamburgerMenu
+                onNewSession={handleNewSession}
+                onHistory={() => router.push('./history')}
+                onSettings={() => router.push('./settings')}
+                onDisconnect={handleLeaveSession}
+              />
+            </View>
+            {renderConnectionPill()}
+          </>
+        )}
+        {renderStateOverlay()}
+      </RemoteScreen>
     </View>
   );
 
   // Thread content: empty in immersive overlay modes (overlay rendered separately), full UI otherwise.
-  // Also shown when disconnected (chat-only mode — user can still talk to conversational model).
+  // Also shown when disconnected (chat-only mode - user can still talk to conversational model).
   const isReconnecting = connectionStatus === 'reconnecting';
   const showThread = (isConnected && !isOverlayMode) || isDisconnected || isReconnecting || isConnecting;
   const threadContent = (
@@ -1008,7 +1008,7 @@ export default function SessionScreen(): React.JSX.Element {
             <View testID="subscription-only-banner" style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 8, paddingHorizontal: 16, backgroundColor: 'rgba(245,158,11,0.08)', borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(245,158,11,0.2)' }}>
               <Ionicons name="information-circle-outline" size={16} color="#F59E0B" />
               <Text style={{ color: '#D97706', fontSize: 12, flex: 1 }}>
-                No API keys — using subscription only. Rescan QR if you add keys on desktop.
+                No API keys - using subscription only. Rescan QR if you add keys on desktop.
               </Text>
             </View>
           )}
@@ -1016,7 +1016,7 @@ export default function SessionScreen(): React.JSX.Element {
             <View testID="disconnected-banner" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 8, paddingHorizontal: 16, backgroundColor: 'rgba(239,68,68,0.1)', borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(239,68,68,0.3)' }}>
               <Ionicons name="cloud-offline" size={16} color="#EF4444" />
               <Text style={{ color: '#EF4444', fontSize: 13, flex: 1 }}>
-                Offline — chat-only mode (no desktop access)
+                Offline - chat-only mode (no desktop access)
               </Text>
               <Pressable testID="retry-button" onPress={handleRetry} style={{ paddingHorizontal: 12, paddingVertical: 4, backgroundColor: 'rgba(9,91,185,0.8)', borderRadius: 8 }}>
                 <Text style={{ color: '#fff', fontSize: 12, fontWeight: '600' }}>Retry</Text>
@@ -1030,7 +1030,7 @@ export default function SessionScreen(): React.JSX.Element {
             <View testID="reconnecting-thread-banner" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 8, paddingHorizontal: 16, backgroundColor: 'rgba(245,158,11,0.1)', borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(245,158,11,0.3)' }}>
               <Ionicons name="cloud-offline" size={16} color="#F59E0B" />
               <Text style={{ color: '#F59E0B', fontSize: 13, flex: 1 }}>
-                Reconnecting — chat-only mode (no desktop access)
+                Reconnecting - chat-only mode (no desktop access)
               </Text>
               <Pressable testID="cancel-reconnect-button" onPress={handleLeaveSession} style={{ paddingHorizontal: 8, paddingVertical: 4 }}>
                 <Ionicons name="close" size={16} color="#EF4444" />
@@ -1041,7 +1041,7 @@ export default function SessionScreen(): React.JSX.Element {
             <View testID="connecting-thread-banner" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 8, paddingHorizontal: 16, backgroundColor: 'rgba(9,91,185,0.1)', borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(9,91,185,0.3)' }}>
               <Ionicons name="wifi-outline" size={16} color="#095BB9" />
               <Text style={{ color: '#095BB9', fontSize: 13, flex: 1 }}>
-                Connecting — chat-only mode (no desktop access)
+                Connecting - chat-only mode (no desktop access)
               </Text>
               <Pressable testID="cancel-connect-button" onPress={handleLeaveSession} style={{ paddingHorizontal: 8, paddingVertical: 4 }}>
                 <Ionicons name="close" size={16} color="#EF4444" />
@@ -1122,14 +1122,14 @@ export default function SessionScreen(): React.JSX.Element {
         videoContent={videoContent}
         threadContent={threadContent}
       />
-      {/* Manual control overlay — landscape-only joystick + buttons */}
+      {/* Manual control overlay - landscape-only joystick + buttons */}
       <ManualControlOverlay
         sendMessage={sendMessage}
         sendFastMessage={sendFastMessage}
         onClose={handleToggleManualMode}
         visible={isManualMode && isLandscape}
       />
-      {/* HUD overlay — single container for exec overlay + pill, outside RemoteScreen to avoid RNGH */}
+      {/* HUD overlay - single container for exec overlay + pill, outside RemoteScreen to avoid RNGH */}
       {isOverlayMode && isConnected && (
         <View style={hudOverlayStyles.container} pointerEvents="box-none">
           {/* Landscape: right-side exec panel (separate from pill stack) */}
@@ -1151,7 +1151,7 @@ export default function SessionScreen(): React.JSX.Element {
                 <ExecutionThread variant="overlay" />
               </View>
             )}
-            {/* Quick action buttons — visible when agent has suggestions and not in manual mode */}
+            {/* Quick action buttons - visible when agent has suggestions and not in manual mode */}
             <QuickActionBar
               actions={suggestedActions}
               onAction={(payload) => sendMessage('manual_control', payload)}
@@ -1285,7 +1285,7 @@ const pillStyles = StyleSheet.create({
   },
 });
 
-// Single absolute container for exec overlay + HUD pill — avoids z-index/touch conflicts
+// Single absolute container for exec overlay + HUD pill - avoids z-index/touch conflicts
 const hudOverlayStyles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,

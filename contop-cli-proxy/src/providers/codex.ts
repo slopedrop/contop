@@ -14,10 +14,10 @@ import type { ProviderConfig } from './base.js';
  * during initial CLI testing and are kept for reference.
  *
  * Codex JSONL events (from CLI binary, not currently used):
- *   - "thread.started"  — contains thread_id (session ID for resume)
- *   - "turn.started"    — turn begins
- *   - "item.completed"  — response with item.text containing the message
- *   - "turn.completed"  — completion with usage stats (input_tokens, output_tokens)
+ *   - "thread.started"  - contains thread_id (session ID for resume)
+ *   - "turn.started"    - turn begins
+ *   - "item.completed"  - response with item.text containing the message
+ *   - "turn.completed"  - completion with usage stats (input_tokens, output_tokens)
  */
 export const codexProvider: ProviderConfig = {
   binary: 'codex',

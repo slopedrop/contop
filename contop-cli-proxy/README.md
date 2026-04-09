@@ -48,9 +48,9 @@ npx tsx src/index.ts --provider claude --port 3456 --workspace /path/to/project
 
 ## Endpoints
 
-- `POST /v1/chat/completions` — OpenAI-compatible, streaming and non-streaming
-- `GET  /v1/models` — provider model list
-- `GET  /health` — session status
+- `POST /v1/chat/completions` - OpenAI-compatible, streaming and non-streaming
+- `GET  /v1/models` - provider model list
+- `GET  /health` - session status
 
 ## Integration with Contop Server
 
@@ -66,5 +66,5 @@ See `tech-spec-subscription-auth.md` for the full integration spec.
 
 ## How It Works
 
-- **Claude / Gemini** — spawns the official CLI per request using `--resume` for conversation continuity
-- **Codex** — calls the Codex API endpoint directly via the OAuth token in `~/.codex/auth.json`
+- **Claude / Gemini** - spawns the official CLI per request using `--resume` for conversation continuity
+- **Codex** - calls the Codex API endpoint directly via the OAuth token in `~/.codex/auth.json`

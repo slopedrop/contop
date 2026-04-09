@@ -11,13 +11,13 @@ Before your first release, ensure all of these are configured:
 - [ ] **Tauri updater signing keypair** generated: `npx tauri signer generate -w ~/.tauri/contop.key`
 - [ ] **Public key** copied into `contop-desktop/src-tauri/tauri.conf.json` → `plugins.updater.pubkey` (the base64 string output by the generate command)
 - [ ] **GitHub secrets** configured on `slopedrop/contop`:
-  - `TAURI_SIGNING_PRIVATE_KEY` — contents of `~/.tauri/contop.key`
-  - `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` — password used during key generation
+  - `TAURI_SIGNING_PRIVATE_KEY` - contents of `~/.tauri/contop.key`
+  - `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` - password used during key generation
 
 ### Mobile (Expo / EAS)
 
 - [ ] **EAS project linked**: run `cd contop-mobile && eas init`
-- [ ] **GitHub secret**: `EXPO_TOKEN` — from [expo.dev/accounts/settings](https://expo.dev/accounts/[account]/settings)
+- [ ] **GitHub secret**: `EXPO_TOKEN` - from [expo.dev/accounts/settings](https://expo.dev/accounts/[account]/settings)
 - [ ] **Android keystore** generated: `keytool -genkey -v -keystore contop.jks -keyalg RSA -keysize 2048 -validity 10000 -alias contop`
 - [ ] **Android signing secrets** (for EAS or local builds):
   - `ANDROID_KEYSTORE_PATH`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`
@@ -43,7 +43,7 @@ There is one shared `CHANGELOG.md` at the repo root covering both desktop and mo
 
 ### How to Maintain It
 
-Keep a running `## [Unreleased]` section at the top. Add notable changes as you commit them — don't wait until release time and try to reconstruct from memory.
+Keep a running `## [Unreleased]` section at the top. Add notable changes as you commit them - don't wait until release time and try to reconstruct from memory.
 
 ```markdown
 ## [Unreleased]
@@ -82,7 +82,7 @@ Keep a running `## [Unreleased]` section at the top. Add notable changes as you 
 - **Change:** behavior changes, dependency updates
 - **Remove:** removed features or deprecated items
 
-Don't log every tiny commit — just the things a user or contributor would care about. If you forget, run `git log --oneline` since the last tag to jog your memory.
+Don't log every tiny commit - just the things a user or contributor would care about. If you forget, run `git log --oneline` since the last tag to jog your memory.
 
 ## Day-to-Day Development Workflow
 
@@ -109,9 +109,9 @@ When you're ready to ship a test release:
   - [ ] Desktop: `cd contop-desktop && npx tsc --noEmit`
   - [ ] Website: `cd website && npm run build`
 - [ ] **New/updated tests** written for any new or changed functionality
-- [ ] `CHANGELOG.md` — `[Unreleased]` section renamed to version + date, fresh `[Unreleased]` added
-- [ ] `README.md` — updated if there are new features, changed setup steps, or new screenshots
-- [ ] Docs site (`docs/`) — updated if features, setup, APIs, or architecture changed
+- [ ] `CHANGELOG.md` - `[Unreleased]` section renamed to version + date, fresh `[Unreleased]` added
+- [ ] `README.md` - updated if there are new features, changed setup steps, or new screenshots
+- [ ] Docs site (`docs/`) - updated if features, setup, APIs, or architecture changed
 - [ ] Tested locally (`npm run tauri dev` for desktop, `npx expo start` for mobile)
 - [ ] Run the bump script:
   ```bash
@@ -127,13 +127,13 @@ When you're ready to ship a test release:
 When promoting from alpha/beta to stable:
 
 - [ ] All pre-release checklist items above (including tests)
-- [ ] `CHANGELOG.md` — consolidate all alpha/beta entries into one clean stable entry
-- [ ] `README.md` — ensure installation instructions point to stable release
-- [ ] Docs site (`docs/`) — all pages accurate for this version (installation, quick-start, architecture, API reference)
-- [ ] Website (`website/`) — any new features reflected in marketing copy
-- [ ] Website download section — verify it picks up the new stable release (happens automatically via GitHub API)
-- [ ] `RELEASE_GUIDE.md` — update if any process changed
-- [ ] `CONTRIBUTING.md` — update if dev setup steps changed
+- [ ] `CHANGELOG.md` - consolidate all alpha/beta entries into one clean stable entry
+- [ ] `README.md` - ensure installation instructions point to stable release
+- [ ] Docs site (`docs/`) - all pages accurate for this version (installation, quick-start, architecture, API reference)
+- [ ] Website (`website/`) - any new features reflected in marketing copy
+- [ ] Website download section - verify it picks up the new stable release (happens automatically via GitHub API)
+- [ ] `RELEASE_GUIDE.md` - update if any process changed
+- [ ] `CONTRIBUTING.md` - update if dev setup steps changed
 - [ ] Run the bump script (no pre-release suffix):
   ```bash
   ./scripts/bump-version.sh desktop 0.1.0 --push
@@ -146,7 +146,7 @@ When promoting from alpha/beta to stable:
 - [ ] All changes committed and pushed
 - [ ] **Tests pass:** `cd contop-mobile && npx jest`
 - [ ] **New/updated tests** written for any new or changed functionality
-- [ ] `CHANGELOG.md` — mobile section updated under version heading
+- [ ] `CHANGELOG.md` - mobile section updated under version heading
 - [ ] `app.json` version bumped
 - [ ] Tested on device/emulator
 - [ ] Run the bump script:
@@ -167,7 +167,7 @@ When promoting from alpha/beta to stable:
 | Website (`website/`) | When adding new features users should know about |
 | `RELEASE_GUIDE.md` | When the release process itself changes |
 | `CONTRIBUTING.md` | When dev setup or contribution process changes |
-| Download section | Automatic — pulls from GitHub Releases API |
+| Download section | Automatic - pulls from GitHub Releases API |
 
 ### Docusaurus Docs (`docs/`)
 
@@ -184,7 +184,7 @@ The documentation site lives in `docs/` and covers user guides, architecture, AP
 | `docs/api-reference/*.md` | When REST API, tools, or data channel protocol changes |
 | `docs/security/*.md` | When security model, pairing, or away mode changes |
 
-You don't need to update docs on every commit — batch it before releases. Add it to your release checklist: "Are the docs still accurate?"
+You don't need to update docs on every commit - batch it before releases. Add it to your release checklist: "Are the docs still accurate?"
 
 ## How to Cut a Desktop Release
 
@@ -210,7 +210,7 @@ You don't need to update docs on every commit — batch it before releases. Add 
 Or use the helper script (handles steps 2-4):
 
 ```bash
-./scripts/bump-version.sh desktop 0.2.0        # local only — creates commit + tag
+./scripts/bump-version.sh desktop 0.2.0        # local only - creates commit + tag
 ./scripts/bump-version.sh desktop 0.2.0 --push  # also pushes, triggering CI
 ```
 
@@ -248,9 +248,9 @@ cd contop-mobile && eas update --branch production --message "fix: description"
 ## How Auto-Update Works (Desktop)
 
 1. On launch, Tauri checks `latest.json` on GitHub Releases
-2. If a newer version exists, user sees a toast: "Update available — Restart to update"
+2. If a newer version exists, user sees a toast: "Update available - Restart to update"
 3. User clicks restart → app downloads the update, restarts
-4. After update, `run_first_launch_setup` checks `pyproject_hash` in `setup_status.json` — if dependencies changed, re-runs `uv sync` automatically
+4. After update, `run_first_launch_setup` checks `pyproject_hash` in `setup_status.json` - if dependencies changed, re-runs `uv sync` automatically
 
 ## Package Manager Update
 
@@ -263,16 +263,16 @@ The Homebrew tap and Scoop bucket are **updated automatically** by the `update-p
 
 ### Requirements
 
-- GitHub secret `PACKAGE_MANAGER_TOKEN` must be set on `slopedrop/contop` — a fine-grained PAT scoped to `slopedrop/homebrew-contop` and `slopedrop/scoop-contop` with `Contents: Read and write` permission.
+- GitHub secret `PACKAGE_MANAGER_TOKEN` must be set on `slopedrop/contop` - a fine-grained PAT scoped to `slopedrop/homebrew-contop` and `slopedrop/scoop-contop` with `Contents: Read and write` permission.
 
 ### Manual update (if CI fails)
 
 ```bash
-# Homebrew — get SHA256 of the .dmg, update version + sha256 in Casks/contop.rb
+# Homebrew - get SHA256 of the .dmg, update version + sha256 in Casks/contop.rb
 shasum -a 256 "Contop Desktop_x.x.x_aarch64.dmg"
 cd homebrew-contop && git commit -am "Update contop to x.x.x" && git push
 
-# Scoop — get SHA256 of the portable .zip, update version + url + hash in bucket/contop.json
+# Scoop - get SHA256 of the portable .zip, update version + url + hash in bucket/contop.json
 sha256sum "Contop-Desktop_x.x.x_x64-portable.zip"
 cd scoop-contop && git commit -am "Update contop to x.x.x" && git push
 ```
@@ -319,7 +319,7 @@ Only desktop releases (tags matching `desktop-v*`) trigger the update.
 |---------|-----|
 | CI build failure | Check Rust toolchain version, Node 22, signing keys configured |
 | Update not detected | Verify `latest.json` is attached to the release, pubkey in `tauri.conf.json` matches |
-| EAS build queued | Free tier has limited concurrency — wait or upgrade |
+| EAS build queued | Free tier has limited concurrency - wait or upgrade |
 | Play Store rejection | Check privacy policy requirement, review permissions |
 | First-launch stuck | Delete `~/.contop/setup_status.json` to force re-run |
 | GPU not detected | Verify NVIDIA drivers installed, `nvidia-smi` on PATH |

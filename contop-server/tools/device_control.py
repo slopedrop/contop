@@ -1,7 +1,7 @@
 """
-Device control tool — handles lock_screen and keep_awake actions.
-Bypasses the Dual-Tool Evaluator — direct device operations.
-[Source: project-context.md — Mandatory Dual-Tool Gate exception]
+Device control tool - handles lock_screen and keep_awake actions.
+Bypasses the Dual-Tool Evaluator - direct device operations.
+[Source: project-context.md - Mandatory Dual-Tool Gate exception]
 """
 import asyncio
 import logging
@@ -88,7 +88,7 @@ async def _keep_awake_on(*, persist: bool = True) -> dict[str, Any]:
     await _keep_awake_off_internal()
     system = platform.system()
     if system == "Windows":
-        # CRITICAL: Call directly on the event loop thread — NOT via asyncio.to_thread.
+        # CRITICAL: Call directly on the event loop thread - NOT via asyncio.to_thread.
         # SetThreadExecutionState is thread-local on Windows. If ON runs on thread pool
         # worker A and OFF runs on worker B, OFF clears B's state (never set) while
         # A's state stays active. Both calls must happen on the same thread.

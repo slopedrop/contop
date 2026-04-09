@@ -1,5 +1,5 @@
 """
-Document tools — structured document reading and writing for the execution agent.
+Document tools - structured document reading and writing for the execution agent.
 
 Provides read_pdf, read_image, read_excel, write_excel as ADK FunctionTools.
 These give the agent native document access without CLI workarounds.

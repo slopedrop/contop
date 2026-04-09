@@ -81,7 +81,7 @@ cd contop-desktop && npm run tauri dev
 ## Code Quality Rules
 
 - **TypeScript**: Strict mode mandatory. All components use NativeWind v4 utility classes.
-- **Python**: Async `asyncio` logic mandatory throughout. Use `asyncio.to_thread()` for blocking calls. Never fail silently — all exceptions logged and returned as `ToolResult` with `status="error"`.
+- **Python**: Async `asyncio` logic mandatory throughout. Use `asyncio.to_thread()` for blocking calls. Never fail silently - all exceptions logged and returned as `ToolResult` with `status="error"`.
 - **Rust**: All Tauri IPC commands use `tauri::async_runtime::spawn_blocking` for HTTP calls.
 - **Documentation**: JSDoc/docstrings at core module boundaries (WebRTC, OmniParser, UI tools).
 - **Data shapes**: WebRTC data channel messages must use the canonical envelope format (`type`, `id`, `payload`).
