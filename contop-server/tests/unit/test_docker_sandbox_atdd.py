@@ -123,46 +123,19 @@ class TestAC2_DockerAvailabilityCheck:
 class TestAC3_DockerUnavailableFallback:
     """Given Docker Engine is NOT available on the host,
     When a sandbox-classified command needs execution,
-    Then the system must fall back to a restricted subprocess,
+    Then the system must refuse execution for security,
     And the fallback must be logged as a warning.
     """
 
     @pytest.mark.asyncio
-    async def test_fallback_to_restricted_subprocess(self):
-        mock_host_result = {
-            "status": "success",
-            "stdout": "fallback output",
-            "stderr": "",
-            "exit_code": 0,
-            "duration_ms": 50,
-        }
-        mock_host = AsyncMock(return_value=mock_host_result)
-
+    async def test_fallback_refuses_execution(self):
         with patch("tools.docker_sandbox.DockerSandbox._check_docker", return_value=False):
-            with patch("tools.host_subprocess.HostSubprocess.run", mock_host):
-                result = await DockerSandbox().run("echo test")
+            result = await DockerSandbox().run("echo test")
 
-        # Fallback used HostSubprocess
-        mock_host.assert_called_once()
-        assert result["status"] == "success"
-
-    @pytest.mark.asyncio
-    async def test_fallback_uses_reduced_timeout(self):
-        mock_host_result = {
-            "status": "success",
-            "stdout": "",
-            "stderr": "",
-            "exit_code": 0,
-            "duration_ms": 50,
-        }
-        mock_host = AsyncMock(return_value=mock_host_result)
-
-        with patch("tools.docker_sandbox.DockerSandbox._check_docker", return_value=False):
-            with patch("tools.host_subprocess.HostSubprocess.run", mock_host):
-                await DockerSandbox().run("echo test", timeout_s=30)
-
-        call_kwargs = mock_host.call_args
-        assert call_kwargs.kwargs.get("timeout_s", call_kwargs[1].get("timeout_s", 30)) <= 10
+        # Fallback must return error
+        assert result["status"] == "error"
+        assert result["sandboxed"] is False
+        assert "Execution refused" in result["stderr"]
 
 
 # ─── AC #4: Timeout enforcement ──────────────────────────────────────────────

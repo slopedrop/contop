@@ -243,68 +243,29 @@ class TestOutputTruncation:
 
 
 class TestDockerUnavailableFallback:
-    """Verify HostSubprocess used with reduced timeout when Docker unavailable."""
+    """Verify fallback refuses execution when Docker unavailable."""
 
     @pytest.mark.asyncio
-    async def test_fallback_uses_host_subprocess(self):
-        mock_result = {
-            "status": "success",
-            "stdout": "fallback output",
-            "stderr": "",
-            "exit_code": 0,
-            "duration_ms": 100,
-        }
-        mock_host = AsyncMock(return_value=mock_result)
-
+    async def test_fallback_refuses_execution(self):
         with patch("tools.docker_sandbox.DockerSandbox._check_docker", return_value=False):
-            with patch("tools.host_subprocess.HostSubprocess.run", mock_host):
-                sandbox = DockerSandbox()
-                result = await sandbox.run("echo test")
+            sandbox = DockerSandbox()
+            result = await sandbox.run("echo test")
 
-        mock_host.assert_called_once()
-        # Verify reduced timeout (max 10s)
-        call_kwargs = mock_host.call_args
-        assert call_kwargs.kwargs.get("timeout_s", call_kwargs[1].get("timeout_s", 30)) <= 10
-
-    @pytest.mark.asyncio
-    async def test_fallback_returns_host_subprocess_result(self):
-        mock_result = {
-            "status": "success",
-            "stdout": "output",
-            "stderr": "",
-            "exit_code": 0,
-            "duration_ms": 100,
-        }
-        mock_host = AsyncMock(return_value=mock_result)
-
-        with patch("tools.docker_sandbox.DockerSandbox._check_docker", return_value=False):
-            with patch("tools.host_subprocess.HostSubprocess.run", mock_host):
-                sandbox = DockerSandbox()
-                result = await sandbox.run("echo test")
-
-        assert result["status"] == "success"
-        assert result["stdout"] == "output"
+        assert result["status"] == "error"
+        assert "Execution refused" in result["stderr"]
+        assert result["sandboxed"] is False
 
     @pytest.mark.asyncio
     async def test_fallback_when_docker_import_fails(self):
-        """When docker package isn't installed, fallback should activate."""
-        mock_result = {
-            "status": "success",
-            "stdout": "ok",
-            "stderr": "",
-            "exit_code": 0,
-            "duration_ms": 50,
-        }
-        mock_host = AsyncMock(return_value=mock_result)
-
+        """When docker package isn't installed, fallback should refuse execution."""
         # Simulate ImportError on docker import
         with patch.dict("sys.modules", {"docker": None}):
             DockerSandbox._reset()
-            with patch("tools.host_subprocess.HostSubprocess.run", mock_host):
-                sandbox = DockerSandbox()
-                result = await sandbox.run("echo fallback")
+            sandbox = DockerSandbox()
+            result = await sandbox.run("echo fallback")
 
-        assert result["status"] == "success"
+        assert result["status"] == "error"
+        assert result["sandboxed"] is False
 
 
 # ─── Test 5.6: Container cleanup ────────────────────────────────────────────
@@ -494,19 +455,9 @@ class TestReturnDictShape:
 
     @pytest.mark.asyncio
     async def test_fallback_path_returns_correct_shape(self):
-        mock_result = {
-            "status": "success",
-            "stdout": "ok",
-            "stderr": "",
-            "exit_code": 0,
-            "duration_ms": 50,
-            "voice_message": "The command completed successfully.",
-        }
-
         with patch("tools.docker_sandbox.DockerSandbox._check_docker", return_value=False):
-            with patch("tools.host_subprocess.HostSubprocess.run", AsyncMock(return_value=mock_result)):
-                sandbox = DockerSandbox()
-                result = await sandbox.run("echo test")
+            sandbox = DockerSandbox()
+            result = await sandbox.run("echo test")
 
         assert set(result.keys()) == self.REQUIRED_KEYS
 

@@ -427,7 +427,45 @@ class DualToolEvaluator:
         """Check if command references a restricted path.
 
         Case-insensitive on Windows, case-sensitive on Linux/macOS.
+        Mitigates path traversal by parsing and normalizing paths.
         """
+        import os
+        import shlex
+
+        # 1. Simple substring check (matches exact strings like before)
         if sys.platform == "win32":
-            return path.lower() in command.lower()
-        return path in command
+            if path.lower() in command.lower():
+                return True
+        else:
+            if path in command:
+                return True
+
+        # 2. Normalize the restricted path to an absolute path.
+        restricted_abs = os.path.abspath(os.path.expanduser(path))
+        if sys.platform == "win32":
+            restricted_abs = restricted_abs.lower()
+
+        # 3. Extract tokens and resolve them to absolute paths to check for traversal
+        try:
+            tokens = shlex.split(command, posix=(sys.platform != "win32"))
+        except ValueError:
+            tokens = command.split()
+
+        for token in tokens:
+            # Check for path traversals hiding in flags like --file=/etc/../etc/passwd
+            if token.startswith("-") and "=" in token:
+                token = token.split("=", 1)[1]
+            elif token.startswith("-") and len(token) > 1:
+                continue
+
+            try:
+                token_abs = os.path.abspath(os.path.expanduser(token))
+                if sys.platform == "win32":
+                    token_abs = token_abs.lower()
+
+                if token_abs == restricted_abs or token_abs.startswith(restricted_abs + os.sep):
+                    return True
+            except Exception:
+                continue
+
+        return False
