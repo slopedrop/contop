@@ -382,36 +382,25 @@ class DockerSandbox:
         max_output_bytes: int,
     ) -> dict:
         """Restricted subprocess fallback when Docker is unavailable."""
-        from tools.host_subprocess import HostSubprocess
-
         logger.warning(
-            "Docker unavailable - executing in restricted host subprocess (NO sandbox isolation): %s",
+            "Docker unavailable - refusing to execute sandboxed command on host: %s",
             command[:80],
         )
         if self._status_callback:
             try:
                 self._status_callback("agent_status", {
                     "type": "sandbox_fallback",
-                    "message": "Docker unavailable → restricted subprocess (no isolation)",
+                    "message": "Docker unavailable → refused to execute sandboxed command",
                 })
             except Exception:
                 pass
 
-        # Use shorter timeout for safety in non-sandboxed environment
-        fallback_timeout = min(timeout_s, 10)
-
-        result = await HostSubprocess().run(
-            command=command,
-            timeout_s=fallback_timeout,
-            max_output_bytes=max_output_bytes,
-            auto_confirm=False,
-        )
-
-        # Mark that this execution was NOT sandboxed so callers can distinguish
-        result["sandboxed"] = False
-        result["voice_message"] = (
-            "Warning: Docker is not available, so this command ran without "
-            "sandbox isolation on the host machine."
-        )
-
-        return result
+        return {
+            "status": "error",
+            "stdout": "",
+            "stderr": "Docker sandbox is required but unavailable. Execution refused for security.",
+            "exit_code": -1,
+            "duration_ms": 0,
+            "sandboxed": False,
+            "voice_message": "Docker is not available. The command was blocked for your safety.",
+        }
